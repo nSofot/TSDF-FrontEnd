@@ -1,9 +1,7 @@
 import { Routes, Route, Outlet } from "react-router-dom";
 import Header from "../components/header";
-import ProductsPage from "./client/productsPage";
-import ProductOverview from "./client/productOverview";
-import CartPage from "./client/cart";
-import CheckOutPage from "./client/checkOut";
+import ConstitutionPage from "./client/constitutionPage";
+import Gallery from "./client/galleryPage";
 import About from "./client/about";
 import Contact from "./client/contact";
 import Home from "./client/homePage";
@@ -25,12 +23,10 @@ export default function HomePage() {
     <Routes>
       <Route path="*" element={<Layout />}>
         <Route index element={<Home />} />
-        <Route path="products" element={<ProductsPage />} />
+        <Route path="gallery" element={<Gallery />} />
         <Route path="about" element={<About />} />
         <Route path="contact" element={<Contact />} />
-        <Route path="overview/:Id" element={<ProductOverview />} />
-        <Route path="cart" element={<CartPage />} />
-        <Route path="checkout" element={<CheckOutPage />} />
+        <Route path="constitution" element={<ConstitutionPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>
