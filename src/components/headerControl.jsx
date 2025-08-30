@@ -45,6 +45,7 @@ export default function Header() {
                 <Link to="/control/members"     className="text-lg font-bold mx-3 hover:underline">Members</Link>
                 <Link to="/control/apply-loan"     className="text-lg font-bold mx-3 hover:underline">Apply Loan</Link>
                 <Link to="/control/grant-loan"  className="text-lg font-bold mx-3 hover:underline">Grant Loan</Link>
+                <Link to="/control/cash-book"             className="text-lg font-bold mx-3 hover:underline">Cash Book</Link>
                 <Link to="/contact"             className="text-lg font-bold mx-3 hover:underline">Shares</Link>
             </nav>
 
@@ -88,10 +89,11 @@ export default function Header() {
 
                     {/* Drawer Nav */}
                     <nav className="flex flex-col items-start px-6 gap-4 mt-6">
-                        <Link to="/control/"                    className="text-lg font-bold" onClick={() => setSideDrawerOpened(false)}>Home</Link>
+                        <Link to="/control/"            className="text-lg font-bold" onClick={() => setSideDrawerOpened(false)}>Home</Link>
                         <Link to="/control/members"     className="text-lg font-bold" onClick={() => setSideDrawerOpened(false)}>Members</Link>
-                        <Link to="/control/apply-loan"     className="text-lg font-bold" onClick={() => setSideDrawerOpened(false)}>Apply Loan</Link>
+                        <Link to="/control/apply-loan"  className="text-lg font-bold" onClick={() => setSideDrawerOpened(false)}>Apply Loan</Link>
                         <Link to="/control/grant-loan"  className="text-lg font-bold" onClick={() => setSideDrawerOpened(false)}>Grant Loan</Link>
+                        <Link to="/control/cash-book"   className="text-lg font-bold" onClick={() => setSideDrawerOpened(false)}>Cash Book</Link>
                         <Link to="/contact"             className="text-lg font-bold" onClick={() => setSideDrawerOpened(false)}>Shares</Link>
 
                         {isLoggedIn ? (

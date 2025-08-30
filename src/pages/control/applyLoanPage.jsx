@@ -25,6 +25,8 @@ export default function ApplyLoanPage() {
   const [secondGuranterId, setSecondGuranterId] = useState("");
   const [firstGuranterLoans, setFirstGuranterLoans] = useState([]);
   const [secondGuranterLoans, setSecondGuranterLoans] = useState([]);
+  const [fGuranteredLoans, setFGuranteredLoans] = useState([]);
+  const [sGuranteredLoans, setSGuranteredLoans] = useState([]);
   const [reason, setReason] = useState("");
   const [isEligible, setIsEligible] = useState(false);
 
@@ -63,6 +65,8 @@ export default function ApplyLoanPage() {
       setFirstGuaranter(res.data);
       const loan = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/loanMaster/pending/${id}`);
       setFirstGuranterLoans(loan.data);
+      const fGLoans = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/loanMaster/guarantor/${id}`);
+      setFGuranteredLoans(fGLoans.data);
     } catch (err) {
       toast.error(err.response?.data?.message || "Member not found");
     } finally {
@@ -78,6 +82,8 @@ export default function ApplyLoanPage() {
       setSecondGuaranter(res.data);
       const loan = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/loanMaster/pending/${id}`);
       setSecondGuranterLoans(loan.data);
+      const sGLoans = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/loanMaster/guarantor/${id}`);
+      setSGuranteredLoans(sGLoans.data);
     } catch (err) {
       toast.error(err.response?.data?.message || "Member not found");
     } finally {
@@ -92,6 +98,8 @@ export default function ApplyLoanPage() {
     setInterest("");
     setMaxAmount("");
     setMaxDuration("");
+    setFirstGuranterId("");
+    setSecondGuranterId("");
     if (loanType === "Welfare Loan") {
       setMaxDuration(2);
       setInterest(5);
@@ -151,7 +159,7 @@ export default function ApplyLoanPage() {
     //Membership fee
     let membershipFee = applicant?.membership ? Number(applicant.membership) : 0;
     //check shares
-    let sharesAmount = Number(applicant?.shares)
+    let sharesAmount = Number(applicant?.shares) + Number(applicant?.profits) 
 
     if (!isMoreThanOneYear) {
         setReason("❌ ඔබගේ සාමාජිකත්ව කාලය තවමත් වසරකට ළඟා වී නැත. මෙම අවස්ථාවේදී ණයක් සඳහා අයදුම් කිරීමට ඔබට සුදුසුකම් නොමැත.");
@@ -165,17 +173,116 @@ export default function ApplyLoanPage() {
         setReason("❌ ඔබගේ කොටස් දායකත්වය අවශ්‍ය අවම මුදලට ළඟා වී නොමැත. එබැවින්, මෙම අවස්ථාවේදී ණයක් නිකුත් කළ නොහැක.");
         setIsEligible(false);
         return;      
+    } 
+    {
+      applicantLoans.map((loan) => {
+        if (loan.loanType === selectedLoanType) {
+            setReason("❌ ඔබ ඉල්ලා සිටින ණය වර්ගය දැනටමත් ලබාගෙන ඇත. එබැවින්, මේ අවස්ථාවේ දී එම වර්ගයේම තවත් ණයක් නිකුත් කළ නොහැක.");
+            setIsEligible(false);
+            return;
+        } else if ((loan.loanType !== "Welfare Loan") && (selectedLoanType !== "Welfare Loan")) {
+            setReason("❌ ඔබට දැනටමත් ක්‍රියාකාරී ණයක් තිබේ. එබැවින්, මෙම අවස්ථාවේදී නව ණයක් නිකුත් කළ නොහැක.");
+            setIsEligible(false);
+            return;        
+        } else if (((loan.amount/2) < (loan.dueAmount)) && (selectedLoanType === "Welfare Loan")) {
+            setReason("❌ ඔබගේ පවතින ණය මුදලින් අවම වශයෙන් 50% ක්වත් පියවා නොමැති බැවින්, මෙම අවස්ථාවේදී සුභසාධන ණයක් නිකුත් කළ නොහැක.");
+            setIsEligible(false);
+            return;              
+        }
+    })}
+    if (selectedLoanType === "Long Term Loan") {
+      if (fGuranteredLoans.length > 0) {
+          setReason("❌ තෝරාගත් පළමු ඇපකරු දැනටමත් තවත් ණයක් සඳහා අත්සන් කර ඇති අතර එම නිසා නැවත අත්සන් කිරීමට සුදුසුකම් නොලබයි.");
+          setIsEligible(false);
+          return;         
+      } else if ((amount/4) > (Number(firstGuranter.shares) + Number(firstGuranter.profits))) {
+          setReason("❌ මෙම ණය මුදල සඳහා අත්සන් කිරීමට පළමු ඇපකරුගේ කොටස් මුදල ප්‍රමාණවත් නොවේ.");
+          setIsEligible(false);
+          return;          
+      }
+      if (sGuranteredLoans.length > 0) {
+          setReason("❌ තෝරාගත් දෙවන ඇපකරු දැනටමත් තවත් ණයක් සඳහා අත්සන් කර ඇති අතර එම නිසා නැවත අත්සන් කිරීමට සුදුසුකම් නොලබයි.");
+          setIsEligible(false);
+          return;         
+      } else if ((amount/4) > (Number(secondGuranter.shares) + Number(secondGuranter.profits))) {
+          setReason("❌ මෙම ණය මුදල සඳහා අත්සන් කිරීමට දෙවන ඇපකරුගේ කොටස් මුදල ප්‍රමාණවත් නොවේ.");
+          setIsEligible(false);
+          return;          
+      }      
     }
-    //check membership fee
-    //check shares and profits 
-    //check other loans
-
 
     setReason("✅ඔබගේ ණය අයදුම්පත සූදානම් සහ ඉදිරිපත් කිරීමට සුදුසුකම් ලබා ඇත. අනුමැතිය සඳහා එය ඉදිරිපත් කිරීමට කරුණාකර පහත බොත්තම ක්ලික් කරන්න.");
     setIsEligible(true);
   };
 
-  const handleLoanGrant = () => {
+
+  const handleLoanGrant = async () => {
+    if (!isEligible) return;
+    let newReferenceNo = "";
+    const lgAcId = "325-0001";
+    try {
+        //1️⃣create loan master
+        try {
+            const loanMasterpayload = {
+                customerId: applicantId,
+                firstGuaranterId: firstGuranterId,
+                secondGuaranterId: secondGuranterId,
+                issuedDate: new Date(),
+                loanType: selectedLoanType,
+                amount: amount,
+                loanDuration: duration,
+                loanInterestRate: interest,
+                dueAmount: amount,
+                isApproved: false,
+                isGranted: false
+            }
+            const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/loanMaster`, loanMasterpayload);
+            newReferenceNo = res.data.referenceNo;
+        } catch (error) {
+            console.log('1. create loan master error: ', error);
+        }
+        //2️⃣create loan transaction
+        // try {
+        //     const loanTrxPayload = {
+        //         referenceNo: newReferenceNo,
+        //         transactionDate: new Date(),
+        //         customerId: applicantId,
+        //         loanType: selectedLoanType,
+        //         amount: amount,
+        //         isCredit: false
+        //     }
+        //     await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/loanTransaction`, loanTrxPayload);
+        // } catch (error) {
+        //     console.log('2️⃣ create loan transaction error: ', error);
+        // }
+        //3️⃣update cash book
+        // try {
+        //     const updates = {
+        //         accountId: lgAcId,
+        //         accountBalance: amount
+        //     }
+        //     await axios.put(`${import.meta.env.VITE_BACKEND_URL}/api/ledgerAccounts/add-balance`, updates);
+        // } catch (error) {
+        //     console.log('3️⃣ update cash book error: ', error);
+        // }
+        //4️⃣create cash book transaction
+        // try {
+        //     const cashBookTrxPayload = {
+        //         trxId: newReferenceNo,
+        //         trxDate: new Date(),
+        //         transactionType: "voucher",
+        //         accountId: lgAcId,
+        //         description: selectedLoanType + " " + applicant.name,
+        //         isCredit: false,
+        //         trxAmount: amount
+        //     }
+        //     await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/ledgerTransactions`, cashBookTrxPayload);
+        // } catch (error) {
+        //     console.log('4️⃣ create cash book transaction error: ', error); 
+        // }
+    } catch (error) {
+        console.log(error);
+    }
 
     toast.success("ඔබගේ ණය අයදුම්පත සාර්ථකව ඉදිරිපත් කර ඇත. අනුමැතිය සඳහා එය සමාලෝචනය කරන තෙක් රැඳී සිටින්න.");
   }

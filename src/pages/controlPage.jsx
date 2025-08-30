@@ -4,6 +4,7 @@ import ControlHomePage from "./control/controlHomePage";
 import MembersPage from "./control/membersPage";
 import ApplyLoanPage from "./control/applyLoanPage";
 import LoanGrantPage from "./control/loanGrantPage";
+import CashBook from "./control/cashRegister";
 
 import ProductOverview from "./client/productOverview";
 import CartPage from "./client/cart";
@@ -32,6 +33,7 @@ export default function ControlPage() {
         <Route path="members"       element={<MembersPage />} />
         <Route path="apply-loan"    element={<ApplyLoanPage />} />
         <Route path="grant-loan"    element={<LoanGrantPage />} />
+        <Route path="cash-book"      element={<CashBook />} />
         <Route path="contact"       element={<Contact />} />
         <Route path="overview/:Id"  element={<ProductOverview />} />
         <Route path="cart"          element={<CartPage />} />
