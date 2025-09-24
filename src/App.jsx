@@ -8,6 +8,7 @@ import LoginPage from './pages/Login'
 import RegisterPage from './pages/Register'
 import ForgetPasswordPage from './pages/ForgetPassword'
 import AdminPage from './pages/AdminPage'
+import ControlPage from './pages/controlPage'
 import HomePage from './pages/home'
 
 
@@ -23,6 +24,7 @@ export default function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/forget" element={<ForgetPasswordPage />} />
           <Route path="/admin/*" element={<AdminPage />} />
+          <Route path="/control/*" element={<ControlPage />} />
           <Route path="*" element={<HomePage />} />
         </Routes>
       </BrowserRouter>

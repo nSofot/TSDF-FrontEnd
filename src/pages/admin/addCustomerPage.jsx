@@ -16,11 +16,12 @@ export default function AddCustomerPage() {
     const [email, setEmail] = useState("");
     const [notes, setNotes] = useState("");
 
+
     const handleAddProduct = async () => {
         const token = localStorage.getItem("token");
         if (!token) return toast.error("Please log in first.");
 
-        if (!name || !address || !mobile) {
+        if (!name || !address) {
             return toast.error("Please fill in all fields.");
         }
 
