@@ -8,7 +8,6 @@ import {
 } from "react-icons/fi";
 
 export default function Contact() {
-  /* ---------------------- state ---------------------- */
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -19,7 +18,6 @@ export default function Contact() {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
 
-  /* -------------------- handlers --------------------- */
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -28,7 +26,6 @@ export default function Contact() {
     setSubmitting(true);
     setError("");
     try {
-      /* === REPLACE with your real API endpoint === */
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -45,7 +42,6 @@ export default function Contact() {
     }
   };
 
-  /* -------------- reusable field component ----------- */
   const Field = ({ label, name, type = "text", textarea = false }) => (
     <div className="flex flex-col gap-1">
       <label htmlFor={name} className="font-medium">
@@ -75,17 +71,16 @@ export default function Contact() {
     </div>
   );
 
-  /* --------------------- render ---------------------- */
   return (
     <main className="min-h-screen flex flex-col">
       {/* ------------ hero banner ------------ */}
-      <section className="relative h-[40vh] bg-indigo-600 flex items-center justify-center overflow-hidden">
+      <section className="relative h-[40vh] bg-indigo-700 flex items-center justify-center overflow-hidden">
         <img
-          src="/contact-hero.jpg" /* place any wide hero in /public */
+          src="/contact-hero.jpg" // replace with foundation-specific image
           alt="Contact us"
           className="absolute inset-0 w-full h-full object-cover opacity-50 mix-blend-overlay"
         />
-        <h1 className="relative text-4xl md:text-5xl font-extrabold text-white drop-shadow-lg">
+        <h1 className="relative text-4xl md:text-5xl font-extrabold text-white drop-shadow-lg text-center">
           Get in Touch
         </h1>
       </section>
@@ -96,8 +91,8 @@ export default function Contact() {
         <div className="flex flex-col gap-8">
           <h2 className="text-3xl font-bold">We’d love to hear from you</h2>
           <p className="text-gray-700">
-            Whether you have a question about products, shipping, or returns, or
-            you just want to share your feedback—our team is ready to help!
+            Whether you have questions about our programs, want to volunteer, 
+            or wish to support our initiatives—our team is ready to help!
           </p>
 
           <ul className="space-y-6">
@@ -106,10 +101,10 @@ export default function Contact() {
               <div>
                 <p className="font-semibold">Email us</p>
                 <a
-                  href="mailto:support@cbcbeauty.lk"
+                  href="mailto:info@thewanashakthi.org"
                   className="text-indigo-600 hover:underline"
                 >
-                  support@cbcbeauty.lk
+                  info@thewanashakthi.org
                 </a>
               </div>
             </li>
@@ -117,10 +112,10 @@ export default function Contact() {
               <FiPhone className="text-2xl text-indigo-600 shrink-0" />
               <div>
                 <p className="font-semibold">Call us</p>
-                <a href="tel:+94112345678" className="text-indigo-600 hover:underline">
-                  +94 11 234 5678
+                <a href="tel:+94111234567" className="text-indigo-600 hover:underline">
+                  +94 11 123 4567
                 </a>
-                <p className="text-sm text-gray-500">Mon–Fri, 9 AM – 6 PM</p>
+                <p className="text-sm text-gray-500">Mon–Fri, 9 AM – 5 PM</p>
               </div>
             </li>
             <li className="flex items-start gap-4">
@@ -128,17 +123,16 @@ export default function Contact() {
               <div>
                 <p className="font-semibold">Visit us</p>
                 <address className="not-italic">
-                  123 Beauty Avenue,<br />
-                  Colombo 07, Sri Lanka
+                  Pothukoladeniya,<br />
+                  Kegalle, Sri Lanka
                 </address>
               </div>
             </li>
           </ul>
 
-          {/* optional embedded map */}
           <div className="rounded-xl overflow-hidden shadow-lg">
             <iframe
-              title="CBC Beauty HQ map"
+              title="Thewana Shakthi map"
               src="https://maps.google.com/maps?q=colombo%2007&t=&z=13&ie=UTF8&iwloc=&output=embed"
               loading="lazy"
               className="w-full h-64 border-0"
