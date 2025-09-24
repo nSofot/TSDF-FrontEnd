@@ -11,7 +11,7 @@ import LoginPage from './pages/login'
 import RegisterPage from './pages/register'
 import ForgetPasswordPage from './pages/forgetPassword'
 
-
+// Components
 export default function App() {
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID
 
