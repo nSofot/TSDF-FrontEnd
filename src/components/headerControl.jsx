@@ -44,7 +44,10 @@ export default function Header() {
                 <Link to="/control/"                    className="text-lg font-bold mx-3 hover:underline">Home</Link>
                 <Link to="/control/members"     className="text-lg font-bold mx-3 hover:underline">Members</Link>
                 <Link to="/control/apply-loan"     className="text-lg font-bold mx-3 hover:underline">Apply Loan</Link>
+                <Link to="/control/approve-loan"     className="text-lg font-bold mx-3 hover:underline">Approve Loan</Link>
                 <Link to="/control/grant-loan"  className="text-lg font-bold mx-3 hover:underline">Grant Loan</Link>
+                <Link to="/control/receipts-membership"     className="text-lg font-bold mx-3 hover:underline">Receipts-Membership</Link>
+                <Link to="/control/receipts-loan"  className="text-lg font-bold mx-3 hover:underline">Receipts-Loan </Link>
                 <Link to="/control/cash-book"             className="text-lg font-bold mx-3 hover:underline">Cash Book</Link>
                 <Link to="/contact"             className="text-lg font-bold mx-3 hover:underline">Shares</Link>
             </nav>
@@ -92,7 +95,10 @@ export default function Header() {
                         <Link to="/control/"            className="text-lg font-bold" onClick={() => setSideDrawerOpened(false)}>Home</Link>
                         <Link to="/control/members"     className="text-lg font-bold" onClick={() => setSideDrawerOpened(false)}>Members</Link>
                         <Link to="/control/apply-loan"  className="text-lg font-bold" onClick={() => setSideDrawerOpened(false)}>Apply Loan</Link>
+                        <Link to="/control/approve-loan"  className="text-lg font-bold" onClick={() => setSideDrawerOpened(false)}>Approve Loan</Link>
                         <Link to="/control/grant-loan"  className="text-lg font-bold" onClick={() => setSideDrawerOpened(false)}>Grant Loan</Link>
+                        <Link to="/control/receipts-membership" className="text-lg font-bold" onClick={() => setSideDrawerOpened(false)}>Receipts-Membership</Link>
+                        <Link to="/control/receipts-loan"  className="text-lg font-bold" onClick={() => setSideDrawerOpened(false)}>Receipts-Loan </Link>
                         <Link to="/control/cash-book"   className="text-lg font-bold" onClick={() => setSideDrawerOpened(false)}>Cash Book</Link>
                         <Link to="/contact"             className="text-lg font-bold" onClick={() => setSideDrawerOpened(false)}>Shares</Link>
 

@@ -3,7 +3,10 @@ import HeaderControl from "../components/headerControl";
 import ControlHomePage from "./control/controlHomePage";
 import MembersPage from "./control/membersPage";
 import ApplyLoanPage from "./control/applyLoanPage";
+import ApproveLoanPage from "./control/approveLoan";
 import LoanGrantPage from "./control/loanGrantPage";
+import ReceiptLoanPage from "./control/receiptLoanPage";
+import ReceiptMembershipPage from "./control/receiptMembershipPage";
 import CashBook from "./control/cashRegister";
 
 import ProductOverview from "./client/productOverview";
@@ -28,17 +31,20 @@ function Layout() {
 export default function ControlPage() {
   return (
     <Routes>
-      <Route path="*"               element={<Layout />}>
-        <Route index                element={<ControlHomePage />} />
-        <Route path="members"       element={<MembersPage />} />
-        <Route path="apply-loan"    element={<ApplyLoanPage />} />
-        <Route path="grant-loan"    element={<LoanGrantPage />} />
-        <Route path="cash-book"      element={<CashBook />} />
-        <Route path="contact"       element={<Contact />} />
-        <Route path="overview/:Id"  element={<ProductOverview />} />
-        <Route path="cart"          element={<CartPage />} />
-        <Route path="checkout"      element={<CheckOutPage />} />
-        <Route path="*"             element={<NotFoundPage />} />
+      <Route path="*"                     element={<Layout />}>
+        <Route index                      element={<ControlHomePage />} />
+        <Route path="members"             element={<MembersPage />} />
+        <Route path="apply-loan"          element={<ApplyLoanPage />} />
+        <Route path="approve-loan"        element={<ApproveLoanPage />} />
+        <Route path="grant-loan"          element={<LoanGrantPage />} />
+        <Route path="receipts-loan"        element={<ReceiptLoanPage />} />
+        <Route path="receipt-membership"  element={<ReceiptMembershipPage />} />
+        <Route path="cash-book"           element={<CashBook />} />
+        <Route path="contact"             element={<Contact />} />
+        <Route path="overview/:Id"        element={<ProductOverview />} />
+        <Route path="cart"                element={<CartPage />} />
+        <Route path="checkout"            element={<CheckOutPage />} />
+        <Route path="*"                   element={<NotFoundPage />} />
       </Route>
     </Routes>
   );

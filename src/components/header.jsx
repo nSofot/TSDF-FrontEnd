@@ -13,6 +13,7 @@ export default function Header() {
     const cart = localStorage.getItem("cart");
     const isLoggedIn = Boolean(token);
     const cartCount = cart ? JSON.parse(cart).length : 0;
+    const user = localStorage.getItem("user");
 
     const handleLogout = () => {
       localStorage.removeItem("token");
@@ -89,18 +90,22 @@ export default function Header() {
                     onClick={(e) => e.stopPropagation()}
                 >
                     {/* Drawer Header */}
+          
                     <div className="h-[80px] shadow flex items-center px-4">
                         <GiHamburgerMenu
                             className="text-3xl cursor-pointer"
                             onClick={() => setSideDrawerOpened(false)}
                       />
-                      <img
-                          src="/LogoTSDF.png"
-                          alt="Logo"
-                          className="w-[60px] h-[60px] object-cover ml-auto cursor-pointer"
-                          onClick={() => navigate("/")}
-                      />
-                  </div>
+                        <img
+                            src="/LogoTSDF.png"
+                            alt="Logo"
+                            className="w-[60px] h-[60px] object-cover ml-auto cursor-pointer"
+                            onClick={() => navigate("/")}
+                        />
+                    </div>
+                    <div>
+                        <p className="text-lg font-bold ml-4 mt-4">Hello {user ? user.name : "Guest"}!</p>
+                    </div>
 
                   {/* Drawer Nav */}
                   {isLoggedIn ? (

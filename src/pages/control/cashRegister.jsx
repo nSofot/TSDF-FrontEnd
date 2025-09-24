@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { HiOutlineHome } from "react-icons/hi";
 import toast from "react-hot-toast";
 import Modal from "react-modal";
-import LoadingSpinner from "../../components/loadingSpinner";
 import Cashbook from "../../components/viewCashbook";
 
 export default function CashRegisterPage() {
@@ -21,36 +20,30 @@ export default function CashRegisterPage() {
   const [toDate, setToDate] = useState(new Date().toISOString().split("T")[0]);
   const [error, setError] = useState("");
 
-  const navigate = useNavigate();
-
   useEffect(() => {
     if (!isLoading) return;
 
-    const fetchAll = async () => {
+    const fetchAllAccounts = async () => {
       try {
-        const reqAccounts = axios.get(
+        const res = await axios.get(
           `${import.meta.env.VITE_BACKEND_URL}/api/ledgerAccounts`
         );
-        const [accRes] = await Promise.all([reqAccounts]);
-
-        const filteredAccunts = accRes.data.filter(
+        const filtered = res.data.filter(
           (a) => a.headerAccountId === "325" || a.headerAccountId === "327"
         );
-        setAccounts(
-          filteredAccunts.sort((a, b) => a.accountId.localeCompare(b.accountId))
-        );
+        setAccounts(filtered.sort((a, b) => a.accountId.localeCompare(b.accountId)));
       } catch (err) {
-        console.error("Data fetch failed:", err);
-        toast.error("Failed to fetch account / bank data.");
+        console.error("Failed to fetch accounts:", err);
+        toast.error("Failed to fetch account/bank data.");
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchAll();
+    fetchAllAccounts();
   }, [isLoading]);
 
-  const validate = (start, end) => {
+  const validateDates = (start, end) => {
     if (start && end && new Date(start) > new Date(end)) {
       setError("⚠️ From Date must be earlier than or equal to To Date");
     } else {
@@ -58,42 +51,35 @@ export default function CashRegisterPage() {
     }
   };
 
-  function handleAccountChange(e) {
+  const handleAccountChange = (e) => {
     const value = e.target.value;
     setSelectAccount(value);
 
-    const selected = accounts.find((a) => (a.accountId || a._id) === value);
+    const selected = accounts.find((a) => a.accountId === value || a._id === value);
     setAccountBalance(selected?.accountBalance ?? 0);
-  }
+  };
 
   const handleSubmit = async () => {
     const token = localStorage.getItem("token");
-
     if (!token) return toast.error("Unauthorized. Please log in.");
-    if (!header) return toast.error("Please select account type");
-    if (accountName === "") return toast.error("Please submit account name.");
+    if (!header) return toast.error("Please select account type.");
+    if (!accountName) return toast.error("Please submit account name.");
 
-    let headerAccountId = header.trim().toLowerCase() === "cash" ? "325" : "327";
-
+    const headerAccountId = header.trim().toLowerCase() === "cash" ? "325" : "327";
     const payload = {
       accountType: "Asset",
-      headerAccountId: headerAccountId,
-      accountName: accountName,
+      headerAccountId,
+      accountName,
     };
 
     try {
       await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/ledgerAccounts/${headerAccountId}`,
         payload
-        // {
-        //   headers: {
-        //     Authorization: `Bearer ${token}`,
-        //   },
-        // }
       );
-      setIsLoading(true);
       toast.success("🎉 Account submitted successfully!");
       setIsAddAccountModalOpen(false);
+      setIsLoading(true); // reload accounts
     } catch (err) {
       console.error("Submit failed:", err);
       toast.error("❌ Failed to submit account. Please try again.");
@@ -101,7 +87,7 @@ export default function CashRegisterPage() {
   };
 
   return (
-    <div className="flex flex-col w-full h-full bg-gradient-to-br from-blue-50 to-purple-50 rounded-md p-4 md:p-6">
+    <div className="flex flex-col w-full min-h-screen bg-gradient-to-br from-blue-200 to-purple-200 rounded-md p-4 md:p-6">
       {/* HEADER */}
       <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-4">
         <div>
@@ -140,7 +126,7 @@ export default function CashRegisterPage() {
           >
             <option value="">-- Select --</option>
             {accounts.map((a, idx) => (
-              <option key={a.accountId || a._id || idx} value={a.accountId || a._id}>
+              <option key={`${a.accountId || a._id}-${idx}`} value={a.accountId || a._id}>
                 {a.accountName || a.accountsName}
               </option>
             ))}
@@ -170,11 +156,10 @@ export default function CashRegisterPage() {
             type="date"
             value={fromDate}
             onChange={(e) => {
-              const val = e.target.value;
-              setFromDate(val);
-              validate(val, toDate);
+              setFromDate(e.target.value);
+              validateDates(e.target.value, toDate);
             }}
-            max={toDate || undefined}
+            max={toDate}
             className="w-full text-sm bg-white border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400"
           />
         </div>
@@ -185,11 +170,10 @@ export default function CashRegisterPage() {
             type="date"
             value={toDate}
             onChange={(e) => {
-              const val = e.target.value;
-              setToDate(val);
-              validate(fromDate, val);
+              setToDate(e.target.value);
+              validateDates(fromDate, e.target.value);
             }}
-            min={fromDate || undefined}
+            min={fromDate}
             className="w-full text-sm bg-white border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400"
           />
         </div>
@@ -197,11 +181,11 @@ export default function CashRegisterPage() {
       {error && <p className="text-red-600 text-sm mb-4">{error}</p>}
 
       {/* CASHBOOK */}
-      <div className="flex-1 overflow-y-auto bg-white shadow-md rounded-xl p-4 border border-gray-200">
+      <div className="flex-1 overflow-y-auto bg-white shadow-md rounded-xl border border-gray-200">
         <Cashbook accountId={selectAccount} fromDate={fromDate} toDate={toDate} />
       </div>
 
-      {/* MODAL */}
+      {/* ADD ACCOUNT MODAL */}
       <Modal
         isOpen={isAddAccountModalOpen}
         onRequestClose={() => setIsAddAccountModalOpen(false)}
@@ -247,18 +231,13 @@ export default function CashRegisterPage() {
           <button
             disabled={isSubmitting}
             onClick={async () => {
-              if (!header) {
-                toast.error("Please select account type.");
-              } else if (accountName === "") {
-                toast.error("Please submit account name.");
-              } else {
-                if (isSubmitting) return;
-                setIsSubmitting(true);
-                const id = toast.loading("Submitting...");
-                await handleSubmit();
-                toast.dismiss(id);
-                setIsSubmitting(false);
-              }
+              if (!header || !accountName) return toast.error("Please fill all fields.");
+              if (isSubmitting) return;
+              setIsSubmitting(true);
+              const id = toast.loading("Submitting...");
+              await handleSubmit();
+              toast.dismiss(id);
+              setIsSubmitting(false);
             }}
             className="w-full py-2 text-sm font-semibold shadow bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-lg hover:from-blue-600 hover:to-indigo-600 active:scale-95 disabled:opacity-50 transition"
           >
