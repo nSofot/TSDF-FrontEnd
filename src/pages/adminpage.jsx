@@ -8,8 +8,8 @@ import AdminMembersPage from "./admin/adminMembersPage";
 import AddCustomerPage from "./admin/addCustomerPage";
 import EditCustomerPage from "./admin/editCustomerPage";
 import UsersPage from "./admin/usersPage";
-import AdminOrdersPage from "./admin/adminOrdersPage";
-import ReviewsPage from "./admin/reviewsPage";
+// import AdminOrdersPage from "./admin/adminOrdersPage";
+// import ReviewsPage from "./admin/reviewsPage";
 import Loading from "../components/loadingSpinner";
 import NotFoundPage from "./notFoundPage";
 
@@ -72,8 +72,8 @@ export default function AdminPage() {
             <h2 className="text-lg font-semibold text-purple-800 mb-4">Admin Panel</h2>
             <Link className={getClass("members")} to="/admin/members">📦 Members</Link>
             <Link className={getClass("users")} to="/admin/users">👤 Users</Link>
-            <Link className={getClass("orders")} to="/admin/orders">🧾 Orders</Link>
-            <Link className={getClass("reviews")} to="/admin/reviews">⭐ Reviews</Link>
+            {/* <Link className={getClass("orders")} to="/admin/orders">🧾 Orders</Link>
+            <Link className={getClass("reviews")} to="/admin/reviews">⭐ Reviews</Link> */}
             <Link className={getClass("add-product")} to="/admin/add-customer">➕ Add Customer</Link>
           </div>
 
@@ -91,8 +91,8 @@ export default function AdminPage() {
             <Route index element={<Navigate to="members" replace />} />
             <Route path="members" element={<AdminMembersPage />} />
             <Route path="users" element={<UsersPage />} />
-            <Route path="orders" element={<AdminOrdersPage />} />
-            <Route path="reviews" element={<ReviewsPage />} />
+            {/* <Route path="orders" element={<AdminOrdersPage />} />
+            <Route path="reviews" element={<ReviewsPage />} /> */}
             <Route path="add-customer" element={<AddCustomerPage />} />
             <Route path="edit-customer" element={<EditCustomerPage />} />
             <Route path="*" element={<NotFoundPage />} />
