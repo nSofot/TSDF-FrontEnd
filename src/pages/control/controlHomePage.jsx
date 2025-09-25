@@ -69,7 +69,7 @@ export default function ControlHomePage() {
   if (isLoading) return <LoadingSpinner />;
 
   return (
-    <div className="w-full min-h-screen bg-gradient-to-br from-orange-50 to-orange-200 flex flex-col">
+    <div className="max-w-5xl mx-auto min-h-screen bg-gradient-to-br from-orange-50 to-orange-200 flex flex-col">
       {/* HEADER */}
       <div className="sticky top-0 z-30 bg-gradient-to-r from-red-500 to-orange-500 text-white shadow-md p-4 rounded-b-xl">
         <h1 className="text-xl md:text-2xl font-bold">📊 පාලන පුවරුව</h1>
