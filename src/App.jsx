@@ -4,12 +4,12 @@ import { GoogleOAuthProvider } from '@react-oauth/google'
 import { Toaster } from 'react-hot-toast'
 
 // Pages
-import AdminPage from './pages/adminPage'
-import ControlPage from './pages/controlPage'
-import HomePage from './pages/home'
-import LoginPage from './pages/login'
-import RegisterPage from './pages/register'
-import ForgetPasswordPage from './pages/forgetPassword'
+import AdminPage from './pages/AdminPage'
+import ControlPage from './pages/ControlPage'
+import HomePage from './pages/Home'
+import LoginPage from './pages/Login'
+import RegisterPage from './pages/Register'
+import ForgetPasswordPage from './pages/ForgetPassword'
 
 // Components
 export default function App() {
