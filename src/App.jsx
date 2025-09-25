@@ -4,7 +4,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google'
 import { Toaster } from 'react-hot-toast'
 
 // Pages
-import AdminPage from './pages/adminPage'
+// import AdminPage from './pages/adminPage'
 import ControlPage from './pages/controlPage'
 import HomePage from './pages/home'
 import LoginPage from './pages/login'
@@ -23,7 +23,7 @@ export default function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/forget" element={<ForgetPasswordPage />} />
-          <Route path="/admin/*" element={<AdminPage />} />
+          {/* <Route path="/admin/*" element={<AdminPage />} /> */}
           <Route path="/control/*" element={<ControlPage />} />
           <Route path="*" element={<HomePage />} />
         </Routes>
