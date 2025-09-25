@@ -22,7 +22,6 @@ export default function CashRegisterPage() {
 
   useEffect(() => {
     if (!isLoading) return;
-
     const fetchAllAccounts = async () => {
       try {
         const res = await axios.get(
@@ -39,13 +38,12 @@ export default function CashRegisterPage() {
         setIsLoading(false);
       }
     };
-
     fetchAllAccounts();
   }, [isLoading]);
 
   const validateDates = (start, end) => {
     if (start && end && new Date(start) > new Date(end)) {
-      setError("⚠️ From Date must be earlier than or equal to To Date");
+      setError("⚠️ From Date must be earlier than To Date");
     } else {
       setError("");
     }
@@ -54,7 +52,6 @@ export default function CashRegisterPage() {
   const handleAccountChange = (e) => {
     const value = e.target.value;
     setSelectAccount(value);
-
     const selected = accounts.find((a) => a.accountId === value || a._id === value);
     setAccountBalance(selected?.accountBalance ?? 0);
   };
@@ -63,66 +60,61 @@ export default function CashRegisterPage() {
     const token = localStorage.getItem("token");
     if (!token) return toast.error("Unauthorized. Please log in.");
     if (!header) return toast.error("Please select account type.");
-    if (!accountName) return toast.error("Please submit account name.");
+    if (!accountName) return toast.error("Please enter account name.");
 
     const headerAccountId = header.trim().toLowerCase() === "cash" ? "325" : "327";
-    const payload = {
-      accountType: "Asset",
-      headerAccountId,
-      accountName,
-    };
+    const payload = { accountType: "Asset", headerAccountId, accountName };
 
     try {
       await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/ledgerAccounts/${headerAccountId}`,
         payload
       );
-      toast.success("🎉 Account submitted successfully!");
+      toast.success("🎉 Account created successfully!");
       setIsAddAccountModalOpen(false);
-      setIsLoading(true); // reload accounts
+      setHeader("");
+      setAccountName("");
+      setIsLoading(true);
     } catch (err) {
       console.error("Submit failed:", err);
-      toast.error("❌ Failed to submit account. Please try again.");
+      toast.error("❌ Failed to submit account. Try again.");
     }
   };
 
   return (
-    <div className="flex flex-col w-full min-h-screen bg-gradient-to-br from-blue-200 to-purple-200 rounded-md p-4 md:p-6">
+    <div className="flex flex-col w-full min-h-screen bg-gradient-to-br from-blue-50 to-purple-100">
       {/* HEADER */}
-      <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-4">
+      <div className="sticky top-0 z-30 bg-gradient-to-r from-blue-500 to-indigo-500 text-white p-4 shadow-md flex flex-col md:flex-row md:items-center md:justify-between gap-3 rounded-b-lg">
         <div>
-          <h1 className="text-2xl font-extrabold text-blue-700">💵 Cash Register</h1>
-          <p className="text-sm text-gray-600">
-            View and filter all cash and bank transactions easily
-          </p>
+          <h1 className="text-xl font-bold">💵 මුදල් පොත</h1>
+          <p className="text-xs opacity-90">මුදල් සහ බැංකු ගනුදෙනු නිරීක්ෂණය කරන්න</p>
         </div>
 
-        <div className="flex flex-wrap gap-3 justify-end">
+        <div className="flex gap-2">
           <button
             onClick={() => setIsAddAccountModalOpen(true)}
-            className="px-4 py-2 text-sm font-semibold shadow rounded-lg bg-gradient-to-r from-blue-500 to-indigo-500 text-white hover:from-blue-600 hover:to-indigo-600 active:scale-95 transition"
+            className="px-3 py-2 text-xs md:text-sm font-semibold rounded-full bg-white text-blue-600 shadow hover:bg-gray-100 active:scale-95 transition"
           >
             + Add Account
           </button>
           <Link
             to="/control"
-            className="flex items-center justify-center w-11 h-11 bg-gradient-to-r from-pink-500 to-red-500 text-white rounded-full shadow hover:scale-105 active:scale-95 transition"
-            title="Go to Home"
+            className="flex items-center justify-center w-10 h-10 bg-white text-red-500 rounded-full shadow hover:scale-105 active:scale-95 transition"
+            title="Go Home"
           >
             <HiOutlineHome className="w-5 h-5" />
           </Link>
         </div>
       </div>
 
-      {/* FILTER SECTION */}
-      <div className="flex flex-col md:flex-row md:justify-between gap-4 mb-4">
-        {/* Account selector */}
+      {/* FILTERS */}
+      <div className="p-4 space-y-3 bg-white shadow-sm md:flex md:gap-4 md:space-y-0">
         <div className="flex-1">
-          <label className="text-sm font-medium block text-gray-700 mb-1">Account</label>
+          <label className="text-xs font-semibold text-gray-600">ගිණුම</label>
           <select
             value={selectAccount}
             onChange={handleAccountChange}
-            className="w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400"
+            className="w-full mt-1 px-3 py-2 text-sm rounded-lg border focus:ring-2 focus:ring-indigo-400"
           >
             <option value="">-- Select --</option>
             {accounts.map((a, idx) => (
@@ -133,12 +125,9 @@ export default function CashRegisterPage() {
           </select>
         </div>
 
-        {/* Balance */}
         <div className="flex-1">
-          <label className="text-sm font-medium block text-gray-700 mb-1">
-            Current Balance
-          </label>
-          <div className="w-full px-3 py-2 text-sm text-right border border-gray-300 rounded-lg bg-gradient-to-r from-green-50 to-green-100 font-semibold text-green-700">
+          <label className="text-xs font-semibold text-gray-600">ගිණුම් ශේෂය</label>
+          <div className="mt-1 px-3 py-2 text-sm text-right rounded-lg border bg-green-50 font-semibold text-green-700">
             Rs.{" "}
             {Number(accountBalance ?? 0).toLocaleString("en-US", {
               minimumFractionDigits: 2,
@@ -148,10 +137,10 @@ export default function CashRegisterPage() {
         </div>
       </div>
 
-      {/* DATE FILTERS */}
-      <div className="flex flex-col md:flex-row gap-4 mb-3">
-        <div className="flex-1">
-          <label className="text-sm font-medium block text-gray-700 mb-1">From Date</label>
+      {/* DATES */}
+      <div className="px-4 py-3 grid grid-cols-1 md:grid-cols-2 gap-3 bg-white border-b">
+        <div>
+          <label className="text-xs font-semibold text-gray-600">දින සිට</label>
           <input
             type="date"
             value={fromDate}
@@ -160,12 +149,11 @@ export default function CashRegisterPage() {
               validateDates(e.target.value, toDate);
             }}
             max={toDate}
-            className="w-full text-sm bg-white border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400"
+            className="w-full mt-1 px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-blue-400"
           />
         </div>
-
-        <div className="flex-1">
-          <label className="text-sm font-medium block text-gray-700 mb-1">To Date</label>
+        <div>
+          <label className="text-xs font-semibold text-gray-600">දිනය දක්වා</label>
           <input
             type="date"
             value={toDate}
@@ -174,28 +162,28 @@ export default function CashRegisterPage() {
               validateDates(fromDate, e.target.value);
             }}
             min={fromDate}
-            className="w-full text-sm bg-white border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400"
+            className="w-full mt-1 px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-blue-400"
           />
         </div>
       </div>
-      {error && <p className="text-red-600 text-sm mb-4">{error}</p>}
+      {error && <p className="px-4 text-red-600 text-xs">{error}</p>}
 
       {/* CASHBOOK */}
-      <div className="flex-1 overflow-y-auto bg-white shadow-md rounded-xl border border-gray-200">
+      <div className="flex-1 overflow-y-auto bg-white m-4 p-2 rounded-xl shadow border">
         <Cashbook accountId={selectAccount} fromDate={fromDate} toDate={toDate} />
       </div>
 
-      {/* ADD ACCOUNT MODAL */}
+      {/* ADD ACCOUNT MODAL (mobile-friendly bottom sheet) */}
       <Modal
         isOpen={isAddAccountModalOpen}
         onRequestClose={() => setIsAddAccountModalOpen(false)}
         contentLabel="Add New Account"
-        overlayClassName="fixed inset-0 bg-[#00000090] flex items-center justify-center z-50"
-        className="max-w-lg w-full max-h-[90vh] overflow-y-auto bg-white p-6 rounded-2xl shadow-xl border border-gray-200"
+        overlayClassName="fixed inset-0 bg-black/50 z-50 flex items-end md:items-center justify-center"
+        className="w-full md:max-w-lg md:rounded-2xl md:shadow-xl bg-white p-6 rounded-t-2xl"
       >
         <div className="space-y-6">
           <div className="flex justify-between items-center">
-            <h2 className="text-xl font-bold text-indigo-600">📒 Add New Account</h2>
+            <h2 className="text-lg font-bold text-indigo-600">📒 Add Account</h2>
             <button
               className="text-gray-400 hover:text-gray-600"
               onClick={() => setIsAddAccountModalOpen(false)}
@@ -204,11 +192,11 @@ export default function CashRegisterPage() {
             </button>
           </div>
 
-          <div className="flex flex-col gap-4">
+          <div className="space-y-4">
             <div>
-              <label className="text-gray-600 font-semibold">Account Type</label>
+              <label className="text-sm font-semibold text-gray-600">Account Type</label>
               <select
-                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400"
+                className="w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-indigo-400"
                 value={header}
                 onChange={(e) => setHeader(e.target.value)}
               >
@@ -218,10 +206,11 @@ export default function CashRegisterPage() {
               </select>
             </div>
             <div>
-              <label className="text-gray-600 font-semibold">Account Name</label>
+              <label className="text-sm font-semibold text-gray-600">Account Name</label>
               <input
                 type="text"
-                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400"
+                autoFocus
+                className="w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-indigo-400"
                 value={accountName}
                 onChange={(e) => setAccountName(e.target.value)}
               />

@@ -2,121 +2,158 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import LoadingSpinner from "../../components/loadingSpinner";
 import { formatNumber } from "../../utils/numberFormat.js";
+import { FaMoneyCheckAlt, FaUserClock, FaHandHoldingUsd } from "react-icons/fa";
 
 export default function ControlHomePage() {
-    const token = localStorage.getItem('token');
-    const [isLoading, setIsLoading] = useState(true);
-    const [customers, setCustomers] = useState([]);
-    const [pendingApprovals, setPendingApprovals] = useState([]);
-    const [pendingLoans, setPendingLoans] = useState([]);
-    const [cashRegister, setCashRegister] = useState([]);
+  const token = localStorage.getItem("token");
+  const [isLoading, setIsLoading] = useState(true);
+  const [customers, setCustomers] = useState([]);
+  const [pendingApprovals, setPendingApprovals] = useState([]);
+  const [pendingLoans, setPendingLoans] = useState([]);
+  const [cashRegister, setCashRegister] = useState([]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                setIsLoading(true);
+        // 1️⃣ Fetch customers
+        const cusRes = await axios.get(
+          import.meta.env.VITE_BACKEND_URL + "/api/customer"
+        );
+        const customers = cusRes.data;
+        setCustomers(customers);
 
-                // 1️⃣ Fetch customers
-                const cusRes = await axios.get(
-                    import.meta.env.VITE_BACKEND_URL + '/api/customer'
-                    // {
-                    //     headers: { Authorization: `Bearer ${token}` }
-                    // }
-                );
-                const customers = cusRes.data;
-                setCustomers(customers);
+        // 2️⃣ Fetch pending approvals & grants
+        const [approvalsRes, loansRes] = await Promise.all([
+          axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/loanMaster/approval`),
+          axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/loanMaster/grant`),
+        ]);
 
-                // 2️⃣ Fetch pending approvals
-                const [approvalsRes, loansRes] = await Promise.all([
-                axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/loanMaster/approval`),
-                axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/loanMaster/grant`)
-                ]);
+        setPendingApprovals(
+          approvalsRes.data.map((loan) => ({
+            ...loan,
+            customerName:
+              customers.find((c) => String(c.customerId) === String(loan.customerId))
+                ?.name || "Unknown",
+          }))
+        );
 
-                setPendingApprovals(
-                approvalsRes.data.map(loan => ({
-                    ...loan,
-                    customerName: customers.find(c => String(c.customerId) === String(loan.customerId))?.name || "Unknown"
-                }))
-                );
+        setPendingLoans(
+          loansRes.data.map((loan) => ({
+            ...loan,
+            customerName:
+              customers.find((c) => String(c.customerId) === String(loan.customerId))
+                ?.name || "Unknown",
+          }))
+        );
 
-                setPendingLoans(
-                loansRes.data.map(loan => ({
-                    ...loan,
-                    customerName: customers.find(c => String(c.customerId) === String(loan.customerId))?.name || "Unknown"
-                }))
-                );
+        // 3️⃣ Fetch cash register
+        const cashRegisterRes = await axios.get(
+          import.meta.env.VITE_BACKEND_URL + "/api/ledgerAccounts"
+        );
+        const cashAccount = cashRegisterRes.data.find(
+          (account) => account.headerAccountId === "325"
+        );
+        setCashRegister(cashAccount);
+      } catch (err) {
+        console.error("Fetch error:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
+    fetchData();
+  }, []);
 
+  if (isLoading) return <LoadingSpinner />;
 
-                // 4️⃣ Fetch cash register account
-                const cashRegisterRes = await axios.get(
-                    import.meta.env.VITE_BACKEND_URL + '/api/ledgerAccounts'
-                );
-                const cashAccount = cashRegisterRes.data.find(account => account.headerAccountId === '325');
-                setCashRegister(cashAccount);
+  return (
+    <div className="w-full min-h-screen bg-gradient-to-br from-orange-50 to-orange-200 flex flex-col">
+      {/* HEADER */}
+      <div className="sticky top-0 z-30 bg-gradient-to-r from-red-500 to-orange-500 text-white shadow-md p-4 rounded-b-xl">
+        <h1 className="text-xl md:text-2xl font-bold">📊 පාලන පුවරුව</h1>
+        <p className="text-xs opacity-80">ණය, අනුමැතීන් සහ මුදල් ප්‍රවාහය කළමනාකරණය කිරීමේ පිටුව</p>
+      </div>
 
-            } catch (err) {
-                console.error("Fetch error:", err);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchData();
-    }, []);
-
-    
-    if (isLoading) return <LoadingSpinner />;
-
-    return (
-        <div className="w-full min-h-screen flex flex-col items-center justify-top bg-gradient-to-br from-orange-400 to-orange-200 p-4">
-            <h1 className="text-2xl font-bold text-red-700 mb-4">Control Dashboard</h1>
-
-            <div className="w-full bg-white rounded-xl shadow p-4">
-                <h2 className="text-xl font-semibold text-gray-700">Pending Loans for Approval</h2>
-                {pendingApprovals.length > 0 ? (
-                    <ul className="mt-2 space-y-1">
-                        {pendingApprovals.map(loan => (
-                            <li key={loan._id} className="text-gray-800">
-                                <div>{loan.customerId} - {loan.customerName}</div>
-                                <div className="text-end">{loan.loanType} - {formatNumber(loan.amount)}</div>
-                            </li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p className="text-gray-400 mt-2">No pending loans for approval</p>
-                )}
+      <div className="flex-1 p-4 space-y-6">
+        {/* Pending Approvals */}
+        <div className="bg-white rounded-xl shadow-md p-4">
+          <h2 className="text-lg font-semibold text-gray-700 flex items-center gap-2">
+            <FaUserClock className="text-blue-500" /> අනුමැතිය සඳහා පොරොත්තු ණය අයදුම්පත්
+          </h2>
+          {pendingApprovals.length > 0 ? (
+            <div className="mt-3 space-y-3">
+              {pendingApprovals.map((loan) => (
+                <div
+                  key={loan._id}
+                  className="p-3 rounded-lg border bg-gradient-to-r from-blue-50 to-blue-100 flex justify-between items-center"
+                >
+                  <div>
+                    <p className="font-medium text-gray-800">{loan.customerName}</p>
+                    <p className="text-xs text-gray-500">
+                      ID: {loan.customerId} • {loan.loanType}
+                    </p>
+                  </div>
+                  <span className="text-blue-700 font-semibold">
+                    {formatNumber(loan.amount)}
+                  </span>
+                </div>
+              ))}
             </div>
-
-            <div className="w-full bg-white rounded-xl shadow p-4 mt-6">
-                <h2 className="text-xl font-semibold text-gray-700">Pending Loans for Grant</h2>
-                {pendingLoans.length > 0 ? (
-                    <ul className="mt-2 space-y-1">
-                        {pendingLoans.map(loan => (
-                            <li key={loan._id} className="text-gray-800">
-                                <div>{loan.customerId} - {loan.customerName}</div>
-                                <div className="text-end">{loan.loanType} - {formatNumber(loan.amount)}</div>
-                            </li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p className="text-gray-400 mt-2">No pending loans for grant</p>
-                )}
-            </div>
-
-            <div className="w-full bg-white rounded-xl shadow p-4 mt-6">
-                <h2 className="text-xl font-semibold text-gray-700">Cash Register</h2>
-
-                {cashRegister ? (
-                    <ul className="mt-2 space-y-1 flex justify-between">
-                        <span>{cashRegister.accountName}</span>
-                        <span>{formatNumber(cashRegister.accountBalance)}</span>
-                    </ul>
-                ) : (
-                    <p className="text-gray-400 mt-2">No cash register account found</p>
-                )}
-            </div>
+          ) : (
+            <p className="text-gray-400 mt-3 text-sm">No pending approvals</p>
+          )}
         </div>
-    );
+
+        {/* Pending Loans */}
+        <div className="bg-white rounded-xl shadow-md p-4">
+          <h2 className="text-lg font-semibold text-gray-700 flex items-center gap-2">
+            <FaHandHoldingUsd className="text-green-500" /> නිකුත් කිරීම සඳහා පොරොත්තු ණය
+          </h2>
+          {pendingLoans.length > 0 ? (
+            <div className="mt-3 space-y-3">
+              {pendingLoans.map((loan) => (
+                <div
+                  key={loan._id}
+                  className="p-3 rounded-lg border bg-gradient-to-r from-green-50 to-green-100 flex justify-between items-center"
+                >
+                  <div>
+                    <p className="font-medium text-gray-800">{loan.customerName}</p>
+                    <p className="text-xs text-gray-500">
+                      ID: {loan.customerId} • {loan.loanType}
+                    </p>
+                  </div>
+                  <span className="text-green-700 font-semibold">
+                    {formatNumber(loan.amount)}
+                  </span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-400 mt-3 text-sm">No pending loans</p>
+          )}
+        </div>
+
+        {/* Cash Register */}
+        <div className="bg-white rounded-xl shadow-md p-4">
+          <h2 className="text-lg font-semibold text-gray-700 flex items-center gap-2">
+            <FaMoneyCheckAlt className="text-yellow-500" /> මුදල් පොත්
+          </h2>
+          {cashRegister ? (
+            <div className="mt-3 flex justify-between items-center p-3 rounded-lg border bg-gradient-to-r from-yellow-50 to-yellow-100">
+              <span className="font-medium text-gray-800">
+                {cashRegister.accountName}
+              </span>
+              <span className="text-yellow-700 font-bold">
+                {formatNumber(cashRegister.accountBalance)}
+              </span>
+            </div>
+          ) : (
+            <p className="text-gray-400 mt-3 text-sm">No cash register found</p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }
