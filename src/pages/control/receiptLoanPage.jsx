@@ -27,8 +27,6 @@ export default function ReceiptLoanPage() {
     const [isSubmitted, setIsSubmitted] = useState(false);
     const navigate = useNavigate();
     
-
-
     // Mapping English loan types to Sinhala
     const loanTypeMap = {
         "Welfare Loan": "සුභසාධන ණය",
@@ -359,409 +357,202 @@ export default function ReceiptLoanPage() {
         <div className="flex flex-col w-full max-w-lg mx-auto px-4 py-6 space-y-6">
             {/* Header */}
             <div className="text-center space-y-1">
-            <h1 className="text-2xl font-bold text-purple-700">🧾 ණය වාරික ගෙවීම්</h1>
-            <p className="text-sm text-gray-600">
-                ණය වාරික සහ පොලී ගෙවීම් පිළිබඳ විස්තර සහ ගෙවීම් සිදුකිරීම.
-            </p>
+                <h1 className="text-2xl font-bold text-purple-700">🧾 ණය වාරික ගෙවීම්</h1>
+                <p className="text-sm text-gray-600">
+                    ණය වාරික සහ පොලී ගෙවීම් පිළිබඳ විස්තර සහ ගෙවීම් සිදුකිරීම.
+                </p>
             </div>
 
             {/* Applicant Card */}
             <div className="bg-white shadow-md rounded-xl p-4 space-y-4">
-            <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                සාමාජික අංකය
-                </label>
-                <input
-                type="text"
-                className="w-full border border-gray-300 rounded-lg p-3 text-center focus:outline-none focus:ring-2 focus:ring-purple-500"
-                placeholder="000"
-                maxLength={3}
-                value={applicantId}
-                onChange={async (e) => {
-                    const value = e.target.value;
-                    setApplicantId(value);
-                    if (value.length === 3) {
-                    await searchApplicant(value);
-                    }
-                }}
-                />
-            </div>
-
-            {isLoading ? (
-                <LoadingSpinner />
-            ) : applicantLoans && applicantLoans.length > 0 ? (
-                <div className="space-y-4">
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                    සාමාජිකයාගේ නම
+                        සාමාජික අංකය
                     </label>
-                    <div className="w-full bg-purple-50 border border-purple-200 rounded-lg p-3 text-center font-medium text-purple-700">
-                    {applicant?.name || ""}
+                    <input
+                        type="text"
+                        className="w-full border border-gray-300 rounded-lg p-3 text-center focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        placeholder="000"
+                        maxLength={3}
+                        value={applicantId}
+                        onChange={async (e) => {
+                            const value = e.target.value;
+                            setApplicantId(value);
+                            if (value.length === 3) {
+                            await searchApplicant(value);
+                            }
+                        }}
+                    />
+                </div>
+
+                {isLoading ? (
+                    <LoadingSpinner />
+                ) : applicantLoans && applicantLoans.length > 0 ? (
+                    <div className="space-y-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                සාමාජිකයාගේ නම
+                            </label>
+                            <div className="w-full bg-purple-50 border border-purple-200 rounded-lg p-3 text-center font-medium text-purple-700">
+                                {applicant?.name || ""}
+                            </div>
+                        </div>
+
+                        {/* Loan Dropdown */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                ණය ගිණුම තෝරා ගන්න
+                            </label>
+                            <select
+                                className="w-full p-3 rounded-lg border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                value={selectedLoanId}
+                                onChange={(e) => setSelectedLoanId(e.target.value)}
+                            >
+                                <option value="">Select Loan Type</option>
+                                {applicantLoans.map((loan) => (
+                                    <option
+                                        key={loan.id || loan._id}
+                                        value={loan.loanId || loan.loanId}
+                                    >
+                                        {loan.loanTypeSinhala}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
                     </div>
-                </div>
-
-                {/* Loan Dropdown */}
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                    ණය ගිණුම තෝරා ගන්න
-                    </label>
-                    <select
-                    className="w-full p-3 rounded-lg border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    value={selectedLoanId}
-                    onChange={(e) => setSelectedLoanId(e.target.value)}
-                    >
-                    <option value="">Select Loan Type</option>
-                    {applicantLoans.map((loan) => (
-                        <option
-                        key={loan.id || loan._id}
-                        value={loan.loanId || loan.loanId}
-                        >
-                        {loan.loanTypeSinhala}
-                        </option>
-                    ))}
-                    </select>
-                </div>
-                </div>
-            ) : (
-                <p className="text-center text-gray-500">ණය ගිණුමක් සොයාගත නොහැක.</p>
-            )}
+                ) : (
+                    <p className="text-center text-gray-500">ණය ගිණුමක් සොයාගත නොහැක.</p>
+                )}
             </div>
 
             {/* Loan Details */}
             {isLoadingLoan ? (
             <LoadingSpinner />
             ) : loanDetails && loanDetails.loanId ? (
-            <div className="bg-white shadow-md rounded-xl p-4 space-y-3">
-                <h2 className="font-semibold text-purple-700">📊 ණය විස්තර</h2>
-                <div className="space-y-2 text-sm text-gray-700">
-                <div className="flex justify-between">
-                    <span>ලබාගත් ණය මුදල:</span>
-                    <span className="font-medium">{formatNumber(loanDetails.amount)}</span>
+                <div className="bg-white shadow-md rounded-xl p-4 space-y-3">
+                    <h2 className="font-semibold text-purple-700">📊 ණය විස්තර</h2>
+                    <div className="space-y-2 text-sm text-gray-700">
+                        <div className="flex justify-between">
+                            <span>ලබාගත් ණය මුදල:</span>
+                            <span className="font-medium">{formatNumber(loanDetails.amount)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span>ගෙවීමට නියමිත ශේෂය:</span>
+                            <span className="font-medium">{formatNumber(loanDetails.dueAmount)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span>මාසික පොලී අනුපාතය:</span>
+                            <span>{loanDetails.loanInterestRate}%</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span>වාරික ගණන:</span>
+                            <span>{loanDetails.loanDuration}</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span>ණය නිකුත් කළ දිනය:</span>
+                            <span>{new Date(loanDetails.issuedDate).toLocaleDateString("uk")}</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span>අවසන් කළ යුතු දිනය:</span>
+                            <span>{new Date(dateEnded).toLocaleDateString("uk")}</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span>අවසන් ගෙවීම් දිනය:</span>
+                            <span>
+                                {lastTransaction?.createdAt
+                                ? new Date(lastTransaction.createdAt).toLocaleDateString("uk")
+                                : "N/A"}
+                            </span>
+                        </div>
+                    </div>
                 </div>
-                <div className="flex justify-between">
-                    <span>ගෙවීමට නියමිත ශේෂය:</span>
-                    <span className="font-medium">{formatNumber(loanDetails.dueAmount)}</span>
-                </div>
-                <div className="flex justify-between">
-                    <span>මාසික පොලී අනුපාතය:</span>
-                    <span>{loanDetails.loanInterestRate}%</span>
-                </div>
-                <div className="flex justify-between">
-                    <span>වාරික ගණන:</span>
-                    <span>{loanDetails.loanDuration}</span>
-                </div>
-                <div className="flex justify-between">
-                    <span>ණය නිකුත් කළ දිනය:</span>
-                    <span>{new Date(loanDetails.issuedDate).toLocaleDateString("uk")}</span>
-                </div>
-                <div className="flex justify-between">
-                    <span>අවසන් කළ යුතු දිනය:</span>
-                    <span>{new Date(dateEnded).toLocaleDateString("uk")}</span>
-                </div>
-                <div className="flex justify-between">
-                    <span>අවසන් ගෙවීම් දිනය:</span>
-                    <span>
-                    {lastTransaction?.createdAt
-                        ? new Date(lastTransaction.createdAt).toLocaleDateString("uk")
-                        : "N/A"}
-                    </span>
-                </div>
-                </div>
-            </div>
             ) : null}
 
-            {/* Payment Section */}
-            {loanDetails && loanDetails.loanId ? (
-            <>
-                <div className="bg-white shadow-md rounded-xl p-4 space-y-4">
-                <h2 className="font-semibold text-purple-700">💰 ගෙවීම් විස්තර</h2>
+                {/* Payment Section */}
+                {loanDetails && loanDetails.loanId ? (
+                <>
+                    <div className="bg-white shadow-md rounded-xl p-4 space-y-4">
+                        <h2 className="font-semibold text-purple-700">💰 ගෙවීම් විස්තර</h2>
 
-                <div>
-                    <label className="block text-sm text-gray-600 mb-1">අදාළ පොලිය</label>
-                    <input
-                    type="number"
-                    value={interest}
-                    readOnly
-                    className="w-full p-3 border border-gray-300 rounded-lg text-right focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    />
-                </div>
+                        <div>
+                            <label className="block text-sm text-gray-600 mb-1">අදාළ පොලිය</label>
+                            <input
+                            type="number"
+                            value={interest}
+                            readOnly
+                            className="w-full p-3 border border-gray-300 rounded-lg text-right focus:outline-none focus:ring-2 focus:ring-purple-500"
+                            />
+                        </div>
 
-                <div>
-                    <label className="block text-sm text-gray-600 mb-1">අදාළ වාරිකය</label>
-                    <input
-                    type="number"
-                    value={installment}
-                    onChange={(e) => setInstallment(e.target.value)}
-                    className="w-full p-3 border border-gray-300 rounded-lg text-right focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    />
-                </div>
+                        <div>
+                            <label className="block text-sm text-gray-600 mb-1">අදාළ වාරිකය</label>
+                            <input
+                                type="number"
+                                value={installment}
+                                onChange={(e) => setInstallment(e.target.value)}
+                                className="w-full p-3 border border-gray-300 rounded-lg text-right focus:outline-none focus:ring-2 focus:ring-purple-500"
+                            />
+                        </div>
 
-                <div className="flex justify-between items-center text-lg font-semibold border-t pt-3">
-                    <span>මුළු ගෙවීම්:</span>
-                    <span className="text-purple-700">{formatNumber(totalAmount)}</span>
-                </div>
+                        <div className="flex justify-between items-center text-lg font-semibold border-t pt-3">
+                            <span>මුළු ගෙවීම්:</span>
+                            <span className="text-purple-700">{formatNumber(totalAmount)}</span>
+                        </div>
 
-                <div>
-                    <label className="block text-sm text-gray-600 mb-1">රිසිට් අංකය</label>
-                    <input
-                    type="text"
-                    className={`w-full p-3 rounded-lg text-right border ${
-                        error ? "border-red-500" : "border-gray-300"
-                    } focus:outline-none focus:ring-2 focus:ring-purple-500`}
-                    value={receiptNo}
-                    placeholder="000000"
-                    onChange={(e) => {
-                        const val = e.target.value.replace(/\D/g, "");
-                        setReceiptNo(val);
-                    }}
-                    onBlur={() => {
-                        const formatted = String(receiptNo).padStart(6, "0");
-                        setReceiptNo(formatted);
-                        if (formatted !== "000000") checkReceiptExists(formatted);
-                    }}
-                    maxLength={6}
-                    />
-                    {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
-                </div>
-                </div>
+                        <div>
+                            <label className="block text-sm text-gray-600 mb-1">රිසිට් අංකය</label>
+                            <input
+                                type="text"
+                                className={`w-full p-3 rounded-lg text-center border ${
+                                    error ? "border-red-500" : "border-gray-300"
+                                } focus:outline-none focus:ring-2 focus:ring-purple-500`}
+                                value={receiptNo}
+                                placeholder="000000"
+                                onChange={(e) => {
+                                    const val = e.target.value.replace(/\D/g, "");
+                                    setReceiptNo(val);
+                                }}
+                                onBlur={() => {
+                                    const formatted = String(receiptNo).padStart(6, "0");
+                                    setReceiptNo(formatted);
+                                    if (formatted !== "000000") checkReceiptExists(formatted);
+                                }}
+                                maxLength={6}
+                            />
+                            {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
+                        </div>
+                    </div>
 
-                {/* Actions */}
-                <div className="space-y-3">
-                <button
-                    disabled={isSubmitting || isSubmitted}
-                    onClick={async () => {
-                    setIsSubmitting(true);
-                    await handleSave();
-                    }}
-                    className={`w-full p-4 rounded-xl font-semibold text-white transition ${
-                    !isSubmitting && !isSubmitted
-                        ? "bg-green-600 hover:bg-green-700"
-                        : "bg-gray-400 cursor-not-allowed"
-                    }`}
-                >
-                    {isSubmitting
-                    ? "ගෙවීම ඉදිරිපත් කරයි..."
-                    : isSubmitted
-                    ? "✅ ගෙවීම් සම්පූර්ණයි"
-                    : "තහවුරු කරන්න"}
-                </button>
+                    {/* Actions */}
+                    <div className="space-y-3">
+                        <button
+                            disabled={isSubmitting || isSubmitted}
+                            onClick={async () => {
+                            setIsSubmitting(true);
+                            await handleSave();
+                            }}
+                            className={`w-full p-4 rounded-xl font-semibold text-white transition ${
+                            !isSubmitting && !isSubmitted
+                                ? "bg-green-600 hover:bg-green-700"
+                                : "bg-gray-400 cursor-not-allowed"
+                            }`}
+                        >
+                            {isSubmitting
+                            ? "ගෙවීම ඉදිරිපත් කරයි..."
+                            : isSubmitted
+                            ? "✅ ගෙවීම් සම්පූර්ණයි"
+                            : "තහවුරු කරන්න"}
+                        </button>
 
-                <button
-                    onClick={() => navigate(-1)}
-                    className="w-full p-4 rounded-xl font-semibold text-white bg-red-500 hover:bg-red-600 transition"
-                >
-                    අවලංගු කරන්න
-                </button>
-                </div>
-            </>
+                        <button
+                            onClick={() => navigate(-1)}
+                            className="w-full bg-gray-600 hover:bg-gray-700 text-white rounded-lg p-3 font-semibold transition"
+                        >
+                            ආපසු යන්න
+                        </button>
+                    </div>
+                </>
             ) : null}
         </div>
-        );
-    };
-
-
-//     return(
-//       <div className="flex flex-col w-full px-4 py-6 space-y-6">
-          
-//           {/* Header */}
-//           <div className="text-center">
-//               <h1 className="text-2xl font-bold text-purple-600">🧾 ණය වාරික ගෙවීම්</h1>
-//               <p className="text-purple-600">ණය වාරික සහ පොලී ගෙවීම් පිළිබඳ විස්තර සහ ගෙවීම් සිදුකිරීම.</p>
-//           </div>
-
-//             {/* Applicant Card */}
-//              <div className="bg-purple-700 shadow rounded-lg p-4 space-y-4">
-//                 <div className="flex flex-col md:flex-row md:items-center gap-1">
-//                     <label className="w-auto font-medium text-white">සාමාජික අංකය:</label>
-//                     <input
-//                         type="text"
-//                         className="text-white  border border-white rounded-md p-2 w-auto text-center focus:outline-none focus:ring-2 focus:ring-purple-400"
-//                         placeholder="000"
-//                         maxLength={3}
-//                         value={applicantId}
-//                         onChange={async (e) => {
-//                             const value = e.target.value;
-//                             setApplicantId(value);
-//                             if (value.length === 3) {
-//                                 await searchApplicant(value);
-//                             }
-//                         }}
-//                     />
-//                 </div>
-
-//                 {isLoading ? (
-//                 <LoadingSpinner />
-//                 ) : applicantLoans && applicantLoans.length > 0 ? (
-//                     <div className="space-y-4">
-//                         <div className="flex flex-col md:flex-row md:items-center gap-1">
-//                         <label className="w-auto font-medium text-white">සාමාජිකයාගේ නම:</label>
-//                         <div className="text-white border border-white rounded-md p-2 w-auto text-center focus:outline-none focus:ring-2 focus:ring-purple-400">
-//                             <span>{applicant?.name || ""}</span>
-//                         </div>
-//                         </div>
-
-//                         {/* Loan Table */}
-//                         <label className="text-white">ණය ගිණුම තෝරා ගන්න</label>
-//                         <select
-//                             className="mt-2 text-white w-full md:w-1/3 p-2 border border-purple-300 rounded-md bg-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-400"
-//                             value={selectedLoanId}
-//                             onChange={(e) => setSelectedLoanId(e.target.value)}
-//                         >
-//                             <option value="">Select Loan Type</option>
-//                             {applicantLoans.map((loan) => (
-//                                 <option key={loan.id || loan._id} value={loan.loanId || loan.loanId}>
-//                                 {loan.loanTypeSinhala}
-//                                 </option>
-//                             ))}
-//                         </select>
-//                     </div>
-//                 ) : (
-//                     <div>
-//                         <span colSpan="4" className="text-center py-2 text-white">
-//                         ණය ගිණුමක් සොයාගත නොහැක.
-//                         </span>
-//                     </div>
-//                 )}
-
-//                 <div className="bg-purple-500 p-4 rounded-md mt-4">
-//                     {isLoadingLoan ? (
-//                     <LoadingSpinner />
-//                     ) : loanDetails && loanDetails.loanId ? (
-//                         <div>
-//                             <div className="text-white space-y-2 flex flex-col">
-//                                 {/* <p>ණය ගිණුම් අංකය: {loanDetails.loanId}</p> */}
-//                                 <div className="flex justify-between">
-//                                     <p>ලබාගත් ණය මුදල: </p>
-//                                     <p>{formatNumber(loanDetails.amount)}</p>
-//                                 </div>
-//                                 <div className="flex justify-between">
-//                                     <p>ගෙවීමට නියමිත ශේෂය: </p>
-//                                     <p>{formatNumber(loanDetails.dueAmount)}</p>
-//                                 </div>
-//                                 <div className="flex justify-between">
-//                                     <p>මාසික පොලී අනුපාතය: </p>
-//                                     <p>{loanDetails.loanInterestRate}%</p>
-//                                 </div>
-//                                 <div className="flex justify-between">
-//                                     <p>වාරික ගණන: </p>
-//                                     <p>{loanDetails.loanDuration}</p>
-//                                 </div>
-//                                 <div className="flex justify-between">
-//                                     <p>ණය නිකුත් කළ දිනය: </p>
-//                                     <p>{new Date(loanDetails.issuedDate).toLocaleDateString('uk')}</p>
-//                                 </div>                            
-//                                 <div className="flex justify-between">
-//                                     <p>අවසන් කළ යුතු දිනය: </p>
-//                                     <p>{new Date(dateEnded).toLocaleDateString('uk')}</p>
-//                                 </div>
-//                                 <div className="flex justify-between">
-//                                     <p>අවසන් ගෙවීම් දිනය: </p>
-//                                     <p>{lastTransaction && lastTransaction.createdAt ? new Date(lastTransaction.createdAt).toLocaleDateString('uk') : 'N/A'}</p>
-//                                 </div>
-//                             </div>
-
-//                         </div>
-
-
-//                     ) : (
-//                         <div>
-//                             <span className="text-center py-2 text-black">
-//                                 ණය ගිණුමක් සොයාගත නොහැක.
-//                             </span>
-//                         </div>
-//                     )}
-//                 </div>    
-
-//             </div> 
-
-//             {loanDetails && loanDetails.loanId ? (
-//                 <>
-//                     <div className="text-gray-600 space-y-2 flex flex-col">
-//                         <div className="flex justify-between text-xl">
-//                             <p>අදාළ පොලිය: </p>
-//                             <input
-//                                 type="number"
-//                                 className="border border-purple-300 rounded-md px-4 py-1 w-1/2 text-right focus:outline-none focus:ring-2 focus:ring-purple-400"
-//                                 value={interest}
-//                                 readOnly
-//                                 onChange={(e) => setInterest(e.target.value)}
-//                             />
-//                         </div>
-//                         <div className="flex justify-between text-xl">
-//                             <p>අදාළ වාරිකය: </p>
-//                             <input
-//                                 type="number"
-//                                 className="border border-purple-300 rounded-md px-4 py-1 w-1/2 text-right focus:outline-none focus:ring-2 focus:ring-purple-400"
-//                                 value={installment}
-//                                 onChange={(e) => setInstallment(e.target.value)}
-//                             />
-//                         </div>
-//                         <div className="flex justify-between text-xl font-bold">
-//                             <p>මුළු ගෙවීම්: </p>
-//                             <span className="border border-purple-300 rounded-md px-4 py-1 w-1/2 text-right focus:outline-none focus:ring-2 focus:ring-purple-400">
-//                                {formatNumber(totalAmount)}
-//                             </span>
-//                         </div>
-
-//                         <div className="flex justify-between text-2xl mt-8">
-//                             <label className="text-xl font-medium text-gray-600">රිසිට් අංකය: </label>
-//                             <input
-//                                 type="text"
-//                                 className={`border border-purple-300 rounded-md px-4 py-1 w-1/2 text-right focus:outline-none focus:ring-2 focus:ring-purple-400 ${
-//                                 error ? "border-red-500" : ""
-//                                 }`}
-//                                 value={receiptNo}
-//                                 placeholder="000000"
-//                                 onChange={(e) => {
-//                                     const val = e.target.value.replace(/\D/g, "");
-//                                     setReceiptNo(val);
-//                                 }}
-//                                 onBlur={() => {
-//                                     const formatted = String(receiptNo).padStart(6, "0");
-//                                     setReceiptNo(formatted);
-//                                     if (formatted !== "000000") checkReceiptExists(formatted);
-//                                 }}
-//                                 maxLength={6}
-//                             />
-//                         </div>
-//                        {error && (
-//                         <p className="text-right text-red-500 text-lg mt-1">
-//                             {error}
-//                         </p>
-//                        )}
-
-
-//                     </div>
-//                     <div className="text-center mt-4">
-//                         <button
-//                             disabled={isSubmitting || isSubmitted}
-//                             onClick={async () => {
-//                                 setIsSubmitting(true);
-//                                 await handleSave();
-//                             }}
-//                             className={`w-full text-white font-semibold p-4 rounded-md ${
-//                                 !isSubmitting && !isSubmitted 
-//                                 ? "bg-green-600 hover:bg-green-700"
-//                                 : "bg-gray-400 cursor-not-allowed"
-//                             }`}                               
-//                         >
-//                             {isSubmitting
-//                                 ? "ගෙවීම ඉදිරිපත් කරයි"
-//                                 : isSubmitted
-//                                 ? "ගෙවීම් සම්පූර්ණයි"
-//                                 : "ගෙවීම තහවුරු කරන්න"}
-//                         </button>
-
-//                         <button
-//                             className="mt-8 w-full bg-red-600 hover:bg-red-700 text-white font-semibold p-4 rounded-md"
-//                             onClick={() => navigate(-1)}
-//                         >
-//                             අවලංගු කරන්න
-//                         </button>                  
-//                     </div>
-//                 </>
-//             ) : null}
-
-//         </div>
-//     );
-// }
+    );
+};

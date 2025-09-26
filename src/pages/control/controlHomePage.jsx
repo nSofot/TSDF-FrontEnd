@@ -79,7 +79,7 @@ export default function ControlHomePage() {
       <div className="flex-1 p-4 space-y-6">
         {/* Pending Approvals */}
         <div className="bg-white rounded-xl shadow-md p-4">
-          <h2 className="text-lg font-semibold text-gray-700 flex items-center gap-2">
+          <h2 className="text-sm font-semibold text-gray-700 flex items-center gap-2">
             <FaUserClock className="text-blue-500" /> අනුමැතිය සඳහා පොරොත්තු ණය අයදුම්පත්
           </h2>
           {pendingApprovals.length > 0 ? (
@@ -108,7 +108,7 @@ export default function ControlHomePage() {
 
         {/* Pending Loans */}
         <div className="bg-white rounded-xl shadow-md p-4">
-          <h2 className="text-lg font-semibold text-gray-700 flex items-center gap-2">
+          <h2 className="text-sm font-semibold text-gray-700 flex items-center gap-2">
             <FaHandHoldingUsd className="text-green-500" /> නිකුත් කිරීම සඳහා පොරොත්තු ණය
           </h2>
           {pendingLoans.length > 0 ? (
@@ -137,7 +137,7 @@ export default function ControlHomePage() {
 
         {/* Cash Register */}
         <div className="bg-white rounded-xl shadow-md p-4">
-          <h2 className="text-lg font-semibold text-gray-700 flex items-center gap-2">
+          <h2 className="text-sm font-semibold text-gray-700 flex items-center gap-2">
             <FaMoneyCheckAlt className="text-yellow-500" /> මුදල් පොත්
           </h2>
           {cashRegister ? (
