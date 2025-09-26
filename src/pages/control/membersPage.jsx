@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Modal from "react-modal";
 import { useNavigate, useLocation } from "react-router-dom";
-import LoadingSpinner from "../../components/LoadingSpinner";
+import LoadingSpinner from "../../components/loadingSpinner";
 
 export default function MembersPage() {
     const [customers, setCustomers] = useState([]);
