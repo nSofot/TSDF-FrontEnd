@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
-import Cashbook from "../../components/ViewCashbook";
+import Cashbook from "../../components/viewCashbook";
 
 export default function CashRegisterPage() {
     const [accounts, setAccounts] = useState([]);
