@@ -4,8 +4,6 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { formatNumber } from "../../utils/numberFormat.js";
-import { tr } from "framer-motion/client";
-// import { tr } from "framer-motion/client";
 
 export default function ApplyLoanPage() {
     const navigate = useNavigate();
