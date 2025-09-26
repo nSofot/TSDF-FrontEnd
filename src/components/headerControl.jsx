@@ -49,6 +49,7 @@ export default function Header() {
                 <Link to="/control/receipts-membership"     className="text-lg font-bold mx-3 hover:underline">Receipts-Membership</Link>
                 <Link to="/control/receipts-loan"  className="text-lg font-bold mx-3 hover:underline">Receipts-Loan </Link>
                 <Link to="/control/cash-book"             className="text-lg font-bold mx-3 hover:underline">Cash Book</Link>
+                <Link to="/control/ledger-loan"             className="text-lg font-bold mx-3 hover:underline">Loan Ledger</Link>
                 <Link to="/contact"             className="text-lg font-bold mx-3 hover:underline">Shares</Link>
             </nav>
 
@@ -100,6 +101,7 @@ export default function Header() {
                         <Link to="/control/receipts-membership" className="text-lg font-bold" onClick={() => setSideDrawerOpened(false)}>Receipts-Membership</Link>
                         <Link to="/control/receipts-loan"  className="text-lg font-bold" onClick={() => setSideDrawerOpened(false)}>Receipts-Loan </Link>
                         <Link to="/control/cash-book"   className="text-lg font-bold" onClick={() => setSideDrawerOpened(false)}>Cash Book</Link>
+                        <Link to="/control/ledger-loan"   className="text-lg font-bold" onClick={() => setSideDrawerOpened(false)}>Loan Ledger</Link>
                         <Link to="/contact"             className="text-lg font-bold" onClick={() => setSideDrawerOpened(false)}>Shares</Link>
 
                         {isLoggedIn ? (

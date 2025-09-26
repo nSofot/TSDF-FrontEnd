@@ -28,8 +28,6 @@ export default function ApplyLoanPage() {
     const [secondGuranter, setSecondGuaranter] = useState("");
     const [firstGuranterId, setFirstGuranterId] = useState("");
     const [secondGuranterId, setSecondGuranterId] = useState("");
-    // const [firstGuranterLoans, setFirstGuranterLoans] = useState([]);
-    // const [secondGuranterLoans, setSecondGuranterLoans] = useState([]);
     const [fGuranteredLoans, setFGuranteredLoans] = useState([]);
     const [sGuranteredLoans, setSGuranteredLoans] = useState([]);
     const [reason, setReason] = useState("");
@@ -71,8 +69,7 @@ export default function ApplyLoanPage() {
 
         // fetch applicant loans
         const loan = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/loanMaster/pending-customer/${id}`);
-        setApplicantLoans(loan.data);
-
+        setApplicantLoans(loan.data);       
         // fetch applcant submitted loans
         try {         
             const appRes = await axios.get(
@@ -147,9 +144,6 @@ export default function ApplyLoanPage() {
           if (!res.data) return toast.error("සාමාජික අංකය වලංගු නැත");
           setSecondGuaranter(res.data);
 
-          // const loan = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/loanMaster/pending/${id}`);
-          // setSecondGuranterLoans(loan.data);
-
           try {
             const sGLoans = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/loanMaster/pending-guarantor/${id}`);
             setSGuranteredLoans(sGLoans.data);
@@ -200,7 +194,7 @@ export default function ApplyLoanPage() {
       } else setFirstInstallment("");
     }, [selectedLoanType, amount, duration]);
 
-    const resetFields = () => {
+    const resetFields = () => {   
         // reset fields
         setReferenceNo("");
         setSelectedLoanType("");
@@ -405,13 +399,13 @@ export default function ApplyLoanPage() {
 
       
     return (
-        <div className="flex flex-col w-full px-4 py-6 space-y-6 max-w-5xl mx-auto">
+        <div className="flex flex-col w-full px-4 py-6 space-y-6  max-w-5xl mx-auto">
 
-          {/* Header */}
-          <div className="text-center">
-            <h1 className="text-3xl font-bold text-indigo-700 mb-1">🛒 ණය අයදුම්පත</h1>
-            <p className="text-indigo-500 text-sm">ඉක්මනින් සහ ආරක්ෂිතව ණයක් සඳහා අයදුම් කරන්න.</p>
-          </div>
+            {/* Header */}
+            <div className="text-center">
+                <h1 className="text-3xl font-bold text-indigo-700 mb-1">🛒 ණය අයදුම්පත</h1>
+                <p className="text-indigo-500 text-sm">ඉක්මනින් සහ ආරක්ෂිතව ණයක් සඳහා අයදුම් කරන්න.</p>
+            </div>
 
           {/* Applicant Info Card */}
           <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-indigo-500">
@@ -589,10 +583,10 @@ export default function ApplyLoanPage() {
           )}
 
         {/* Reason */}
-        <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-blue-500">
+        <div className="h-auto bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-blue-500">
           <p className="text-blue-600 font-semibold text-sm sm:text-base">ඉදිරිපත් කළ ණය අයදුම්පත:</p>
           <textarea
-            className={`w-full focus:ring-2 focus:ring-blue-400 ${!isEligible ? "text-blue-600" : "text-blue-600"}`}
+            className={`w-full h-auto focus:ring-2 focus:ring-blue-400 ${!isEligible ? "text-blue-600" : "text-blue-600"}`}
             rows={4}
             value={reason}
             onChange={e => setReason(e.target.value)}
@@ -602,7 +596,7 @@ export default function ApplyLoanPage() {
 
           {/* Action Buttons */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">                      
-              <button
+              {/* <button
                 disabled={!isNewLoan || isEligible || isValidating}
                 onClick={async () => { 
                   setIsValidating(true); 
@@ -610,6 +604,24 @@ export default function ApplyLoanPage() {
                 }}
                 className={`w-full text-white font-semibold rounded-lg p-3 transition ${
                   isNewLoan && !isEligible && !isValidating
+                    ? 'bg-blue-500 hover:bg-blue-600 cursor-pointer'
+                    : 'bg-gray-400 cursor-not-allowed'
+                }`}
+              >
+                {isValidating
+                  ? 'අයදුම්පත සත්‍යාපනය වෙමින් පවතී...'
+                  : !isEligible && isNewLoan
+                    ? 'අයදුම්පත සත්‍යාපනය කරන්න'
+                    : 'අයදුම්පත සත්‍යාපනය කර ඇත'}
+              </button> */}
+              <button
+                disabled={!isNewLoan || isValidating}
+                onClick={async () => { 
+                  setIsValidating(true); 
+                  await validateLoanGrant(); 
+                }}
+                className={`w-full text-white font-semibold rounded-lg p-3 transition ${
+                  isNewLoan && !isValidating
                     ? 'bg-blue-500 hover:bg-blue-600 cursor-pointer'
                     : 'bg-gray-400 cursor-not-allowed'
                 }`}

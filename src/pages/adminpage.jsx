@@ -20,6 +20,7 @@ export default function AdminPage() {
   const [status, setStatus] = useState("loading");
 
   useEffect(() => {
+    const controller = new AbortController();
     const token = localStorage.getItem("token");
 
     if (!token) {
@@ -29,26 +30,31 @@ export default function AdminPage() {
       return;
     }
 
-    axios
-      .get(`${import.meta.env.VITE_BACKEND_URL}/api/user/`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((res) => {
-        const role = res.data.role?.toLowerCase();
-        if (role !== "admin") {
-          setStatus("unauthorized");
-          toast.error("Unauthorized access");
-          navigate("/", { replace: true });
-        } else {
-          setStatus("authenticated");
-        }
-      })
-      .catch(() => {
+    axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/user/`, {
+      headers: { Authorization: `Bearer ${token}` },
+      signal: controller.signal
+    })
+    .then(res => {
+      const role = res.data.role?.toLowerCase();
+      if (role !== "admin") {
+        setStatus("unauthorized");
+        toast.error("Unauthorized access");
+        navigate("/", { replace: true });
+      } else {
+        setStatus("authenticated");
+      }
+    })
+    .catch(err => {
+      if (!axios.isCancel(err)) {
         setStatus("unauthenticated");
         toast.error("Session expired. Please login again");
         navigate("/login", { replace: true });
-      });
+      }
+    });
+
+    return () => controller.abort();
   }, [navigate]);
+
 
   const getClass = (name) =>
     path.includes(`/admin/${name}`)
