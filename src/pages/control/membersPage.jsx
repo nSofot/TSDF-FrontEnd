@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Modal from "react-modal";
 import { useNavigate, useLocation } from "react-router-dom";
-import LoadingSpinner from "../../components/LoadingSpinner";
+import LoadingSpinner from "../../components/loadingSpinner";
 
 export default function MembersPage() {
     const [customers, setCustomers] = useState([]);
@@ -62,7 +62,7 @@ export default function MembersPage() {
                                     >
                                         <td className="px-4 py-2">{index + 1}</td>
                                         <td className="px-4 py-2 font-medium">{item.customerId}</td>
-                                        <td className="px-4 py-2">{item.name}</td>
+                                        <td className="px-4 py-2">{item.nameSinhala ? item.nameSinhala : item.name }</td>
                                         <td className="px-4 py-2">{item.mobile}</td>
                                     </tr>
                                 ))}

@@ -6,6 +6,7 @@ import { FcGoogle } from "react-icons/fc";
 import { useNavigate, Link } from "react-router-dom";
 
 export default function LoginPage() {
+  const [userId, setUserId] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
@@ -14,13 +15,14 @@ export default function LoginPage() {
   const googleLogin = useGoogleLogin({
     onSuccess: async ({ access_token }) => {
       try {
-        const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/user/login-google`, {
-          accessToken: access_token,
-        });
+        const res = await axios.post(
+          `${import.meta.env.VITE_BACKEND_URL}/api/user/login-google`,
+          { accessToken: access_token }
+        );
 
         toast.success("Login Successful");
         localStorage.setItem("token", res.data.token);
-
+console.log(res.data.token);
         if (res.data.role === "admin") {
           navigate("/admin/members");
         } else {
@@ -35,21 +37,21 @@ export default function LoginPage() {
 
   // Email/Password Login
   async function handleLogin() {
-    if (!email || !password) {
-      toast.error("Email and password are required");
+    if ((!userId || !email) && !password) {
+      toast.error("User ID and password are required");
       return;
     }
 
     try {
-      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/user/login`, {
-        email,
-        password,
-      });
+      const res = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/user/login`,
+        { userId, email, password }
+      );
 
       toast.success("Login Success");
       localStorage.setItem("token", res.data.token);
-
-      if (res.data.role === "admin") {
+console.log(res.data.token);
+      if (res.data.memberRole === "admin") {
         navigate("/admin/members");
       } else {
         navigate("/");
@@ -60,56 +62,74 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="w-full h-screen bg-[url('/login-background.jpg')] bg-cover bg-center flex justify-center items-center gap-12">
-      {/* Left image block */}
-      <div className="w-[600px] h-[500px] rounded-2xl shadow-2xl overflow-hidden hidden md:block">
-        <img
-          src="/login-image3.jpg"
-          alt="Login Visual"
-          className="w-full h-full object-cover"
-        />
-      </div>
-
+    <div className="min-h-screen w-full bg-[url('/login-background.jpg')] bg-cover bg-center flex justify-center items-center px-4">
       {/* Login Form */}
-      <div className="w-[400px] h-[500px] py-10 px-5 backdrop-blur-md bg-white/30 rounded-2xl shadow-2xl flex flex-col justify-center items-center">
-        <h2 className="text-2xl font-semibold text-purple-600 mb-8">Login to Your Account</h2>
-
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-[300px] h-[40px] px-3 rounded-md border border-white bg-green-50 mb-5 focus:outline-none focus:ring-2 focus:ring-purple-400"
-        />
-
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-[300px] h-[40px] px-3 rounded-md border border-white bg-green-50 mb-5 focus:outline-none focus:ring-2 focus:ring-purple-400"
-        />
-
-        <button
-          onClick={handleLogin}
-          className="w-[300px] h-[40px] text-white font-semibold bg-purple-600 hover:bg-purple-700 active:bg-purple-800 rounded-md mb-4 transition"
-        >
+      <div className="w-full max-w-sm bg-white/80 backdrop-blur-md rounded-2xl shadow-xl p-6 sm:p-8">
+        <h2 className="text-2xl sm:text-3xl font-bold text-purple-700 mb-6 text-center">
           Login
-        </button>
+        </h2>
 
-        <button
-          onClick={googleLogin}
-          className="w-[300px] h-[40px] flex items-center justify-center gap-3 text-purple-600 font-semibold border border-purple-600 hover:text-white hover:bg-purple-700 active:bg-purple-800 rounded-md transition"
-        >
-          <FcGoogle className="text-2xl" />
-          <span>Login with Google</span>
-        </button>
+        <div className="flex flex-col space-y-4">
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">
+              User ID
+            </label>
+            <input
+              type="text"
+              placeholder="Enter your User ID"
+              value={userId}
+              onChange={(e) => setUserId(e.target.value)}
+              className="w-full h-11 px-3 rounded-lg border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-purple-400"
+            />
+          </div>
 
-        <div className="flex justify-between items-center text-blue-800 gap-10 pt-4 pb-6">
-          <Link to="/register" className="text-sm text-blue-600 hover:text-blue-800 hover:underline">
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">
+              or Email
+            </label>
+            <input
+              type="email"
+              placeholder="Enter your Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full h-11 px-3 rounded-lg border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-purple-400"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">
+              Password
+            </label>
+            <input
+              type="password"
+              placeholder="Enter your Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full h-11 px-3 rounded-lg border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-purple-400"
+            />
+          </div>
+
+          <button
+            onClick={handleLogin}
+            className="w-full h-11 text-white font-semibold bg-purple-600 hover:bg-purple-700 active:bg-purple-800 rounded-lg transition"
+          >
+            Login
+          </button>
+
+          <button
+            onClick={googleLogin}
+            className="w-full h-11 flex items-center justify-center gap-3 text-purple-700 font-semibold border border-purple-600 hover:bg-purple-700 hover:text-white active:bg-purple-800 rounded-lg transition"
+          >
+            <FcGoogle className="text-2xl" />
+            <span>Login with Google</span>
+          </button>
+        </div>
+
+        <div className="flex justify-between items-center text-sm text-blue-700 mt-6">
+          {/* <Link to="/register" className="hover:underline">
             Register New Account
-          </Link>
-          <Link to="/forget" className="text-sm text-blue-600 hover:text-blue-800 hover:underline">
+          </Link> */}
+          <Link to="/forget" className="hover:underline">
             Forgot Password?
           </Link>
         </div>
