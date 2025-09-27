@@ -13,10 +13,9 @@ import LedgerLoan from "./control/ledgerLoan";
 import ProductOverview from "./client/productOverview";
 import CartPage from "./client/cart";
 import CheckOutPage from "./client/checkOut";
-import About from "./client/about";
 import Contact from "./client/contact";
-import Home from "./client/homePage";
 import NotFoundPage from "./notFoundPage";
+
 
 function Layout() {
   return (

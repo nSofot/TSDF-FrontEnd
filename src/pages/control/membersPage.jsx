@@ -62,7 +62,7 @@ export default function MembersPage() {
                                     >
                                         <td className="px-4 py-2">{index + 1}</td>
                                         <td className="px-4 py-2 font-medium">{item.customerId}</td>
-                                        <td className="px-4 py-2">{item.name}</td>
+                                        <td className="px-4 py-2">{item.nameSinhala ? item.nameSinhala : item.name }</td>
                                         <td className="px-4 py-2">{item.mobile}</td>
                                     </tr>
                                 ))}

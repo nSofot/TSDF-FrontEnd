@@ -1,5 +1,4 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { BsCart3 } from "react-icons/bs";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { useEffect, useState } from "react";
 import { FaRegUser } from "react-icons/fa";
@@ -66,7 +65,7 @@ export default function Header() {
             )}
 
             {/* Desktop User + Cart */}
-            <div className="w-[200px] hidden md:flex justify-center items-center gap-4 pr-4">
+            <div className="w-[200px] hidden md:flex justify-center items-center gap-4 mt-4 pr-4">
                 <FaRegUser className="text-2xl cursor-pointer" />
 
                 {isLoggedIn ? (
@@ -128,16 +127,17 @@ export default function Header() {
                           <Link to="/contact"  className="text-lg font-bold" onClick={() => setSideDrawerOpened(false)}>Contact</Link>
                       </nav>
                     )}
-
+                    <div className="flex flex-col items-start px-6 gap-4 mt-6">
                     {isLoggedIn ? (
-                      <button onClick={handleLogout} className="px-6 text-lg font-bold text-red-600 mt-8">
+                      <button onClick={handleLogout} className="text-lg font-bold text-red-600">
                           Logout
                       </button>
                     ) : (
-                      <Link to="/login" className="px-6 text-lg font-bold text-blue-600 mt-8">
+                      <Link to="/login" className="text-lg font-bold text-blue-600">
                           Login
                       </Link>
                     )}
+                    </div>
                 </aside>
             </div>
         </header>
