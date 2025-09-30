@@ -35,7 +35,7 @@ export default function AdminPage() {
       signal: controller.signal
     })
     .then(res => {
-      const role = res.data.role?.toLowerCase();
+      const role = res.data.memberRole?.toLowerCase();
       if (role !== "admin") {
         setStatus("unauthorized");
         toast.error("Unauthorized access");

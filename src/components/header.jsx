@@ -1,145 +1,217 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { useEffect, useState } from "react";
-import { FaRegUser } from "react-icons/fa";
+import {
+  FaRegUser,
+  FaHome,
+  FaImage,
+  FaInfoCircle,
+  FaPhone,
+  FaMoneyCheck,
+  FaGavel,
+  FaSignOutAlt,
+} from "react-icons/fa";
 
 export default function Header() {
-    const [sideDrawerOpened, setSideDrawerOpened] = useState(false);
-    const navigate = useNavigate();
-    const location = useLocation();
+  const [sideDrawerOpened, setSideDrawerOpened] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
-    const token = localStorage.getItem("token");
-    const cart = localStorage.getItem("cart");
-    const isLoggedIn = Boolean(token);
-    const cartCount = cart ? JSON.parse(cart).length : 0;
-    const user = localStorage.getItem("user");
+  const token = localStorage.getItem("token");
+  const isLoggedIn = Boolean(token);
+  const user = JSON.parse(localStorage.getItem("user") || "null");
 
-    const handleLogout = () => {
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      navigate("/", { replace: true });
-    };
+  const isCommittee = ["admin", "manager", "chairman", "secretary", "treasurer"].includes(
+    user?.memberRole
+  );
+  const isAdmin = user?.memberRole === "admin";
 
-    // Close side drawer on route change
-    useEffect(() => {
-      setSideDrawerOpened(false);
-    }, [location.pathname]);
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setSideDrawerOpened(false);
+    navigate("/", { replace: true });
+  };
 
+  // Auto-close drawer on route change
+  useEffect(() => {
+    setSideDrawerOpened(false);
+  }, [location.pathname]);
+
+  const NavItem = ({ to, icon: Icon, label }) => {
+    const isActive = location.pathname.startsWith(to);
     return (
-        <header className="w-full h-[80px] shadow-2xl flex justify-center relative bg-white z-50">
-            {/* Hamburger Icon (Mobile) */}
-            <GiHamburgerMenu
-                className="h-full text-3xl md:hidden absolute left-4 cursor-pointer"
-                onClick={() => setSideDrawerOpened(true)}
-            />
-
-            {/* Logo */}
-            <img
-                src="/LogoTSDF.png"
-                alt="Logo"
-                className="w-[80px] h-[80px] object-cover cursor-pointer"
-                onClick={() => navigate("/")}
-            />
-
-            {/* Desktop Nav Links */}
-            {isLoggedIn ? (
-                <nav className="flex-1 hidden md:flex justify-center items-center">
-                    <Link to="/"          className="text-lg font-bold mx-3 hover:underline">Home</Link>
-                    <Link to="/Gallery"    className="text-lg font-bold mx-3 hover:underline">Gallery</Link>
-                    <Link to="/about"     className="text-lg font-bold mx-3 hover:underline">About</Link>
-                    <Link to="/contact"   className="text-lg font-bold mx-3 hover:underline">Contact</Link>
-                    <Link to="/profile"   className="text-lg font-bold mx-3 hover:underline">Profile</Link>
-                    <Link to="/membership" className="text-lg font-bold mx-3 hover:underline">Membership Fee</Link>
-                    <Link to="/loan"      className="text-lg font-bold mx-3 hover:underline">Loan</Link>
-                    <Link to="/apply-loan"      className="text-lg font-bold mx-3 hover:underline">Apply Loan</Link>
-                    <Link to="/constitution"      className="text-lg font-bold mx-3 hover:underline">Constitution</Link>
-                </nav>
-            ) : (
-                <nav className="flex-1 hidden md:flex justify-center items-center">
-                    <Link to="/"          className="text-lg font-bold mx-3 hover:underline">Home</Link>
-                    <Link to="/Gallery"    className="text-lg font-bold mx-3 hover:underline">Gallery</Link>
-                    <Link to="/about"     className="text-lg font-bold mx-3 hover:underline">About</Link>
-                    <Link to="/contact"   className="text-lg font-bold mx-3 hover:underline">Contact</Link>
-                    <Link to="/login"     className="text-lg font-bold mx-3 hover:underline">Login</Link>
-                </nav>
-            )}
-
-            {/* Desktop User + Cart */}
-            <div className="w-[200px] hidden md:flex justify-center items-center gap-4 mt-4 pr-4">
-                <FaRegUser className="text-2xl cursor-pointer" />
-
-                {isLoggedIn ? (
-                    <button onClick={handleLogout} className="text-md font-semibold text-red-600">Logout</button>
-                ) : (
-                    <Link to="/login" className="text-md font-semibold text-blue-600">Login</Link>
-                )}
-            </div>
-
-            {/* Mobile Side Drawer */}
-            <div
-                className={`fixed inset-0 bg-black/60 md:hidden transition-opacity duration-300 ${
-                    sideDrawerOpened ? "opacity-100" : "opacity-0 pointer-events-none"
-                }`}
-                onClick={() => setSideDrawerOpened(false)}
-            >
-                <aside
-                    className={`w-[280px] bg-white h-full shadow-xl transform transition-transform duration-300 ${
-                        sideDrawerOpened ? "translate-x-0" : "-translate-x-full"
-                    }`}
-                    onClick={(e) => e.stopPropagation()}
-                >
-                    {/* Drawer Header */}
-          
-                    <div className="h-[80px] shadow flex items-center px-4">
-                        <GiHamburgerMenu
-                            className="text-3xl cursor-pointer"
-                            onClick={() => setSideDrawerOpened(false)}
-                      />
-                        <img
-                            src="/LogoTSDF.png"
-                            alt="Logo"
-                            className="w-[60px] h-[60px] object-cover ml-auto cursor-pointer"
-                            onClick={() => navigate("/")}
-                        />
-                    </div>
-                    <div>
-                        <p className="text-lg font-bold ml-4 mt-4">Hello {user ? user.name : "Guest"}!</p>
-                    </div>
-
-                  {/* Drawer Nav */}
-                  {isLoggedIn ? (
-                      <nav className="flex flex-col items-start px-6 gap-4 mt-6">
-                          <Link to="/"         className="text-lg font-bold" onClick={() => setSideDrawerOpened(false)}>Home</Link>
-                          <Link to="/gallery" className="text-lg font-bold" onClick={() => setSideDrawerOpened(false)}>Gallery</Link>
-                          <Link to="/about"    className="text-lg font-bold" onClick={() => setSideDrawerOpened(false)}>About</Link>
-                          <Link to="/contact"  className="text-lg font-bold" onClick={() => setSideDrawerOpened(false)}>Contact</Link>
-                          <Link to="/profile"   className="text-lg font-bold" onClick={() => setSideDrawerOpened(false)}>Profile</Link>
-                          <Link to="/membership" className="text-lg font-bold" onClick={() => setSideDrawerOpened(false)}>Membership Fee</Link>
-                          <Link to="/loan"      className="text-lg font-bold" onClick={() => setSideDrawerOpened(false)}>Loan</Link>
-                          <Link to="/apply-loan"      className="text-lg font-bold" onClick={() => setSideDrawerOpened(false)}>Apply Loan</Link>
-                          <Link to="/constitution"      className="text-lg font-bold" onClick={() => setSideDrawerOpened(false)}>Constitution</Link>
-                      </nav>        
-                  ) : (
-                      <nav className="flex flex-col items-start px-6 gap-4 mt-6">
-                          <Link to="/"         className="text-lg font-bold" onClick={() => setSideDrawerOpened(false)}>Home</Link>
-                          <Link to="/gallery" className="text-lg font-bold" onClick={() => setSideDrawerOpened(false)}>Gallery</Link>
-                          <Link to="/about"    className="text-lg font-bold" onClick={() => setSideDrawerOpened(false)}>About</Link>
-                          <Link to="/contact"  className="text-lg font-bold" onClick={() => setSideDrawerOpened(false)}>Contact</Link>
-                      </nav>
-                    )}
-                    <div className="flex flex-col items-start px-6 gap-4 mt-6">
-                    {isLoggedIn ? (
-                      <button onClick={handleLogout} className="text-lg font-bold text-red-600">
-                          Logout
-                      </button>
-                    ) : (
-                      <Link to="/login" className="text-lg font-bold text-blue-600">
-                          Login
-                      </Link>
-                    )}
-                    </div>
-                </aside>
-            </div>
-        </header>
+      <Link
+        to={to}
+        onClick={() => setSideDrawerOpened(false)}
+        className={`flex items-center gap-3 text-lg py-2 px-2 rounded-md transition ${
+          isActive ? "bg-white/20 font-bold" : "hover:bg-white/10"
+        }`}
+      >
+        <Icon /> {label}
+      </Link>
     );
+  };
+
+  // Base nav links
+  const navLinks = [
+    { to: "/", label: "Home", icon: FaHome },
+    { to: "/gallery", label: "Gallery", icon: FaImage },
+    { to: "/about", label: "About", icon: FaInfoCircle },
+    { to: "/contact", label: "Contact", icon: FaPhone },
+  ];
+
+  // Authenticated links
+  const authLinks = [
+    { to: "/profile", label: "Profile", icon: FaRegUser },
+    { to: "/membership", label: "Membership Fee", icon: FaMoneyCheck },
+    { to: "/loan", label: "Loan Ledger", icon: FaMoneyCheck },
+    { to: "/apply-loan", label: "Apply Loan", icon: FaMoneyCheck },
+    { to: "/constitution", label: "Constitution", icon: FaGavel },
+  ];
+
+  return (
+    <header className="w-full h-[64px] shadow-lg flex justify-between items-center px-4 bg-white z-50">
+      {/* Hamburger (Mobile) */}
+      <GiHamburgerMenu
+        className="text-3xl text-blue-600 md:hidden cursor-pointer"
+        onClick={() => setSideDrawerOpened(true)}
+      />
+
+      <div className="md:hidden flex items-center">
+        <h1 className="text-1xl text-green-700 font-bold">
+          තෙවන ශක්ති සංවර්ධන පදනම
+        </h1>
+      </div>
+
+      {/* Logo */}
+      <img
+        src="/LogoTSDF.png"
+        alt="Logo"
+        className="w-[70px] h-[70px] object-cover cursor-pointer"
+        onClick={() => navigate("/")}
+      />
+
+      {/* Desktop Nav */}
+      <div>
+        <div className="hidden md:flex items-right">
+          <h1 className="text-1xl text-green-700 font-bold">
+            තෙවන ශක්ති සංවර්ධන පදනම
+          </h1>
+        </div>
+        <nav className="hidden md:flex gap-6 font-bold">
+          {navLinks.map(({ to, label }) => (
+            <Link key={to} to={to} className="hover:underline">
+              {label}
+            </Link>
+          ))}
+
+          {isLoggedIn ? (
+            <>
+              {authLinks.map(({ to, label }) => (
+                <Link key={to} to={to} className="hover:underline">
+                  {label}
+                </Link>
+              ))}
+              <button
+                onClick={handleLogout}
+                className="hover:underline text-red-600 font-bold"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <Link to="/login" className="hover:underline text-blue-600">
+              Login
+            </Link>
+          )}
+
+          {isCommittee && (
+            <Link to="/control" className="hover:underline text-orange-600">
+              Control Panel
+            </Link>
+          )}
+          {isAdmin && (
+            <Link to="/admin" className="hover:underline text-orange-600">
+              Admin Panel
+            </Link>
+          )}
+        </nav>
+      </div>
+
+      {/* Mobile Side Drawer */}
+      <div
+        className={`fixed inset-0 bg-black/50 md:hidden transition-opacity duration-300 ${
+          sideDrawerOpened ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
+        onClick={() => setSideDrawerOpened(false)}
+      >
+        <aside
+          role="dialog"
+          aria-modal="true"
+          tabIndex={-1}
+          className={`w-[280px] bg-blue-700 h-full shadow-xl transform transition-transform duration-300 ease-in-out flex flex-col justify-between ${
+            sideDrawerOpened ? "translate-x-0" : "-translate-x-full"
+          }`}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* User Info */}
+          <div className="p-4 flex justify-between items-center gap-3 border-b border-white/20">
+              <GiHamburgerMenu
+                  className="text-4xl text-white cursor-pointer"
+                  onClick={() => setSideDrawerOpened(false)}
+              />
+
+              <p className="text-white font-semibold truncate">
+                {user
+                  ? user.nameSinhala || user.nameEnglish || "Member"
+                  : "Guest"}
+              </p>
+          </div>
+
+          {/* Nav Items */}
+          <div className="flex flex-col text-white p-4 gap-2 flex-1 overflow-y-auto">
+            {navLinks.map(({ to, label, icon }) => (
+              <NavItem key={to} to={to} icon={icon} label={label} />
+            ))}
+
+            {isLoggedIn &&
+              authLinks.map(({ to, label, icon }) => (
+                <NavItem key={to} to={to} icon={icon} label={label} />
+              ))}
+
+            {/* Role-based Links */}
+            <div className="text-yellow-400 font-semibold">
+              {isCommittee && (
+                <NavItem to="/control" icon={FaGavel} label="Control Panel" />
+              )}
+              {isAdmin && (
+                <NavItem to="/admin" icon={FaGavel} label="Admin Panel" />
+              )}
+            </div>
+          </div>
+
+          {/* Footer (Logout/Login) */}
+          <div className="p-4 border-t border-white/20">
+            {isLoggedIn ? (
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-3 text-white text-lg font-semibold w-full"
+              >
+                <FaSignOutAlt /> Logout
+              </button>
+            ) : (
+              <Link
+                to="/login"
+                onClick={() => setSideDrawerOpened(false)}
+                className="flex items-center gap-3 text-white text-lg"
+              >
+                <FaRegUser /> Login
+              </Link>
+            )}
+          </div>
+        </aside>
+      </div>
+    </header>
+  );
 }

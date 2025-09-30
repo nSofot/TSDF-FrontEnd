@@ -397,271 +397,252 @@ export default function ApplyLoanPage() {
 
       
     return (
-        <div className="flex flex-col w-full px-4 py-6 space-y-6  max-w-5xl mx-auto">
+        <div className="max-w-5xl w-full h-full flex flex-col space-y-6 overflow-hidden">
 
             {/* Header */}
-            <div className="text-center">
-                <h1 className="text-3xl font-bold text-indigo-700 mb-1">🛒 ණය අයදුම්පත</h1>
+            <div className="text-center p-4 sticky top-0 z-10">
+                <h1 className="text-lg md:text-2xl font-bold text-indigo-700 mb-1">🛒 ණය අයදුම්පත</h1>
                 <p className="text-indigo-500 text-sm">ඉක්මනින් සහ ආරක්ෂිතව ණයක් සඳහා අයදුම් කරන්න.</p>
             </div>
 
-          {/* Applicant Info Card */}
-          <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-indigo-500">
-            <div className="flex flex-col md:flex-row md:items-center gap-4">
-              <label className="font-semibold text-indigo-700 w-40">සාමාජික අංකය:</label>
-              <input
-                type="text"
-                className="border border-indigo-300 rounded-lg p-2 w-full md:w-24 text-center focus:outline-none focus:ring-2 focus:ring-indigo-400"
-                placeholder="000"
-                maxLength={3}
-                value={applicantId}
-                onChange={async (e) => {
-                  const value = e.target.value;
-                  setApplicantId(value);
-                  if (value.length === 3) await searchApplicant(value);
-                }}
-              />
-            </div>
+            <div className="bg-white shadow rounded-md max-h-[calc(100vh-250px)] space-y-8 overflow-y-auto">
+                {/* Applicant Info Card */}
+                <div className="bg-indigo-50 shadow-lg rounded-xl p-6 border-l-8 border-indigo-500">
+                    <div className="flex flex-col md:flex-row md:items-center gap-4">
+                        <label className="font-semibold text-indigo-700 w-40">සාමාජික අංකය:</label>
+                        <input
+                            type="text"
+                            className="border border-indigo-300 rounded-lg p-2 w-full md:w-24 text-center focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                            placeholder="000"
+                            maxLength={3}
+                            value={applicantId}
+                            onChange={async (e) => {
+                              const value = e.target.value;
+                              setApplicantId(value);
+                              if (value.length === 3) await searchApplicant(value);
+                            }}
+                        />
+                    </div>
 
-            {isLoading ? (
-              <LoadingSpinner />
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-indigo-700 font-medium">
-                <div className="flex justify-between">
-                  <span>නම:</span>
-                  <span>{applicant?.name || "-"}</span>
+                    {isLoading ? (
+                      <LoadingSpinner />
+                    ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-indigo-700 font-medium">
+                            <div className="flex justify-between">
+                              <span>නම:</span>
+                              <span>{applicant?.name || "-"}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>සම්බන්ධ දිනය:</span>
+                              <span>{applicant?.joinDate?.slice(0, 10) || "-"}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>හිග​ සාමාජික ගාස්තු:</span>
+                              <span>{formatNumber(applicant?.membership)}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>කොටස් මුදල:</span>
+                              <span>{formatNumber(applicant?.shares)}</span>
+                            </div>
+                        </div>
+                    )}
                 </div>
-                <div className="flex justify-between">
-                  <span>සම්බන්ධ දිනය:</span>
-                  <span>{applicant?.joinDate?.slice(0, 10) || "-"}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>හිග​ සාමාජික ගාස්තු:</span>
-                  <span>{formatNumber(applicant?.membership)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>කොටස් මුදල:</span>
-                  <span>{formatNumber(applicant?.shares)}</span>
-                </div>
-              </div>
-            )}
-          </div>
 
+                {/* Loan Table */}
+                <div className="bg-orange-50 shadow-lg rounded-xl p-6 space-y-4 border-l-8 border-orange-500">
+                    <p className="text-orange-600 font-semibold text-sm sm:text-base">ලබාගෙන ඇති අනෙකුත් ණය:</p>
+                    <table className="w-full border-collapse text-sm">
+                        <thead className="bg-orange-50 text-orange-700 font-semibold">
+                            <tr>
+                              <th className="border px-3 py-2">දිනය</th>
+                              <th className="border px-3 py-2">ණය වර්ගය</th>
+                              <th className="border px-3 py-2">මුදල</th>
+                              <th className="border px-3 py-2">ශේෂය</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {applicantLoans?.length ? applicantLoans.map((loan, idx) => (
+                              <tr key={loan.id ?? idx} className="hover:bg-orange-50 transition">
+                                <td className="border px-3 py-1">{new Date(loan.issuedDate).toLocaleDateString("en-GB")}</td>
+                                <td className="border px-3 py-1">{loan.loanType}</td>
+                                <td className="border px-3 py-1">{formatNumber(loan.amount)}</td>
+                                <td className="border px-3 py-1">{formatNumber(loan.dueAmount)}</td>
+                              </tr>
+                            )) : (
+                              <tr>
+                                <td colSpan="4" className="text-center py-3 text-gray-400 italic">වෙනත් ණය ගෙන නැත</td>
+                              </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
 
-          {/* Loan Table */}
-          <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-orange-500">
-            <p className="text-orange-600 font-semibold text-sm sm:text-base">ලබාගෙන ඇති අනෙකුත් ණය:</p>
-            <table className="w-full border-collapse text-sm">
-              <thead className="bg-orange-50 text-orange-700 font-semibold">
-                <tr>
-                  <th className="border px-3 py-2">දිනය</th>
-                  <th className="border px-3 py-2">ණය වර්ගය</th>
-                  <th className="border px-3 py-2">මුදල</th>
-                  <th className="border px-3 py-2">ශේෂය</th>
-                </tr>
-              </thead>
-              <tbody>
-                {applicantLoans?.length ? applicantLoans.map((loan, idx) => (
-                  <tr key={loan.id ?? idx} className="hover:bg-orange-50 transition">
-                    <td className="border px-3 py-1">{new Date(loan.issuedDate).toLocaleDateString("en-GB")}</td>
-                    <td className="border px-3 py-1">{loan.loanType}</td>
-                    <td className="border px-3 py-1">{formatNumber(loan.amount)}</td>
-                    <td className="border px-3 py-1">{formatNumber(loan.dueAmount)}</td>
-                  </tr>
-                )) : (
-                  <tr>
-                    <td colSpan="4" className="text-center py-3 text-gray-400 italic">වෙනත් ණය ගෙන නැත</td>
-                  </tr>
+                {/* Loan Application Inputs */}
+                <div className="bg-pink-50 shadow-lg rounded-xl p-6 space-y-4 border-l-8 border-pink-500">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        {/* Loan Type */}
+                        <div>
+                            <label className="font-medium text-pink-700">ණය වර්ගය</label>
+                            <select
+                                disabled={!isNewLoan}
+                                className={`mt-1 w-full border rounded-lg p-2 focus:ring-2 focus:ring-pink-400 ${
+                                  !isNewLoan ? "bg-gray-100 cursor-not-allowed text-gray-500" : ""
+                                }`}
+                                value={selectedLoanType ?? ""}
+                                onChange={e => {
+                                  setSelectedLoanType(e.target.value);
+                                  setInstallments(e.target.value);
+                                }}
+                            >
+                                <option value="">තෝරන්න</option>
+                                {loanTypes.map((lt, idx) => (
+                                  <option key={loanTypesValue[idx]} value={loanTypesValue[idx]}>
+                                    {lt}
+                                  </option>
+                                ))}
+                            </select>
+                        </div>
+
+                        {/* Amount */}
+                        <div>
+                            <label className="font-medium text-pink-700">මුදල</label>
+                            <input
+                                type="number"
+                                disabled={!isNewLoan}
+                                value={amount || ""}
+                                onChange={e => {
+                                  const value = Number(e.target.value);
+                                  if (value <= maxAmount) setAmount(value);
+                                  else {
+                                    toast.error(`Amount cannot exceed ${formatNumber(maxAmount)}`);
+                                    setAmount(maxAmount);
+                                  }
+                                }}
+                                className={`mt-1 w-full border rounded-lg p-2 focus:ring-2 focus:ring-pink-400 ${
+                                  !isNewLoan ? "bg-gray-100 cursor-not-allowed text-gray-500" : ""
+                                }`}
+                            />
+                            <small className="text-gray-400">Max: {formatNumber(maxAmount)}</small>
+                        </div>
+
+                        {/* Duration */}
+                        <div>
+                            <label className="font-medium text-pink-700">කාල සීමාව (මාස)</label>
+                            <input
+                                type="number"
+                                disabled={!isNewLoan}
+                                value={duration || ""}
+                                onChange={e => {
+                                  const value = Number(e.target.value);
+                                  if (value <= maxDuration) setDuration(value);
+                                  else {
+                                    toast.error(`Duration cannot exceed ${maxDuration}`);
+                                    setDuration(maxDuration);
+                                  }
+                                }}
+                                className={`mt-1 w-full border rounded-lg p-2 focus:ring-2 focus:ring-pink-400 ${
+                                  !isNewLoan ? "bg-gray-100 cursor-not-allowed text-gray-500" : ""
+                                }`}
+                            />
+                            <small className="text-gray-400">Max: {maxDuration}</small>
+                        </div>
+                    </div>
+
+                    {/* Interest + First Installment */}
+                    <div className="flex flex-col sm:flex-row justify-between text-pink-700 font-semibold mt-2">
+                        <span>පොලී අනුපාතය: {interest}%</span>
+                        <span>පළමු වාරිකය: {formatNumber(firstInstallment)}</span>
+                    </div>
+                </div>
+
+                {/* Guarantors */}
+                {(selectedLoanType === "Long Term Loan" || selectedLoanType === "Project Loan") && (
+                    <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-green-500">
+                        {[{label: "පළමු ඇපකරු", value: firstGuranterId, setValue: setFirstGuranterId, data: firstGuranter, searchFn: searchFirstGuranter},
+                          {label: "දෙවන ඇපකරු", value: secondGuranterId, setValue: setSecondGuranterId, data: secondGuranter, searchFn: searchSecondGuranter}
+                        ].map((guar, idx) => (
+                            <div key={idx} className="flex flex-col sm:flex-row items-center gap-3">
+                                <label className="font-medium text-green-700 w-32">{guar.label}</label>
+                                <input
+                                    type="text"
+                                    maxLength={3}
+                                    value={guar.value || ""}
+                                    onChange={async e => {
+                                      guar.setValue(e.target.value);
+                                      if (e.target.value.length === 3) await guar.searchFn(e.target.value);
+                                    }}
+                                    className="border rounded-lg p-2 w-full sm:w-24 text-center focus:ring-2 focus:ring-green-400"
+                                />
+                                <span className="text-gray-600 font-medium">{guar.data?.name || "-"}</span>
+                            </div>
+                        ))}
+                    </div>
                 )}
-              </tbody>
-            </table>
-          </div>
 
-          {/* Loan Application Inputs */}
-          <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-pink-500">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {/* Loan Type */}
-              <div>
-                <label className="font-medium text-pink-700">ණය වර්ගය</label>
-                <select
-                  disabled={!isNewLoan}
-                  className={`mt-1 w-full border rounded-lg p-2 focus:ring-2 focus:ring-pink-400 ${
-                    !isNewLoan ? "bg-gray-100 cursor-not-allowed text-gray-500" : ""
-                  }`}
-                  value={selectedLoanType ?? ""}
-                  onChange={e => {
-                    setSelectedLoanType(e.target.value);
-                    setInstallments(e.target.value);
-                  }}
-                >
-                  <option value="">තෝරන්න</option>
-                  {loanTypes.map((lt, idx) => (
-                    <option key={loanTypesValue[idx]} value={loanTypesValue[idx]}>
-                      {lt}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Amount */}
-              <div>
-                <label className="font-medium text-pink-700">මුදල</label>
-                <input
-                  type="number"
-                  disabled={!isNewLoan}
-                  value={amount || ""}
-                  onChange={e => {
-                    const value = Number(e.target.value);
-                    if (value <= maxAmount) setAmount(value);
-                    else {
-                      toast.error(`Amount cannot exceed ${formatNumber(maxAmount)}`);
-                      setAmount(maxAmount);
-                    }
-                  }}
-                  className={`mt-1 w-full border rounded-lg p-2 focus:ring-2 focus:ring-pink-400 ${
-                    !isNewLoan ? "bg-gray-100 cursor-not-allowed text-gray-500" : ""
-                  }`}
-                />
-                <small className="text-gray-400">Max: {formatNumber(maxAmount)}</small>
-              </div>
-
-              {/* Duration */}
-              <div>
-                <label className="font-medium text-pink-700">කාල සීමාව (මාස)</label>
-                <input
-                  type="number"
-                  disabled={!isNewLoan}
-                  value={duration || ""}
-                  onChange={e => {
-                    const value = Number(e.target.value);
-                    if (value <= maxDuration) setDuration(value);
-                    else {
-                      toast.error(`Duration cannot exceed ${maxDuration}`);
-                      setDuration(maxDuration);
-                    }
-                  }}
-                  className={`mt-1 w-full border rounded-lg p-2 focus:ring-2 focus:ring-pink-400 ${
-                    !isNewLoan ? "bg-gray-100 cursor-not-allowed text-gray-500" : ""
-                  }`}
-                />
-                <small className="text-gray-400">Max: {maxDuration}</small>
-              </div>
-            </div>
-
-            {/* Interest + First Installment */}
-            <div className="flex flex-col sm:flex-row justify-between text-pink-700 font-semibold mt-2">
-              <span>පොලී අනුපාතය: {interest}%</span>
-              <span>පළමු වාරිකය: {formatNumber(firstInstallment)}</span>
-            </div>
-          </div>
-
-
-          {/* Guarantors */}
-          {(selectedLoanType === "Long Term Loan" || selectedLoanType === "Project Loan") && (
-            <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-green-500">
-              {[{label: "පළමු ඇපකරු", value: firstGuranterId, setValue: setFirstGuranterId, data: firstGuranter, searchFn: searchFirstGuranter},
-                {label: "දෙවන ඇපකරු", value: secondGuranterId, setValue: setSecondGuranterId, data: secondGuranter, searchFn: searchSecondGuranter}
-              ].map((guar, idx) => (
-                <div key={idx} className="flex flex-col sm:flex-row items-center gap-3">
-                  <label className="font-medium text-green-700 w-32">{guar.label}</label>
-                  <input
-                    type="text"
-                    maxLength={3}
-                    value={guar.value || ""}
-                    onChange={async e => {
-                      guar.setValue(e.target.value);
-                      if (e.target.value.length === 3) await guar.searchFn(e.target.value);
-                    }}
-                    className="border rounded-lg p-2 w-full sm:w-24 text-center focus:ring-2 focus:ring-green-400"
-                  />
-                  <span className="text-gray-600 font-medium">{guar.data?.name || "-"}</span>
+                {/* Reason */}
+                <div className="h-auto bg-blue-50 shadow-lg rounded-xl p-6 space-y-4 border-l-8 border-blue-500">
+                    <p className="text-blue-600 font-semibold text-sm sm:text-base">ඉදිරිපත් කළ ණය අයදුම්පත:</p>
+                    <textarea
+                        className={`w-full h-auto focus:ring-2 focus:ring-blue-400 ${!isEligible ? "text-blue-600" : "text-blue-600"}`}
+                        rows={4}
+                        value={reason}
+                        onChange={e => setReason(e.target.value)}
+                        disabled={!isEligible}
+                    />
                 </div>
-              ))}
+
+                {/* Action Buttons */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">                      
+                    <button
+                        disabled={!isNewLoan || isValidating}
+                        onClick={async () => { 
+                          setIsValidating(true); 
+                          await validateLoanGrant(); 
+                        }}
+                        className={`w-full text-white font-semibold rounded-lg p-3 transition ${
+                          isNewLoan && !isValidating
+                            ? 'bg-blue-500 hover:bg-blue-600 cursor-pointer'
+                            : 'bg-gray-400 cursor-not-allowed'
+                        }`}
+                    >
+                      {isValidating
+                          ? 'අයදුම්පත සත්‍යාපනය වෙමින් පවතී...'
+                          : !isEligible && isNewLoan
+                            ? 'අයදුම්පත සත්‍යාපනය කරන්න'
+                            : 'අයදුම්පත සත්‍යාපනය කර ඇත'}
+                    </button>
+
+                    <button
+                        disabled={!isEligible || isSubmitting || isSubmitted || !isNewLoan}
+                        onClick={async () => { setIsSubmitting(true); await handleLoanGrant(); }}
+                        className={`w-full rounded-lg p-3 text-white font-semibold transition ${isEligible && !isSubmitted 
+                          ? 'bg-green-500 hover:bg-green-600' 
+                          : 'bg-gray-400 cursor-not-allowed'}`}
+                    >
+                        {!isSubmitted && isNewLoan ? 'අනුමැතිය සඳහා ඉදිරිපත් කරන්න' : isSubmitting ? 'අයදුම්පත ඉදිරිපත් වෙමින් පවතී' : 'ඉදිරිපත් කිරීම සම්පූර්ණයි'  }
+                    </button>
+
+                    {!isNewLoan && (
+                      <button
+                        disabled={isRemoved || isRemoving}
+                        onClick={async () => { 
+                          setIsRemoving(true); 
+                          await handleDeleteApplication(); 
+                        }}
+                        className="w-full bg-red-500 hover:bg-red-600 text-white rounded-lg p-3 font-semibold transition"
+                      >
+                        {!isRemoved ? 'ණය අයදුම්පත ඉවත් කරන්න' : 'ණය අයදුම්පත ඉවත් කළා'}
+                      </button>
+                    )}
+
+                    <button
+                      onClick={() => navigate(-1)}
+                      className="w-full bg-gray-600 hover:bg-gray-700 text-white rounded-lg p-3 font-semibold transition"
+                    >
+                      ආපසු යන්න
+                    </button>
+                </div>
             </div>
-          )}
-
-        {/* Reason */}
-        <div className="h-auto bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-blue-500">
-          <p className="text-blue-600 font-semibold text-sm sm:text-base">ඉදිරිපත් කළ ණය අයදුම්පත:</p>
-          <textarea
-            className={`w-full h-auto focus:ring-2 focus:ring-blue-400 ${!isEligible ? "text-blue-600" : "text-blue-600"}`}
-            rows={4}
-            value={reason}
-            onChange={e => setReason(e.target.value)}
-            disabled={!isEligible}
-          />
-        </div>
-
-          {/* Action Buttons */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">                      
-              {/* <button
-                disabled={!isNewLoan || isEligible || isValidating}
-                onClick={async () => { 
-                  setIsValidating(true); 
-                  await validateLoanGrant(); 
-                }}
-                className={`w-full text-white font-semibold rounded-lg p-3 transition ${
-                  isNewLoan && !isEligible && !isValidating
-                    ? 'bg-blue-500 hover:bg-blue-600 cursor-pointer'
-                    : 'bg-gray-400 cursor-not-allowed'
-                }`}
-              >
-                {isValidating
-                  ? 'අයදුම්පත සත්‍යාපනය වෙමින් පවතී...'
-                  : !isEligible && isNewLoan
-                    ? 'අයදුම්පත සත්‍යාපනය කරන්න'
-                    : 'අයදුම්පත සත්‍යාපනය කර ඇත'}
-              </button> */}
-              <button
-                disabled={!isNewLoan || isValidating}
-                onClick={async () => { 
-                  setIsValidating(true); 
-                  await validateLoanGrant(); 
-                }}
-                className={`w-full text-white font-semibold rounded-lg p-3 transition ${
-                  isNewLoan && !isValidating
-                    ? 'bg-blue-500 hover:bg-blue-600 cursor-pointer'
-                    : 'bg-gray-400 cursor-not-allowed'
-                }`}
-              >
-                {isValidating
-                  ? 'අයදුම්පත සත්‍යාපනය වෙමින් පවතී...'
-                  : !isEligible && isNewLoan
-                    ? 'අයදුම්පත සත්‍යාපනය කරන්න'
-                    : 'අයදුම්පත සත්‍යාපනය කර ඇත'}
-              </button>
-
-
-            <button
-              disabled={!isEligible || isSubmitting || isSubmitted || !isNewLoan}
-              onClick={async () => { setIsSubmitting(true); await handleLoanGrant(); }}
-              className={`w-full rounded-lg p-3 text-white font-semibold transition ${isEligible && !isSubmitted 
-                ? 'bg-green-500 hover:bg-green-600' 
-                : 'bg-gray-400 cursor-not-allowed'}`}
-            >
-              {!isSubmitted && isNewLoan ? 'අනුමැතිය සඳහා ඉදිරිපත් කරන්න' : isSubmitting ? 'අයදුම්පත ඉදිරිපත් වෙමින් පවතී' : 'ඉදිරිපත් කිරීම සම්පූර්ණයි'  }
-            </button>
-
-            {!isNewLoan && (
-              <button
-                disabled={isRemoved || isRemoving}
-                onClick={async () => { 
-                  setIsRemoving(true); 
-                  await handleDeleteApplication(); 
-                }}
-                className="w-full bg-red-500 hover:bg-red-600 text-white rounded-lg p-3 font-semibold transition"
-              >
-                {!isRemoved ? 'ණය අයදුම්පත ඉවත් කරන්න' : 'ණය අයදුම්පත ඉවත් කළා'}
-              </button>
-            )}
-
-            <button
-              onClick={() => navigate(-1)}
-              className="w-full bg-gray-600 hover:bg-gray-700 text-white rounded-lg p-3 font-semibold transition"
-            >
-              ආපසු යන්න
-            </button>
-          </div>
         </div>
     )
 }
