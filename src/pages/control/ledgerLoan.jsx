@@ -1,10 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
-import { HiOutlineHome } from "react-icons/hi";
 import toast from "react-hot-toast";
-import Modal from "react-modal";
-import LoadingSpinner from "../../components/LoadingSpinner";
+import LoadingSpinner from "../../components/loadingSpinner";
 import { formatNumber } from "../../utils/numberFormat.js";
 import LoanLedger from "../../components/viewLoanLedger";
 

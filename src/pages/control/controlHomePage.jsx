@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import LoadingSpinner from "../../components/LoadingSpinner";
+import LoadingSpinner from "../../components/loadingSpinner";
 import { formatNumber } from "../../utils/numberFormat.js";
 import { FaMoneyCheckAlt, FaUserClock, FaHandHoldingUsd } from "react-icons/fa";
 

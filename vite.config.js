@@ -1,3 +1,15 @@
+// import { defineConfig } from 'vite'
+// import react from '@vitejs/plugin-react'
+// import tailwindcss from '@tailwindcss/vite'
+
+// // https://vite.dev/config/
+// export default defineConfig({
+//   base: '/',
+//   plugins: [react(), tailwindcss(),
+//   ]
+// })
+
+
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
@@ -5,10 +17,23 @@ import tailwindcss from '@tailwindcss/vite'
 // https://vite.dev/config/
 export default defineConfig({
   base: '/',
-  plugins: [react(), tailwindcss(),
-  ]
+  plugins: [react(), tailwindcss()],
+  build: {
+    rollupOptions: {
+      output: {
+        // Split large modules into separate chunks
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            return 'vendor'; // all node_modules into vendor.js
+          }
+          // Optional: split specific large components/pages
+          if (id.includes('src/pages/BigPage.jsx')) {
+            return 'big-page';
+          }
+        }
+      }
+    },
+    // optional: increase chunk size warning if you have big chunks
+    chunkSizeWarningLimit: 600, // in kB
+  }
 })
-
-// 1033564119689-va316rn8puf27vikpjmcl1v09qptfapl.apps.googleusercontent.com
-// 1033564119689-va316rn8puf27vikpjmcl1v09qptfapl.apps.googleusercontent.com
-// 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
