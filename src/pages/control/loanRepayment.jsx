@@ -2,11 +2,11 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import axios from "axios";
-import LoadingSpinner from "../../components/loadingSpinner";
+import LoadingSpinner from "../../components/loadingSpinner.jsx";
 import { formatNumber } from "../../utils/numberFormat.js";
 
 
-export default function ReceiptLoanPage() {
+export default function LoanRepaymentPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [isLoadingLoan, setIsLoadingLoan] = useState(false);
     const [applicantId, setApplicantId] = useState("");
@@ -356,7 +356,7 @@ export default function ReceiptLoanPage() {
         <div className="flex flex-col w-full max-w-lg mx-auto px-4 py-6 space-y-6">
             {/* Header */}
             <div className="text-center space-y-1">
-                <h1 className="text-2xl font-bold text-purple-700">🧾 ණය වාරික ගෙවීම්</h1>
+                <h1 className="text-2xl font-bold text-purple-700">🧾 ණය ආපසු ගෙවීම</h1>
                 <p className="text-sm text-gray-600">
                     ණය වාරික සහ පොලී ගෙවීම් පිළිබඳ විස්තර සහ ගෙවීම් සිදුකිරීම.
                 </p>

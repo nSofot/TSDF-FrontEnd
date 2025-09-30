@@ -26,11 +26,11 @@ export default function MembersPage() {
     }, [location]);
 
     return (
-        <div className="w-full h-full flex flex-col p-4">
-            <div className="flex justify-between items-center mb-4">
+        <div className="max-w-6xl w-full h-full flex flex-col">
+            <div className="flex justify-between items-center p-4 mb-4">
                 <div>
-                    <h1 className="text-xl font-semibold text-gray-800">🛍️ Members</h1>
-                    <p className="text-sm text-gray-500">Manage members</p>
+                    <h1 className="text-xl md:text-2xl font-semibold text-orange-600">🧑‍🤝‍🧑සාමාජික ලැයිස්තුව</h1>
+                    <p className="text-sm text-orange-600">පදනමේ සාමාජික ලැයිස්තුව</p>
                 </div>
             </div>
 
@@ -39,17 +39,17 @@ export default function MembersPage() {
                 {isLoading ? (
                     <LoadingSpinner />
                 ) : (
-                    <div className="overflow-y-auto max-h-[500px]">
-                        <table className="w-full text-sm text-left border border-gray-200">
-                            <thead className="bg-purple-600 text-white sticky top-0 z-10">
+                    <div className="overflow-y-auto max-h-[calc(100vh-200px)]">
+                        <table className="w-full text-sm text-left border border-gray-200 bg-orange-100">
+                            <thead className="bg-orange-600 text-white sticky top-0 z-10">
                                 <tr>
-                                    <th className="px-4 py-2">#</th>
-                                    <th className="px-4 py-2">Mem/Id</th>
-                                    <th className="px-4 py-2">Name</th>
-                                    <th className="px-4 py-2">Mobile</th>
+                                    <th className="px-2 py-2">#</th>
+                                    <th className="px-2 py-2">Id</th>
+                                    <th className="px-2 py-2">Name</th>
+                                    <th className="px-2 py-2">Mobile</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-gray-100">
+                            <tbody className="divide-y divide-orange-300">
                                 {customers.map((item, index) => (
                                     <tr
                                         key={item.customerId}
@@ -58,12 +58,12 @@ export default function MembersPage() {
                                             setIsModalOpen(true);
                                         }}
                                         // className="cursor-pointer hover:bg-tableHover transition duration-150"                                        
-                                        className="hover:bg-purple-100 transition duration-150"
+                                        className="hover:bg-orange-200 transition duration-150"
                                     >
-                                        <td className="px-4 py-2">{index + 1}</td>
-                                        <td className="px-4 py-2 font-medium">{item.customerId}</td>
-                                        <td className="px-4 py-2">{item.nameSinhala ? item.nameSinhala : item.name }</td>
-                                        <td className="px-4 py-2">{item.mobile}</td>
+                                        <td className="px-2 py-2">{index + 1}</td>
+                                        <td className="px-2 py-2">{item.customerId}</td>
+                                        <td className="px-2 py-2">{item.nameSinhala ? item.nameSinhala : item.name }</td>
+                                        <td className="px-2 py-2">{item.mobile}</td>
                                     </tr>
                                 ))}
                             </tbody>
