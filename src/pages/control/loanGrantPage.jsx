@@ -374,16 +374,16 @@ export default function LoanGrantPage() {
     }
 
     return (
-      <div className="flex flex-col w-full px-4 py-6 space-y-6 max-w-5xl mx-auto">
+      <div className="max-w-5xl w-full h-full flex flex-col space-y-6 overflow-hidden">
 
         {/* Header */}
-        <div className="text-center space-y-2">
-          <h1 className="text-3xl font-extrabold text-purple-700">🛒 ණය ප්‍රදානය</h1>
+        <div className="text-center p-2 border-b sticky top-0 z-10 mb-8">
+          <h1 className="text-3xl font-extrabold text-gray-800">🛒 ණය ප්‍රදානය</h1>
           <p className="text-gray-600 text-sm">අනුමත ණය සඳහා මුදල් ගෙවීමේ පිටුව</p>
         </div>
 
         {/* Applicant Search */}
-        <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-indigo-500">
+        <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-6 border-indigo-500">
             <div className="flex flex-col md:flex-row md:items-center gap-4">
               <label className="font-semibold text-indigo-700 w-40">සාමාජික අංකය:</label>
               <input
@@ -437,7 +437,7 @@ export default function LoanGrantPage() {
         </div>
 
         {/* Approvals */}
-        <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-teal-600">
+        <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-6 border-teal-600">
           <p className="text-teal-600 font-semibold text-sm sm:text-base">ණය අනුමත කිරීම:</p>
           <div className="flex flex-col gap-2">
             {selectedLoanType === "ව්යාපෘති ණය" ||
@@ -462,11 +462,11 @@ export default function LoanGrantPage() {
         </div>
 
         {/* Voucher Input */}
-        <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-green-600">
-          <label className="block font-medium text-green-600 text-lg">වවුචර් අංකය</label>
+        <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-6 border-pink-600">
+          <label className="block font-medium text-pink-600 text-lg">වවුචර් අංකය</label>
           <input
             type="text"
-            className={`text-green-600 border border-green-300 rounded-lg w-full p-3 text-center text-lg tracking-widest focus:ring-2 focus:ring-purple-500 outline-none ${
+            className={`text-pink-600 border border-pink-300 rounded-lg w-full p-3 text-center text-lg tracking-widest focus:ring-2 focus:ring-purple-500 outline-none ${
               error ? "border-red-500" : "border-gray-300"
             }`}
             value={voucherNo}
@@ -491,7 +491,7 @@ export default function LoanGrantPage() {
 
         {/* Sticky Action Button */}
         {/* <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-4 shadow-lg"> */}
-       <div>
+       <div className="mt-6">
           <button
             disabled={isGranting}
             onClick={async () => {

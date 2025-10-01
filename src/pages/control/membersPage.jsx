@@ -29,8 +29,8 @@ export default function MembersPage() {
         <div className="max-w-6xl w-full h-full flex flex-col">
             <div className="flex justify-between items-center p-4 mb-4">
                 <div>
-                    <h1 className="text-xl md:text-2xl font-semibold text-orange-600">🧑‍🤝‍🧑සාමාජික ලැයිස්තුව</h1>
-                    <p className="text-sm text-orange-600">පදනමේ සාමාජික ලැයිස්තුව</p>
+                    <h1 className="text-xl md:text-2xl font-semibold text-gray-800">🧑‍🤝‍🧑සාමාජික ලැයිස්තුව</h1>
+                    <p className="text-sm text-gray-600">පදනමේ සාමාජික ලැයිස්තුව</p>
                 </div>
             </div>
 
