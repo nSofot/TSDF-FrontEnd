@@ -16,6 +16,17 @@ export default function LedgerLoanPage() {
     const [loanDetails, setLoanDetails] = useState({});
     const [loanTransactions, setLoanTransactions] = useState([]);
 
+    const user = JSON.parse(localStorage.getItem("user") || "null");
+
+    useEffect(() => {      
+      if (user?.userId) {
+        setApplicantId(user.userId);
+        if (user.userId.length === 3) {
+          searchApplicant(user.userId);
+        }
+      }
+    }, [user?.userId]);
+
 
     // Mapping English loan types to Sinhala
     const loanTypeMap = {
@@ -122,20 +133,35 @@ export default function LedgerLoanPage() {
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                         සාමාජික අංකය
                     </label>
-                    <input
-                        type="text"
-                        className="w-full border border-gray-300 rounded-lg p-3 text-center focus:outline-none focus:ring-2 focus:ring-purple-500"
-                        placeholder="000"
-                        maxLength={3}
-                        value={applicantId}
-                        onChange={async (e) => {
-                            const value = e.target.value;
-                            setApplicantId(value);
-                            if (value.length === 3) {
-                            await searchApplicant(value);
-                            }
-                        }}
-                    />
+
+                    {user.memberRole === "manager" 
+                    || user.memberRole === "admin" 
+                    || user.memberRole === "chairman"
+                    || user.memberRole === "secretary"
+                    || user.memberRole === "treasurer" ? (
+                        <input
+                            type="text"
+                            className="w-full border border-gray-300 rounded-lg p-3 text-center focus:outline-none focus:ring-2 focus:ring-purple-500"
+                            placeholder="000"
+                            maxLength={3}
+                            value={applicantId}
+                            onChange={async (e) => {
+                                const value = e.target.value;
+                                setApplicantId(value);
+                                if (value.length === 3) {
+                                await searchApplicant(value);
+                                }
+                            }}
+                        />
+                    ) : (
+                          <input
+                            type="text"
+                            className="border border-indigo-300 rounded-lg p-2 w-full md:w-24 text-center focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                            maxLength={3}
+                            value={applicantId}
+                            readOnly
+                          />
+                    )}                    
                 </div>
 
                 {isLoading ? (

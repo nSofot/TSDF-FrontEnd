@@ -20,8 +20,6 @@ export default function ApplyLoanPage() {
     const [duration, setDuration] = useState(0);
     const [maxDuration, setMaxDuration] = useState(0);
     const [firstInstallment, setFirstInstallment] = useState(0);
-    const [isApproved, setIsApproved] = useState(false);
-    const [isGranted, setIsGranted] = useState(false);
     const [firstGuranter, setFirstGuaranter] = useState("");
     const [secondGuranter, setSecondGuaranter] = useState("");
     const [firstGuranterId, setFirstGuranterId] = useState("");
@@ -40,9 +38,21 @@ export default function ApplyLoanPage() {
     const loanTypes = ["සුභසාධන ණය", "කෙටි කාලීන ණය", "දිගු කාලීන ණය", "ව්යාපෘති ණය"];
     const loanTypesValue = ["Welfare Loan", "Short Term Loan", "Long Term Loan", "Project Loan"];
 
+    const user = JSON.parse(localStorage.getItem("user") || "null");
+
+  
+    useEffect(() => {      
+      if (user?.userId) {
+        setApplicantId(user.userId);
+        if (user.userId.length === 3) {
+          searchApplicant(user.userId);
+        }
+      }
+    }, [user?.userId]);
+
+
     // Fetch applicant
-    const searchApplicant = async (id) => {
-      resetFields();
+    const searchApplicant = async (id) => {    
       if (!id || id === "0") return;
       setIsLoading(true);
       setApplicant({});
@@ -67,7 +77,8 @@ export default function ApplyLoanPage() {
 
         // fetch applicant loans
         const loan = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/loanMaster/pending-customer/${id}`);
-        setApplicantLoans(loan.data);       
+        setApplicantLoans(loan.data);    
+          
         // fetch applcant submitted loans
         try {         
             const appRes = await axios.get(
@@ -82,7 +93,7 @@ export default function ApplyLoanPage() {
                 setDuration(appRes.data.loanDuration ?? 0);
                 setMaxDuration(appRes.data.maxDuration ?? 0);
                 setFirstInstallment(appRes.data.firstInstallment ?? 0);     
-                setIsApproved(appRes.data.isApproved);
+                // setIsApproved(appRes.data.isApproved);
                 setIsGranted(appRes.data.isGranted);
                 setFirstGuranterId(appRes.data.firstGuarantorId ?? "");
                 setSecondGuranterId(appRes.data.secondGuarantorId ?? "");
@@ -115,8 +126,6 @@ export default function ApplyLoanPage() {
             const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/customer/${id}`);
             if (!res.data) return toast.error("සාමාජික අංකය වලංගු නැත");
             setFirstGuaranter(res.data);
-            // const loan = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/loanMaster/pending/${id}`);
-            // setFirstGuranterLoans(loan.data);
 
             try {
                 const fGLoans = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/loanMaster/pending-guarantor/${id}`);
@@ -192,28 +201,26 @@ export default function ApplyLoanPage() {
       } else setFirstInstallment("");
     }, [selectedLoanType, amount, duration]);
 
-    const resetFields = () => {   
+    const resetFields = () => {         
         // reset fields
-        setReferenceNo("");
-        setSelectedLoanType("");
-        setAmount(0);
-        setMaxAmount(0);
-        setInterest(0);
-        setDuration(0);
-        setMaxDuration(0);
-        setFirstInstallment(0);
-        setIsApproved(false);
-        setIsGranted(false);
-        setFirstGuranterId("");
-        setSecondGuranterId("");   
-        setApplicantLoans([]);  
-        setReason("");    
-        setIsNewLoan(true);
-        setIsValidating(false);
-        setIsEligible(false);
-        setIsSubmitting(false);
-        setIsSubmitted(false);
-        setIsRemoving(false);
+        // setReferenceNo("");
+        // setSelectedLoanType("");
+        // setAmount(0);
+        // setMaxAmount(0);
+        // setInterest(0);
+        // setDuration(0);
+        // setMaxDuration(0);
+        // setFirstInstallment(0);
+        // setFirstGuranterId("");
+        // setSecondGuranterId("");   
+        // setApplicantLoans([]);  
+        // setReason("");    
+        // setIsNewLoan(true);
+        // setIsValidating(false);
+        // setIsEligible(false);
+        // setIsSubmitting(false);
+        // setIsSubmitted(false);
+        // setIsRemoving(false);
     }
 
 
@@ -408,9 +415,11 @@ export default function ApplyLoanPage() {
             <div className="bg-white shadow rounded-md max-h-[calc(100vh-230px)] space-y-8 overflow-y-auto">
                 {/* Applicant Info Card */}
                 <div className="bg-white shadow-lg rounded-xl p-6 border-l-6 border-indigo-500">
-                    <div className="flex flex-col md:flex-row md:items-center gap-4">
+                    <div className="flex flex-col md:flex-row md:items-center gap-1">
                         <label className="font-semibold text-indigo-700 w-40">සාමාජික අංකය:</label>
-                        <input
+                        
+                        {user.memberRole === "manager" ? (
+                          <input
                             type="text"
                             className="border border-indigo-300 rounded-lg p-2 w-full md:w-24 text-center focus:outline-none focus:ring-2 focus:ring-indigo-400"
                             placeholder="000"
@@ -421,13 +430,22 @@ export default function ApplyLoanPage() {
                               setApplicantId(value);
                               if (value.length === 3) await searchApplicant(value);
                             }}
-                        />
-                    </div>
+                          />
+                        ) : (
+                          <input
+                            type="text"
+                            className="border border-indigo-300 rounded-lg p-2 w-full md:w-24 text-center focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                            maxLength={3}
+                            value={applicantId}
+                            readOnly
+                          />
+                        )}
+                  </div>
 
                     {isLoading ? (
                       <LoadingSpinner />
                     ) : (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-indigo-700 font-medium">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-indigo-700 font-medium mt-4">
                             <div className="flex justify-between">
                               <span>නම:</span>
                               <span>{applicant?.name || "-"}</span>
@@ -450,7 +468,7 @@ export default function ApplyLoanPage() {
 
                 {/* Loan Table */}
                 <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-6 border-orange-500">
-                    <p className="text-orange-600 font-semibold text-sm sm:text-base">ලබාගෙන ඇති අනෙකුත් ණය:</p>
+                    <p className="text-orange-600 font-semibold sm:text-base">ලබාගෙන ඇති අනෙකුත් ණය:</p>
                     <table className="w-full border-collapse text-sm">
                         <thead className="bg-orange-50 text-orange-700 font-semibold">
                             <tr>
@@ -581,7 +599,7 @@ export default function ApplyLoanPage() {
 
                 {/* Reason */}
                 <div className="h-auto bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-6 border-blue-500">
-                    <p className="text-blue-600 font-semibold text-sm sm:text-base">ඉදිරිපත් කළ ණය අයදුම්පත:</p>
+                    <p className="text-blue-600 font-semibold sm:text-base">ඉදිරිපත් කළ ණය අයදුම්පත:</p>
                     <textarea
                         className={`w-full h-auto focus:ring-2 focus:ring-blue-400 ${!isEligible ? "text-blue-600" : "text-blue-600"}`}
                         rows={4}
@@ -599,7 +617,7 @@ export default function ApplyLoanPage() {
                           setIsValidating(true); 
                           await validateLoanGrant(); 
                         }}
-                        className={`w-full text-white font-semibold rounded-xl p-3 transition ${
+                        className={`w-full h-12 text-white font-semibold rounded-lg transition ${
                           isNewLoan && !isValidating
                             ? 'bg-blue-500 hover:bg-blue-600 cursor-pointer'
                             : 'bg-gray-400 cursor-not-allowed'
@@ -615,7 +633,7 @@ export default function ApplyLoanPage() {
                     <button
                         disabled={!isEligible || isSubmitting || isSubmitted || !isNewLoan}
                         onClick={async () => { setIsSubmitting(true); await handleLoanGrant(); }}
-                        className={`w-full rounded-xl p-3 text-white font-semibold transition ${isEligible && !isSubmitted 
+                        className={`w-full h-12 rounded-lg text-white font-semibold transition ${isEligible && !isSubmitted 
                           ? 'bg-green-500 hover:bg-green-600' 
                           : 'bg-gray-400 cursor-not-allowed'}`}
                     >
@@ -629,7 +647,7 @@ export default function ApplyLoanPage() {
                           setIsRemoving(true); 
                           await handleDeleteApplication(); 
                         }}
-                        className="w-full bg-red-500 hover:bg-red-600 text-white rounded-xl p-3 font-semibold transition"
+                        className="w-full h-12 bg-red-500 hover:bg-red-600 text-white rounded-lg font-semibold transition"
                       >
                         {!isRemoved ? 'ණය අයදුම්පත ඉවත් කරන්න' : 'ණය අයදුම්පත ඉවත් කළා'}
                       </button>
@@ -637,7 +655,8 @@ export default function ApplyLoanPage() {
 
                     <button
                       onClick={() => navigate(-1)}
-                      className="w-full bg-gray-600 hover:bg-gray-700 text-white rounded-xl p-3 font-semibold transition"
+                      // className="w-full bg-gray-600 hover:bg-gray-700 text-white rounded-xl p-3 font-semibold transition"
+                      className="w-full h-12 text-gray-600 font-semibold border border-gray-600 hover:bg-purple-700 active:bg-purple-800 rounded-lg transition"
                     >
                       ආපසු යන්න
                     </button>

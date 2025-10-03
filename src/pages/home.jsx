@@ -5,6 +5,8 @@ import Gallery from "./client/galleryPage";
 import About from "./client/about";
 import Contact from "./client/contact";
 import Home from "./client/homePage";
+import ApplyLoanPage from "./control/applyLoanPage";
+import LedgerLoan from "./control/ledgerLoan";
 import NotFoundPage from "./notFoundPage";
 
 function Layout() {
@@ -27,6 +29,10 @@ export default function HomePage() {
         <Route path="about" element={<About />} />
         <Route path="contact" element={<Contact />} />
         <Route path="constitution" element={<ConstitutionPage />} />
+
+        <Route path="apply-loan" element={<ApplyLoanPage />} />
+        <Route path="ledger-loan" element={<LedgerLoan />} />
+        
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>

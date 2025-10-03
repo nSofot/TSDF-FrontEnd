@@ -81,7 +81,7 @@ export default function ControlHomePage() {
     return (
         <div className="max-w-4xl w-full h-full flex flex-col overflow-hidden">
             {/* PAGE HEADER */}
-            <div className="sticky top-0 z-30 text-orange-600 p-4 sticky top-0 z-10">
+            <div className="sticky top-0 z-30 text-orange-600 p-4 sticky top-0 z-10 border border-orange-600 rounded-md">
                 <h1 className="text-lg md:text-2xl font-bold">🖥️ පාලන පුවරුව</h1>
                 <p className="text-sm opacity-80">ණය සහ මූල්‍ය දළ විශ්ලේෂණය</p>
             </div>

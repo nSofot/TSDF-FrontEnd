@@ -81,40 +81,6 @@ export default function Header() {
           />
       </div>
 
-      {/* Desktop Navigation */}
-      {/* {showLinks && (
-        <nav className="hidden md:flex flex-wrap items-center gap-6">
-          {navLinks.map(({ path, label }) => (
-            <Link
-              key={path}
-              to={path}
-              className={`flex items-center gap-2 text-base font-semibold hover:text-blue-600 transition ${
-                location.pathname === path ? "text-blue-700 underline" : "text-gray-700"
-              }`}
-            >
-              {label}
-            </Link>
-          ))}
-        </nav>
-      )} */}
-
-      {/* Desktop User Menu */}
-      {/* <div className="hidden md:flex flex-col items-center px-4">
-        <FaRegUser className="text-2xl mb-1 text-gray-600" />
-        {isLoggedIn ? (
-          <button
-            onClick={handleLogout}
-            className="text-sm font-semibold text-red-600 hover:underline"
-          >
-            Logout
-          </button>
-        ) : (
-          <Link to="/login" className="text-sm font-semibold text-blue-600 hover:underline">
-            Login
-          </Link>
-        )}
-      </div> */}
-
       {/* Mobile Side Drawer */}
       <div
         className={`fixed inset-0 bg-black/60  transition-opacity duration-300 ${
@@ -126,30 +92,23 @@ export default function Header() {
           role="dialog"
           aria-modal="true"
           tabIndex={-1}
-          className={`w-[280px] bg-orange-300 h-full shadow-xl transform transition-transform duration-300 ease-in-out flex flex-col justify-between ${
+          className={`w-[280px] bg-orange-600 h-full shadow-xl transform transition-transform duration-300 ease-in-out flex flex-col justify-between ${
             sideDrawerOpened ? "translate-x-0" : "-translate-x-full"
           }`}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Drawer Header */}
-          <div className="h-[64px] w-full flex justify-between items-center px-4 border-b">
+          <div className="h-[64px] w-full flex justify-between items-center px-4 border-b border-white">
               <GiHamburgerMenu
-                className="text-4xl cursor-pointer"
+                className="text-4xl text-white cursor-pointer"
                 onClick={() => setSideDrawerOpened(false)}
               />
             {/* <div className="p-4 flex items-center gap-3 border-b border-white/20"> */}
-              <h1 className="text-orange-700 font-semibold text-lg  leading-tight" >
+              <h1 className="text-white font-semibold text-lg  leading-tight" >
                 {user
                   ? user.memberRole
                   : "Guest"}
               </h1>
-
-              {/* <img
-                src="/LogoTSDF.png"
-                alt="Logo"
-                className="w-[60px] h-[60px] object-cover ml-auto cursor-pointer"
-                onClick={() => navigate("/")}
-              /> */}
           </div>
 
           {/* Drawer Nav */}
@@ -160,7 +119,7 @@ export default function Header() {
                   key={path}
                   to={path}
                   onClick={() => setSideDrawerOpened(false)}
-                  className={`flex items-center gap-2 text-base font-semibold hover:text-blue-600 transition ${
+                  className={`flex items-center gap-2 text-white text-base font-semibold hover:text-gray-200 transition ${
                     location.pathname === path ? "text-blue-700 underline" : "text-gray-800"
                   }`}
                 >
@@ -171,11 +130,11 @@ export default function Header() {
           )}
 
           {/* Footer (Logout/Login) */}
-          <div className="p-4 border-t border-black/20">
+          <div className="p-4 border-t border-white">
             {isLoggedIn ? (
               <button
                 onClick={handleLogout}
-                className="flex items-center gap-3 text-red-600 text-lg font-semibold w-full"
+                className="flex items-center gap-3 text-white text-lg font-semibold w-full"
               >
                 <FaSignOutAlt /> Logout
               </button>
