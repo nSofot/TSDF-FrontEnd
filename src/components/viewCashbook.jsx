@@ -76,8 +76,8 @@ export default function ViewCashbook({ accountId, fromDate, toDate }) {
                                     <span
                                         className={`text-right ${
                                             b.debit === "0.00" 
-                                            ? "text-green-600" 
-                                            : "text-red-600"
+                                            ? "text-red-600" 
+                                            : "text-green-600"
                                         }`}
                                     >
                                         {b.debit === "0.00" ? b.credit : b.debit}

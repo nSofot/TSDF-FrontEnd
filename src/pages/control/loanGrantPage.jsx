@@ -384,7 +384,7 @@ export default function LoanGrantPage() {
 
         {/* Applicant Search */}
         <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-6 border-indigo-500">
-            <div className="flex flex-col md:flex-row md:items-center gap-4">
+            <div className="flex flex-col md:flex-row md:items-center gap-1">
               <label className="font-semibold text-indigo-700 w-40">සාමාජික අංකය:</label>
               <input
                 type="text"
@@ -438,7 +438,7 @@ export default function LoanGrantPage() {
 
         {/* Approvals */}
         <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-6 border-teal-600">
-          <p className="text-teal-600 font-semibold text-sm sm:text-base">ණය අනුමත කිරීම:</p>
+          <p className="text-teal-600 font-semibold sm:text-base">ණය අනුමත කිරීම:</p>
           <div className="flex flex-col gap-2">
             {selectedLoanType === "ව්යාපෘති ණය" ||
             selectedLoanType === "දිගු කාලීන ණය" ? (
@@ -466,7 +466,7 @@ export default function LoanGrantPage() {
           <label className="block font-medium text-pink-600 text-lg">වවුචර් අංකය</label>
           <input
             type="text"
-            className={`text-pink-600 border border-pink-300 rounded-lg w-full p-3 text-center text-lg tracking-widest focus:ring-2 focus:ring-purple-500 outline-none ${
+            className={`text-pink-600 border border-pink-300 rounded-lg w-full p-3 text-center tracking-widest focus:ring-2 focus:ring-purple-500 outline-none ${
               error ? "border-red-500" : "border-gray-300"
             }`}
             value={voucherNo}
@@ -490,7 +490,6 @@ export default function LoanGrantPage() {
         </div>
 
         {/* Sticky Action Button */}
-        {/* <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-4 shadow-lg"> */}
        <div className="mt-6">
           <button
             disabled={isGranting}
@@ -498,18 +497,18 @@ export default function LoanGrantPage() {
               setIsGranting(true);
               await handleLoanGrant();
             }}
-            className={`w-full py-3 rounded-lg font-bold text-lg transition ${
+            className={`w-full h-12 rounded-lg font-bold text-lg transition ${
               !isGranting
                 ? "bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700"
                 : "bg-gray-300 cursor-not-allowed text-gray-600"
             }`}
           >
-            {isGranting ? "✅ ණය ප්‍රදානය සාර්ථකයි" : "💳 ණය මුදල ලබා දෙන්න"}
+            {isGranting ? "✅ ණය ප්‍රදානය සාර්ථකයි" : "ණය මුදල ලබා දෙන්න"}
           </button>
 
           <button
               onClick={() => navigate(-1)}
-              className="mt-8 w-full p-4 rounded-xl font-semibold text-white bg-gray-600 hover:bg-red-600 transition"
+              className="mt-6 w-full h-12 rounded-lg font-semibold text-gray-600 border border-gray-600 hover:bg-red-600 transition"
           >
               ආපසු යන්න
           </button>          
@@ -532,187 +531,3 @@ export default function LoanGrantPage() {
       );
     }
   }
-//     return (
-//         <div className="flex flex-col w-full px-4 py-6 space-y-6">
-          
-//             {/* Header */}
-//             <div className="text-center">
-//                 <h1 className="text-2xl font-bold text-purple-600">🛒 අනුමත ණය ගෙවීම</h1>
-//                 <p className="text-purple-600">අනුමත ණය සඳහා මුදල් ගෙවීම.</p>
-//             </div>
-
-//             {/* Applicant Card */}
-//             <div className="bg-purple-700 shadow rounded-lg p-4 space-y-4">
-//                 <div className="flex flex-col md:flex-row md:items-center gap-4">
-//                     <label className="font-medium text-white">සාමාජික අංකය:</label>
-//                     <input
-//                         type="text"
-//                         className="text-white  border border-white rounded-md p-2 w-full md:w-24 text-center focus:outline-none focus:ring-2 focus:ring-purple-400"
-//                         placeholder="000"
-//                         maxLength={3}
-//                         value={applicantId}
-//                         onChange={async (e) => {
-//                             const value = e.target.value;
-//                             setApplicantId(value);
-//                             if (value.length === 3) {
-//                                 await searchApplicant(value);
-//                             }
-//                         }}
-//                     />
-//                 </div>
-
-//                 {isLoading ? <LoadingSpinner /> : (
-//                     <div>
-//                         <div className="bg-purple-500 shadow rounded-lg p-4 space-y-2 text-white">
-//                             <div className="flex justify-between">
-//                               <span>නම:</span>
-//                               <span> {applicant?.name || ""}</span>
-//                             </div>
-//                             <div className="flex justify-between">
-//                                 <label>ණය වර්ගය:</label>
-//                                 <span>{selectedLoanType}</span>
-//                             </div>
-//                             <div className="flex justify-between">
-//                                 <label>මුදල: </label>
-//                                 <span>{formatNumber(amount)}</span>
-//                             </div>
-//                             <div className="flex justify-between">
-//                                 <label>කාල සීමාව මාස:</label>
-//                                 <span>{duration}</span>
-//                             </div>
-//                             <div className="flex justify-between">
-//                                 <label>මාසික පොලී අනුපාතය: </label>
-//                                 <label>{interest}%</label>
-//                             </div>     
-//                             <div className="flex justify-between">
-//                                 <label>පළමු වාරිකය:</label>
-//                                 <label>{formatNumber(firstInstallment)}</label>
-//                             </div>  
-//                         </div>
-//                     </div>
-//                 )}
-//             </div>
-
-//             {/* Approval Checkboxes */}
-//             <div className="w-full sm:w-1/2 flex flex-col gap-2 border border-gray-400 rounded p-4 mt-4">
-//                 <label className="font-medium text-pink-700">අනුමතකරු</label>
-                
-//                 {selectedLoanType === "ව්යාපෘති ණය" ||  selectedLoanType === "දිගු කාලීන ණය" && (
-//                   <label className="flex items-center gap-2">
-//                     <input
-//                       type="checkbox"
-//                       name="chairman"
-//                       checked={approvals.chairman}
-//                       readOnly
-//                       className="form-checkbox h-5 w-5 text-blue-600 pointer-events-none"
-//                     />
-//                     සභාපති අනුමැතිය
-//                   </label>
-//                 )}                
-
-//                 <label className="flex items-center gap-2">
-//                   <input
-//                     type="checkbox"
-//                     name="secretary"
-//                     checked={approvals.secretary}
-//                     readOnly
-//                     className="form-checkbox h-5 w-5 text-blue-600 pointer-events-none"
-//                   />
-//                   ලේකම් අනුමැතිය
-//                 </label>
-
-//                 {(selectedLoanType === "ව්යාපෘති ණය" || selectedLoanType === "දිගු කාලීන ණය" || selectedLoanType === "කෙටි කාලීන ණය") && (
-//                   <label className="flex items-center gap-2">
-//                     <input
-//                       type="checkbox"
-//                       name="treasurer"
-//                       checked={approvals.treasurer}
-//                       readOnly
-//                       className="form-checkbox h-5 w-5 text-blue-600 pointer-events-none"
-//                     />
-//                     භාණ්ඩාගාරික අනුමැතිය
-//                   </label>
-//                 )}
-
-//                 {selectedLoanType === "ව්යාපෘති ණය" && (
-//                   <label className="flex items-center gap-2">
-//                     <input
-//                       type="checkbox"
-//                       name="executive"
-//                       checked={approvals.executive}
-//                       readOnly
-//                       className="form-checkbox h-5 w-5 text-blue-600 pointer-events-none"
-//                     />
-//                     විධායක කමිටුවේ අනුමැතිය
-//                   </label>
-//                 )}
-
-
-//                 <label className="flex items-center gap-2">
-//                   <input
-//                     type="checkbox"
-//                     name="manager"
-//                     checked={approvals.manager}
-//                     readOnly
-//                     className="form-checkbox h-5 w-5 text-blue-600 pointer-events-none"
-//                   />
-//                   කළමනාකරු අනුමැතිය
-//                 </label>                
-//             </div>
-
-
-//             {/* Actions */}
-//             <div className="flex flex-col sm:flex-row gap-4 mt-4">
-//               <div>
-//                 <label className="text-2xl font-medium text-purple-600">ණය මුදල: </label>
-//                 <span className="text-2xl font-bold text-purple-600"> රු.{formatNumber(amount)}</span>
-//               </div>
-
-
-//               <div>
-//                   <label className="text-2xl font-medium text-purple-600">වවුචර් අංකය: </label>
-//                   <input
-//                     type="text"
-//                     className={`ml-2 border rounded p-2 w-24 text-2xl text-center focus:outline-none focus:ring-2 focus:ring-purple-600 ${
-//                       error ? "border-red-500" : ""
-//                     }`}
-//                     value={voucherNo}
-//                     placeholder="0000"
-//                     onChange={(e) => {
-//                       const val = e.target.value.replace(/\D/g, "");
-//                       setVoucherNo(val);
-//                     }}
-//                     onBlur={() => {
-//                       const formatted = voucherNo.padStart(4, "0");
-//                       setVoucherNo(formatted);
-//                       if (formatted !== "0000") checkVoucherExists(formatted);
-//                     }}
-//                     maxLength={4}
-//                   />
-//                   {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
-//               </div>
-
-//               <div>
-//                 <label className="font-medium text-pink-700">සටහන: </label>
-//                 <p className="text-xs text-gray-500">*වවුචර් පොතේ ඇති වවුචර් අංකය ඇතුළත් කර ණය ලබා දීමේ ක්‍රියාවලිය සම්පූර්ණ කිරීමට "ණය ලබා දෙන්න" බොත්තම ක්ලික් කරන්න. මෙම ක්‍රියාවලිය අවසන් වූ පසු, අරමුදල් ණය ගිණුමට බැර කරනු ලබන අතර ගෙවීම් ආරම්භ කළ හැකිය.</p>
-//               </div>
-
-//               <button
-//                 disabled={isGranting}
-//                 onClick={ async () =>{
-//                   setIsGranting(true);
-//                   await handleLoanGrant();
-//                 }}              
-//                 className={`mt-4 w-full sm:w-1/2 rounded p-2 ${
-//                   !isGranting
-//                     ? "bg-gradient-to-r from-green-400 to-green-600 text-white hover:from-pink-500 hover:to-pink-700"
-//                     : "bg-gray-400 cursor-not-allowed"
-//                 }`}
-//               >
-//                 {isGranting ? "ණය ප්‍රදානය සාර්ථකව අවසන්" : "ණය මුදල ලබා දෙන්න"}
-//               </button>
-
-//             </div>
-//         </div>
-//     );
-// }

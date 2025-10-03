@@ -35,9 +35,8 @@ export default function ApproveLoanPage() {
       executive: false,
       manager: false
     });
-    // const loanTypes = ["සුභසාධන ණය", "කෙටි කාලීන ණය", "දිගු කාලීන ණය", "ව්යාපෘති ණය"];
-    // const loanTypesValue = ["Welfare Loan", "Short Term Loan", "Long Term Loan", "Project Loan"];
 
+    const user = JSON.parse(localStorage.getItem("user"));
 
     // Fetch applicant
     const searchApplicant = async (id) => {
@@ -335,7 +334,7 @@ export default function ApproveLoanPage() {
 
                 {/* Applicant Info Card */}
                 <div className="bg-white shadow-lg rounded-xl p-6 border-l-6 border-indigo-500">
-                    <div className="flex flex-col md:flex-row md:items-center gap-4">
+                    {/* <div className="flex flex-col md:flex-row md:items-center gap-1">
                         <label className="font-semibold text-indigo-700 w-40">සාමාජික අංකය:</label>
                         <input
                           type="text"
@@ -349,6 +348,33 @@ export default function ApproveLoanPage() {
                             if (value.length === 3) await searchApplicant(value);
                           }}
                         />
+                    </div> */}
+                    <div className="flex flex-col md:flex-row md:items-center gap-1">
+                        <label className="font-semibold text-indigo-700 w-40">සාමාජික අංකය:</label>
+
+                        {["manager", "admin"].includes(user?.memberRole) ? (
+                          // If manager or admin → allow input
+                          <input
+                            type="text"
+                            className="border border-indigo-300 rounded-lg p-2 w-full md:w-24 text-center focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                            placeholder="000"
+                            maxLength={3}
+                            value={applicantId}
+                            onChange={async (e) => {
+                              const value = e.target.value;
+                              setApplicantId(value);
+                              if (value.length === 3) await searchApplicant(value);
+                            }}
+                          />
+                        ) : (
+                          // If member → just display his member id
+                          <input
+                            type="text"
+                            className="border border-indigo-300 rounded-lg p-2 w-full md:w-24 text-center bg-gray-100 cursor-not-allowed"
+                            value={user?.memberId || ""}
+                            readOnly
+                          />
+                        )}
                     </div>
 
                     {isLoading ? (
@@ -377,7 +403,7 @@ export default function ApproveLoanPage() {
 
                 {/* Membership Table */}
                 <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-6 border-purple-500">
-                    <p className="text-sm font-semibold text-purple-700">සාමාජික ගාස්තු පිළිබඳ විස්තර</p>
+                    <p className="font-semibold text-purple-700">සාමාජික ගාස්තු පිළිබඳ විස්තර</p>
                     <table className="min-w-full bg-white rounded-lg overflow-hidden shadow-md text-sm sm:text-base">
                       <thead className="bg-purple-50 text-purple-700">
                         <tr>
@@ -433,7 +459,7 @@ export default function ApproveLoanPage() {
 
                 {/* Loan Summary Card */}
                 <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-6 border-pink-500">
-                    <p className="text-pink-600 font-semibold text-sm sm:text-base">අයදුම් කළ ණය පිළිබඳ විස්තර:</p>
+                    <p className="text-pink-600 font-semibold sm:text-base">අයදුම් කළ ණය පිළිබඳ විස්තර:</p>
                     <div className="flex justify-between">
                       <span className="font-medium text-pink-500">ණය වර්ගය:</span>
                       <span>{selectedLoanType}</span>
@@ -526,7 +552,7 @@ export default function ApproveLoanPage() {
 
                 {/* Reason */}
                 <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-6 border-blue-500">
-                    <p className="text-blue-600 font-semibold text-sm sm:text-base">ඉදිරිපත් කළ ණය අයදුම්පත:</p>
+                    <p className="text-blue-600 font-semibold sm:text-base">ඉදිරිපත් කළ ණය අයදුම්පත:</p>
                     <textarea
                       className={`w-full rounded p-2 focus:ring-2 focus:ring-blue-400 ${!isEligible ? "text-red-600" : "text-blue-600"}`}
                       rows={4}
@@ -539,7 +565,7 @@ export default function ApproveLoanPage() {
                 {/* Action Buttons */}
                 <div className="flex flex-col sm:flex-row gap-4 mt-4">
                     <button
-                      className="flex-1 bg-gradient-to-r from-indigo-400 to-indigo-600 text-white rounded-xl p-3 hover:from-indigo-500 hover:to-indigo-700"
+                      className="w-full h-12 bg-gradient-to-r from-indigo-400 to-indigo-600 text-white rounded-lg hover:from-indigo-500 hover:to-indigo-700"
                       onClick={validateLoanGrant}
                     >
                       {isEligible ? 'ණය සත්‍යාපනය කර ඇත' : 'ණය අයදුම්පත සත්‍යාපනය කරන්න'}
@@ -547,7 +573,7 @@ export default function ApproveLoanPage() {
 
                     <button
                       disabled={!isEligible || isGranting}
-                      className={`flex-1 rounded-xl p-3 ${isEligible && !isGranting ? "bg-gradient-to-r from-green-400 to-green-600 text-white hover:from-green-500 hover:to-green-700" : "bg-gray-400 cursor-not-allowed"}`}
+                      className={`rounded-lg w-full h-12 ${isEligible && !isGranting ? "bg-gradient-to-r from-green-400 to-green-600 text-white hover:from-green-500 hover:to-green-700" : "bg-gray-400 cursor-not-allowed"}`}
                       onClick={async () => {
                         setIsGranting(true);
                         await handleLoanGrant();
@@ -558,7 +584,7 @@ export default function ApproveLoanPage() {
 
                     <button
                       disabled={isRejecting || isGranting}
-                      className={`flex-1 rounded-xl p-3 ${!isRejecting && !isGranting ? "bg-gradient-to-r from-red-400 to-red-600 text-white hover:from-red-500 hover:to-red-700" : "bg-gray-400 cursor-not-allowed"}`}
+                      className={`rounded-lg w-full h-12 ${!isRejecting && !isGranting ? "bg-gradient-to-r from-red-400 to-red-600 text-white hover:from-red-500 hover:to-red-700" : "bg-gray-400 cursor-not-allowed"}`}
                       onClick={handleLoanReject}
                     >
                       {isRejecting ? "අයදුම්පත ප්‍රතික්ෂේප කරන ලදී" : "අයදුම්පත ප්‍රතික්ෂේප කරන්න"}
@@ -566,7 +592,7 @@ export default function ApproveLoanPage() {
 
                     <button
                       onClick={() => navigate(-1)}
-                      className="w-full bg-gray-600 hover:bg-gray-700 text-white rounded-xl p-3 font-semibold transition mb-4"
+                      className="w-full h-12 text-gray-600 border border-gray-600 hover:bg-gray-700 rounded-lg font-semibold transition mb-4"
                     >
                       ආපසු යන්න
                     </button>          
