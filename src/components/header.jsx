@@ -21,7 +21,7 @@ export default function Header() {
   const isLoggedIn = Boolean(token);
   const user = JSON.parse(localStorage.getItem("user") || "null");
 
-  const isCommittee = ["admin", "manager", "chairman", "secretary", "treasurer"].includes(
+  const isCommittee = ["admin", "executive", "manager", "chairman", "secretary", "treasurer"].includes(
     user?.memberRole
   );
   const isAdmin = user?.memberRole === "admin";
@@ -65,7 +65,7 @@ export default function Header() {
   const authLinks = [
     { to: "/profile", label: "Profile", icon: FaRegUser },
     { to: "/membership", label: "Membership Fee", icon: FaMoneyCheck },
-    { to: "/loan", label: "Loan Ledger", icon: FaMoneyCheck },
+    { to: "/ledger-loan", label: "Loan Ledger", icon: FaMoneyCheck },
     { to: "/apply-loan", label: "Apply Loan", icon: FaMoneyCheck },
     { to: "/constitution", label: "Constitution", icon: FaGavel },
   ];
@@ -161,12 +161,15 @@ export default function Header() {
                   className="text-4xl text-white cursor-pointer"
                   onClick={() => setSideDrawerOpened(false)}
               />
+              <div className="flex flex-col items-end">
+                <p className="text-white font-semibold truncate">
+                  {user
+                    ? user.nameSinhala || user.nameEnglish || "Member"
+                    : "Guest"}
+                </p>
+                <p className="text-sm text-white">{user?.userId}</p>
+              </div>
 
-              <p className="text-white font-semibold truncate">
-                {user
-                  ? user.nameSinhala || user.nameEnglish || "Member"
-                  : "Guest"}
-              </p>
           </div>
 
           {/* Nav Items */}

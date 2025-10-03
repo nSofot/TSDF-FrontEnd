@@ -104,7 +104,7 @@ export default function Contact() {
                   href="mailto:info@thewanashakthi.org"
                   className="text-indigo-600 hover:underline"
                 >
-                  info@thewanashakthi.org
+                  tsdf.pothukoladeniya@gmail.com
                 </a>
               </div>
             </li>
@@ -133,7 +133,8 @@ export default function Contact() {
           <div className="rounded-xl overflow-hidden shadow-lg">
             <iframe
               title="Thewana Shakthi map"
-              src="https://maps.google.com/maps?q=colombo%2007&t=&z=13&ie=UTF8&iwloc=&output=embed"
+              // src="https://maps.google.com/maps?q=colombo%2007&t=&z=13&ie=UTF8&iwloc=&output=embed"
+              src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d1979.313912217235!2d80.31263712777225!3d7.168949845031896!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zN8KwMTAnMDguMiJOIDgwwrAxOCc0OC43IkU!5e0!3m2!1sen!2slk!4v1759286930549!5m2!1sen!2slk"
               loading="lazy"
               className="w-full h-64 border-0"
             />

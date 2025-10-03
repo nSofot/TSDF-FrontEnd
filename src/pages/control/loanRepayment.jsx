@@ -532,7 +532,7 @@ export default function LoanRepaymentPage() {
                                 setIsSubmitting(true);
                                 await handleSave();
                                 }}
-                                className={`w-full p-4 rounded-xl font-semibold text-white transition ${
+                                className={`w-full h-12 rounded-lg font-semibold text-white transition ${
                                 !isSubmitting && !isSubmitted
                                     ? "bg-green-600 hover:bg-green-700"
                                     : "bg-gray-400 cursor-not-allowed"
@@ -547,7 +547,7 @@ export default function LoanRepaymentPage() {
 
                             <button
                                 onClick={() => navigate(-1)}
-                                className="w-full bg-gray-600 hover:bg-gray-700 text-white rounded-xl p-4 font-semibold transition mb-6"
+                                className="w-full h-12 hover:bg-gray-700 text-gray-700 rounded-lg border border-gray-700 font-semibold transition mb-6"
                             >
                                 ආපසු යන්න
                             </button>
