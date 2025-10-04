@@ -13,6 +13,7 @@ import LoanRepaymentPage from "./control/loanRepayment";
 import ReceiptMembershipPage from "./control/receiptMembershipPage";
 import CashBook from "./control/cashRegister";
 import LedgerLoan from "./control/ledgerLoan";
+import FundTransferPage from "./control/fundTransferPage";
 
 import ProductOverview from "./client/productOverview";
 import CartPage from "./client/cart";
@@ -90,6 +91,7 @@ export default function ControlPage() {
         <Route path="receipt-membership" element={<ReceiptMembershipPage />} />
         <Route path="cash-book" element={<CashBook />} />
         <Route path="ledger-loan" element={<LedgerLoan />} />
+        <Route path="fund-transfer" element={<FundTransferPage />} />
         <Route path="contact" element={<Contact />} />
         <Route path="overview/:Id" element={<ProductOverview />} />
         <Route path="cart" element={<CartPage />} />

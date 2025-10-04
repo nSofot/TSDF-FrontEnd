@@ -66,13 +66,20 @@ export default function ViewCashbook({ accountId, fromDate, toDate }) {
                               className="grid grid-cols-1 md:grid-cols-[100px_120px_120px_280px_120px_120px_120px] px-4 py-2 border-b border-gray-200 hover:bg-gray-100 gap-1 md:gap-0"
                             >
                                 {/* For mobile, show stacked info */}
-                                <div className="flex justify-between md:hidden">
+                                <div className="flex justify-start gap-4 md:hidden">
                                     <span className="flex gap-4">
                                         <span>{b.date}</span>
                                         <span>{b.trxId}</span>
                                         <span>{b.trxType}</span>
                                     </span>
 
+             
+                                </div>
+                                <div className="flex justify-start md:hidden">
+                                    <span>{b.description}</span>
+                                </div>
+
+                                <div className="flex justify-end gap-4 md:hidden">
                                     <span
                                         className={`text-right ${
                                             b.debit === "0.00" 
@@ -81,17 +88,14 @@ export default function ViewCashbook({ accountId, fromDate, toDate }) {
                                         }`}
                                     >
                                         {b.debit === "0.00" ? b.credit : b.debit}
-                                    </span>
-                                </div>
-                                <div className="flex justify-between md:hidden">
-                                    <span>{b.description}</span>
+                                    </span>        
                                     <span
-                                    className={`text-right ${
+                                        className={`text-right ${
                                             b.balance > "0.00" 
                                             ? "text-gray-600" 
                                             : "text-red-600"
                                         }`}
-                                    >{b.balance}</span>
+                                    >{b.balance}</span>                                                                
                                 </div>
 
                                 {/* Desktop view */}
