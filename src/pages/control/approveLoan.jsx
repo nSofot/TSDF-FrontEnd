@@ -326,7 +326,7 @@ export default function ApproveLoanPage() {
           
             {/* Header */}
             <div className="text-center p-2 border-b sticky top-0 z-10">
-              <h1 className="text-lg md:text-2xl  font-bold text-gray-800">🛒 ණය අයදුම්පත් අනුමත කිරීම</h1>
+              <h1 className="text-lg md:text-2xl font-bold text-gray-800">🛒 ණය අයදුම්පත් අනුමත කිරීම</h1>
               <p className="text-gray-600 text-sm sm:text-base">අයදුම්පත් තොරතුරු තහවුරු කර ණය අනුමත කිරීම.</p>
             </div>
 

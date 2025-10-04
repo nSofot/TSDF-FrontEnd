@@ -51,31 +51,6 @@ export default function CashRegisterPage() {
       setAccountBalance(selected?.accountBalance ?? 0);
     };
 
-    const handleSubmit = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) return toast.error("Unauthorized. Please log in.");
-      if (!header) return toast.error("Please select account type.");
-      if (!accountName) return toast.error("Please enter account name.");
-
-      const headerAccountId = header.trim().toLowerCase() === "cash" ? "325" : "327";
-      const payload = { accountType: "Asset", headerAccountId, accountName };
-
-      try {
-        await axios.post(
-          `${import.meta.env.VITE_BACKEND_URL}/api/ledgerAccounts/${headerAccountId}`,
-          payload
-        );
-        toast.success("🎉 Account created successfully!");
-        setIsAddAccountModalOpen(false);
-        setHeader("");
-        setAccountName("");
-        setIsLoading(true);
-      } catch (err) {
-        console.error("Submit failed:", err);
-        toast.error("❌ Failed to submit account. Try again.");
-      }
-    };
-
     return (
         <div className="flex flex-col  max-w-5xl mx-auto min-h-screen">
             {/* HEADER */}
