@@ -39,32 +39,70 @@ export default function Header() {
     setSideDrawerOpened(false);
   }, [location.pathname]);
 
-  const navLinks = [
-    { path: "/control/", label: "Home", icon: <FaHome /> },
-    { path: "/control/members", label: "Members", icon: <FaUsers /> },
-    { path: "/control/apply-loan", label: "Apply Loan", icon: <FaFileSignature /> },
-    { path: "/control/approve-loan", label: "Approve Loan", icon: <FaCheckCircle /> },
-    { path: "/control/grant-loan", label: "Grant Loan", icon: <FaHandHoldingUsd /> },
-    { path: "/control/receipts-membership", label: "Membership Receipt", icon: <FaReceipt /> },
-    { path: "/control/loan-repayment", label: "Loan Repayment", icon: <FaMoneyBillWave /> },
-    { path: "/control/fund-transfer", label: "Fund Transfer", icon: <FaExchangeAlt /> },
-    { path: "/control/expense", label: "Expenses", icon: <FaWallet /> },
-    { path: "/control/income", label: "Income", icon: <FaChartLine /> },
-    { path: "/control/cash-book", label: "Cash Book", icon: <FaBook /> },
-    { path: "/control/ledger-membership", label: "Membership Ledger", icon: <FaAddressBook /> },
-    { path: "/control/ledger-loan", label: "Loan Ledger", icon: <FaClipboardList /> },
-    { path: "/contact", label: "Shares", icon: <FaChartPie /> },
-  ];
+  const roleBasedNavLinks = {
+    common: [
+      { path: "/control/", label: "Home", icon: <FaHome /> },
+      { path: "/control/members", label: "Members", icon: <FaUsers /> },
+      { path: "/control/cash-book", label: "Cash Book", icon: <FaBook /> },
+      { path: "/contact", label: "Shares", icon: <FaChartPie /> },      
+    ],
+    admin: [
+      { path: "/control/apply-loan", label: "Apply Loan", icon: <FaFileSignature /> },
+      { path: "/control/approve-loan", label: "Approve Loan", icon: <FaCheckCircle /> },
+      { path: "/control/grant-loan", label: "Grant Loan", icon: <FaHandHoldingUsd /> },   
+      { path: "/control/loan-repayment", label: "Loan Repayment", icon: <FaMoneyBillWave /> },  
+      { path: "/control/receipts-membership", label: "Membership Receipt", icon: <FaReceipt /> }, 
+      { path: "/control/expense", label: "Expenses", icon: <FaWallet /> },
+      { path: "/control/expense-others", label: "Other Expenses", icon: <FaWallet /> },
+      { path: "/control/income", label: "Income", icon: <FaChartLine /> },
+      { path: "/control/fund-transfer", label: "Fund Transfer", icon: <FaExchangeAlt /> },
+      { path: "/control/ledger-membership", label: "Membership Ledger", icon: <FaAddressBook /> }, 
+      { path: "/control/ledger-loan", label: "Loan Ledger", icon: <FaClipboardList /> },       
+    ],
+    manager: [
+      { path: "/control/apply-loan", label: "Apply Loan", icon: <FaFileSignature /> },
+      { path: "/control/approve-loan", label: "Approve Loan", icon: <FaCheckCircle /> },
+      { path: "/control/grant-loan", label: "Grant Loan", icon: <FaHandHoldingUsd /> },   
+      { path: "/control/loan-repayment", label: "Loan Repayment", icon: <FaMoneyBillWave /> },   
+      { path: "/control/expense", label: "Expenses", icon: <FaWallet /> },
+      { path: "/control/expense-others", label: "Other Expenses", icon: <FaWallet /> },
+      { path: "/control/income", label: "Income", icon: <FaChartLine /> },
+      { path: "/control/fund-transfer", label: "Fund Transfer", icon: <FaExchangeAlt /> },
+      { path: "/control/ledger-loan", label: "Loan Ledger", icon: <FaClipboardList /> },      
+    ],
+    treasurer: [
+      { path: "/control/receipts-membership", label: "Membership Receipt", icon: <FaReceipt /> },
+      { path: "/control/fund-transfer", label: "Fund Transfer", icon: <FaExchangeAlt /> },
+      { path: "/control/expense", label: "Expenses", icon: <FaWallet /> },
+      { path: "/control/expense-other", label: "Other Expenses", icon: <FaWallet /> },
+      { path: "/control/income", label: "Income", icon: <FaChartLine /> },
+      { path: "/control/ledger-membership", label: "Members Ledger", icon: <FaAddressBook /> },      
+    ],
+    secretary: [
+      { path: "/control/approve-loan", label: "Approve Loan", icon: <FaCheckCircle /> },
+    ],
+    chairman: [
+      { path: "/control/approve-loan", label: "Approve Loan", icon: <FaCheckCircle /> },
+    ],
+  };
+ 
 
-  const allowedRoles = ["admin", "manager", "chairman", "secretary", "treasurer"];
+  const allowedRoles = ["admin", "executive", "manager", "chairman", "secretary", "treasurer"];
   const showLinks = allowedRoles.includes(user?.memberRole);
+  
+  const userRole = user?.memberRole?.toLowerCase();
+
+  const navLinks = [
+    ...(roleBasedNavLinks.common || []),
+    ...(roleBasedNavLinks[userRole] || []),
+  ];
 
   return (
     <header className="w-full h-[64px] shadow-lg flex justify-between items-center px-4 bg-white z-50">
       {/* Mobile Hamburger + Title */}
       <div className="w-full flex justify-between items-center">
           <GiHamburgerMenu
-            className="text-4xl text-blue-600 cursor-pointer"
+            className="text-4xl text-green-700 cursor-pointer"
             onClick={() => setSideDrawerOpened(true)}
           />
 
@@ -92,7 +130,7 @@ export default function Header() {
           role="dialog"
           aria-modal="true"
           tabIndex={-1}
-          className={`w-[280px] bg-orange-600 h-full shadow-xl transform transition-transform duration-300 ease-in-out flex flex-col justify-between ${
+          className={`w-[280px] bg-green-700 h-full shadow-xl transform transition-transform duration-300 ease-in-out flex flex-col justify-between ${
             sideDrawerOpened ? "translate-x-0" : "-translate-x-full"
           }`}
           onClick={(e) => e.stopPropagation()}

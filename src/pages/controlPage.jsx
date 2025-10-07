@@ -13,7 +13,11 @@ import LoanRepaymentPage from "./control/loanRepayment";
 import ReceiptMembershipPage from "./control/receiptMembershipPage";
 import CashBook from "./control/cashRegister";
 import LedgerLoan from "./control/ledgerLoan";
+import MemberLedger from "./control/memberLedger";
 import FundTransferPage from "./control/fundTransferPage";
+import ExpensePage from "./control/expensePage";
+import OtherExpensePage from "./control/otherExpensePage";
+import IncomePage from "./control/incomePage";
 
 import ProductOverview from "./client/productOverview";
 import CartPage from "./client/cart";
@@ -88,10 +92,14 @@ export default function ControlPage() {
         <Route path="approve-loan" element={<ApproveLoanPage />} />
         <Route path="grant-loan" element={<LoanGrantPage />} />
         <Route path="loan-repayment" element={<LoanRepaymentPage />} />
-        <Route path="receipt-membership" element={<ReceiptMembershipPage />} />
+        <Route path="receipts-membership" element={<ReceiptMembershipPage />} />
         <Route path="cash-book" element={<CashBook />} />
         <Route path="ledger-loan" element={<LedgerLoan />} />
+        <Route path="ledger-membership" element={<MemberLedger />} />
         <Route path="fund-transfer" element={<FundTransferPage />} />
+        <Route path="expense" element={<ExpensePage />} />
+        <Route path="expense-other" element={<OtherExpensePage />} />
+        <Route path="income" element={<IncomePage />} />
         <Route path="contact" element={<Contact />} />
         <Route path="overview/:Id" element={<ProductOverview />} />
         <Route path="cart" element={<CartPage />} />

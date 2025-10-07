@@ -89,12 +89,19 @@ export default function AddCustomerPage() {
                             <div className="w-[20%]">
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Member ID</label>
                                 <input
-                                  type="text"
-                                  value={customerId}
-                                  onChange={(e) => setCustomerId(e.target.value)}
-                                  className="w-full p-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    type="text"
+                                    placeholder="e.g. 001"
+                                    value={customerId}
+                                    onChange={(e) => {
+                                    // Allow only digits and max 3 characters
+                                    const value = e.target.value.replace(/\D/g, "").slice(0, 3);
+                                    setCustomerId(value);
+                                    }}
+                                    maxLength={3}
+                                    className="w-full p-2 text-sm text-center border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 />
                             </div>
+
                             <div className="w-[75%]">
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Member Name</label>
                                 <input
