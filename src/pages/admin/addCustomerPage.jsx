@@ -23,44 +23,64 @@ export default function AddCustomerPage() {
     const [isAdding, setIsAdding] = useState(false);
 
 
-    const handleAddProduct = async () => {
-        const token = localStorage.getItem("token");
-        if (!token) return toast.error("Please log in first.");
+	const handleAddProduct = async () => {
+		const token = localStorage.getItem("token");
+		if (!token) return toast.error("Please log in first.");
 
-        if (!name || !address) {
-            return toast.error("Please fill in all fields.");
-        }
+		if (!name || !mobile || !memberRole) {
+			toast.error("Please fill in name, mobile number and member role");
+			setIsAdding(false);
+			return;
+		}
 
-        // if (image.length === 0) {
-        //     return toast.error("Please select at least one product image.");
-        // }
+		const invalidFamilyMember = familyMembers.some(
+			m => !m.name || !m.relationship
+		);
+		if (invalidFamilyMember) {
+			toast.error("Please fill all family member fields");
+			setIsAdding(false);
+			return;
+		}
 
-        try {         
-            const uploadedImages = await Promise.all(image.map((img) => mediaUpload(img)));
-            const newCustomer = {
-                customerId,
-                name,
-                // customerType,
-                // title,
-                address,
-                mobile,
-                phone,
-                email,
-                // image: uploadedImages,
-                // birthDate,
-                notes,
-                // isActive
-            };
-            await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/customer`, newCustomer, {
-              headers: { Authorization: `Bearer ${token}` },
-            });
+		try {
+			// Upload images if any
+			let uploadedImages = [];
+			if (image.length > 0) {
+				uploadedImages = await Promise.all(image.map(img => mediaUpload(img)));
+			}
 
-            toast.success("Member added successfully!");
-            navigate(-1);
-        } catch (err) {
-            toast.error(err?.response?.data?.message || "Something went wrong");
-        }
-    };
+			// Default image if none uploaded
+			const finalImages = uploadedImages.length === 0 ? ["/userDefault.jpg"] : uploadedImages;
+
+			const newCustomer = {
+				customerId,
+				title,
+				name,
+				nameSinhala,
+				memberRole: memberRole || 'member',  // ensure default
+				address: address ? address.split(",").map(n => n.trim()) : [],
+				notes: notes || "",
+				image: finalImages,
+				mobile,
+				phone: phone || undefined,
+				familyMembers,
+			};
+
+			if (email) newCustomer.email = email;  // only include if non-empty
+
+			await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/customer`, newCustomer, {
+				headers: { Authorization: `Bearer ${token}` },
+			});
+
+			toast.success("Member added successfully!");
+			navigate(-1);
+
+		} catch (err) {
+			toast.error(err?.response?.data?.message || "Something went wrong");
+		} finally {
+			setIsAdding(false);
+		}
+	};
 
     return (
 		<div className="w-full h-full flex flex-col p-4">
@@ -122,6 +142,7 @@ export default function AddCustomerPage() {
 									onChange={(e) => setTitle(e.target.value)}
 									className="w-full p-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
 								>
+									<option value="">Select</option>
 									<option value="Mr.">Mr.</option>
 									<option value="Mrs.">Mrs.</option>
 									<option value="Miss.">Miss.</option>
@@ -148,6 +169,7 @@ export default function AddCustomerPage() {
 									onChange={(e) => setMemberRole(e.target.value)}
 									className="w-full p-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
 								>
+									<option value="">Select</option>
 									<option value="member">Member</option>
 									<option value="chairman">Chairman</option>
 									<option value="secretary">Secretary</option>

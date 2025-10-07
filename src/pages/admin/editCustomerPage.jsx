@@ -3,9 +3,8 @@ import { useLocation, useNavigate, Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import axios from "axios";
 import mediaUpload from "../../utils/mediaUpload";
-import { s } from "framer-motion/client";
 
-export default function EditCustomerPage() {
+export default function EditCustomerPage() {	
 	const location = useLocation();
 	const navigate = useNavigate();
 
@@ -29,7 +28,7 @@ export default function EditCustomerPage() {
 
     const user = JSON.parse(localStorage.getItem("user") || "null");
 
-    if (!user) navigate("/");
+    // if (!user) navigate("/");
     // if (user.memberRole !== 'secretary') navigate("/");
 
 	useEffect(() => {
@@ -78,6 +77,8 @@ export default function EditCustomerPage() {
 			if (image.length > 0) {
 				const uploadPromises = image.map((img) => mediaUpload(img));
 				uploadedNewImages = await Promise.all(uploadPromises);
+			} else {
+				uploadedNewImages =  ["/userDefault.jpg"];
 			}
 
 			const updatedProduct = {
@@ -345,59 +346,59 @@ export default function EditCustomerPage() {
 							></textarea>
 						</div>
 
-						{/* Existing Images */}
-						<p className="text-sm text-gray-700 font-medium mb-1">Existing Images</p>
-						<div className="w-full h-[calc(30vh)] overflow-y-auto border border-gray-300 rounded-md shadow-inner">
-							{existingImages.length > 0 && (
-								<div className="space-y-2">
-									<div className="grid grid-cols-3 gap-3">
-										{/* Existing Images */}
-										{existingImages.map((imgUrl, index) => (
-										<div key={`existing-${index}`} className="relative border rounded-md overflow-hidden group">
-											<img src={imgUrl} alt={`existing-${index}`} className="w-full h-20 object-cover" />
-											<button
-											type="button"
-											onClick={() => {
-												const filtered = existingImages.filter((_, i) => i !== index);
-												setExistingImages(filtered);
-											}}
-											className="absolute top-1 right-1 bg-black bg-opacity-60 text-white text-xs rounded-full px-2 py-0.5 hover:bg-red-600"
-											>
-											✕
-											</button>
-										</div>
-										))}
-
-										{/* New Images */}
-										{image.map((file, index) => (
-										<div key={`new-${index}`} className="relative border rounded-md overflow-hidden group">
-											<img src={URL.createObjectURL(file)} alt={`new-${index}`} className="w-full h-20 object-cover" />
-											<button
-											type="button"
-											onClick={() => {
-												const filtered = image.filter((_, i) => i !== index);
-												setImage(filtered);
-											}}
-											className="absolute top-1 right-1 bg-black bg-opacity-60 text-white text-xs rounded-full px-2 py-0.5 hover:bg-red-600"
-											>
-											✕
-											</button>
-										</div>
-										))}
-									</div>
-								</div>
-							)}
-						</div>
-
 						{/* Image Upload */}
 						<div className="w-full">
 							<label className="block text-sm font-medium text-gray-700 mb-1">Add New Images (optional)</label>
 							<input
 								type="file"
 								multiple
-								onChange={(e) => setImage(Array.from(e.target.files))}
+								onChange={(e) => {
+								// Append newly selected files to existing `image` state
+								const files = Array.from(e.target.files);
+								setImage((prev) => [...prev, ...files]);
+								}}
 								className="w-full text-sm text-blue-500 font-italic file-input file-input-bordered rounded-lg cursor-pointer hover:text-blue-800"
 							/>
+							</div>
+
+							{/* Display Existing + New Images */}
+							<p className="text-sm text-gray-700 font-medium mb-1">Existing & New Images</p>
+							<div className="w-full h-[calc(30vh)] overflow-y-auto border border-gray-300 rounded-md shadow-inner">
+							<div className="grid grid-cols-3 gap-3">
+								{/* Existing Images */}
+								{existingImages.map((imgUrl, index) => (
+								<div key={`existing-${index}`} className="relative border rounded-md overflow-hidden group">
+									<img src={imgUrl} alt={`existing-${index}`} className="w-full h-20 object-cover" />
+									<button
+									type="button"
+									onClick={() => {
+										const filtered = existingImages.filter((_, i) => i !== index);
+										setExistingImages(filtered);
+									}}
+									className="absolute top-1 right-1 bg-black bg-opacity-60 text-white text-xs rounded-full px-2 py-0.5 hover:bg-red-600"
+									>
+									✕
+									</button>
+								</div>
+								))}
+
+								{/* New Images */}
+								{image.map((file, index) => (
+								<div key={`new-${index}`} className="relative border rounded-md overflow-hidden group">
+									<img src={URL.createObjectURL(file)} alt={`new-${index}`} className="w-full h-20 object-cover" />
+									<button
+									type="button"
+									onClick={() => {
+										const filtered = image.filter((_, i) => i !== index);
+										setImage(filtered);
+									}}
+									className="absolute top-1 right-1 bg-black bg-opacity-60 text-white text-xs rounded-full px-2 py-0.5 hover:bg-red-600"
+									>
+									✕
+									</button>
+								</div>
+								))}
+							</div>
 						</div>
 					</div>
 				</div>

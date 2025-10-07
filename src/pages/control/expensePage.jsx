@@ -218,6 +218,7 @@ export default function ExpensePage() {
         ) {
             try {
                 let funeralFeev = 0;
+                let newFuneralFee= 0;
                 if (selectedExpenseType === 'සාමාජික පවුලේ අවමංගල්‍ය පරිත්‍යාග') {
                     funeralFeev = 750;
                 } else if (selectedExpenseType === 'කලත්රයාගේ පවුලේ අවමංගල්‍ය පරිත්‍යාග') {
@@ -228,13 +229,23 @@ export default function ExpensePage() {
                 const transactionPromises = members
                     .filter(mem => mem.isActive)
                     .map(mem => {
+                        
+                        const otherCount = mem.familyMembers.filter(
+                        (fm) => fm.relationship === "other"
+                        ).length;
+                        if (otherCount > 0) {
+                            newFuneralFee = funeralFeev + (otherCount * (funeralFeev / 2));
+                        } else {
+                            newFuneralFee = funeralFeev;
+                        }
+
                         const trxPayload = {
                             trxNumber: newReferenceNo,
                             trxBookNo: voucherNo,
                             customerId: mem.customerId,
                             transactionType: "funeralFee",
                             transactionDate: new Date(transferDate).toISOString(),
-                            trxAmount: Number(funeralFeev) || 0,
+                            trxAmount: Number(newFuneralFee) || 0,
                             isCredit: false,
                             description: member.nameSinhala || member.name
                         };
@@ -252,7 +263,7 @@ export default function ExpensePage() {
                     .filter(mem => mem.isActive)
                     .map(mem => ({
                         customerId: String(mem.customerId),
-                        amount: funeralFeev
+                        amount: newFuneralFee
                     }));
 
                 await axios.put(

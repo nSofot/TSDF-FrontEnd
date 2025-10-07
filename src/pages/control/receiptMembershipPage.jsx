@@ -309,7 +309,7 @@ export default function ReceiptMembershipPage() {
                 </div>
 
                 {/* Actions */}
-                <div className="space-y-4 mt-6">
+                <div className="space-y-4 md:space-y-0 md:flex md:gap-4 mt-6">
                     <button
                         disabled={isSubmitting || isSubmitted}
                         onClick={async () => {

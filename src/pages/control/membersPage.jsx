@@ -104,7 +104,7 @@ export default function MembersPage() {
 
                             {/* Family Members Row */}
                             <tr className="border-b border-gray-200 align-top">
-                                <td className="py-2 font-medium text-orange-600 w-1/3">Family Members</td>
+                                <td className="py-2 font-medium text-orange-600 w-1/4">Family</td>
                                 <td className="py-2 text-gray-800">
                                 {activeRecord.familyMembers && activeRecord.familyMembers.length > 0 ? (
                                     <ul className="space-y-1 list-disc list-inside">

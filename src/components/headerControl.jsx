@@ -72,7 +72,7 @@ export default function Header() {
       { path: "/control/ledger-loan", label: "Loan Ledger", icon: <FaClipboardList /> },      
     ],
     treasurer: [
-      { path: "/control/receipts-membership", label: "Membership Receipt", icon: <FaReceipt /> },
+      { path: "/control/receipts-membership", label: "Membership Fee", icon: <FaReceipt /> },
       { path: "/control/fund-transfer", label: "Fund Transfer", icon: <FaExchangeAlt /> },
       { path: "/control/expense", label: "Expenses", icon: <FaWallet /> },
       { path: "/control/expense-other", label: "Other Expenses", icon: <FaWallet /> },
@@ -81,8 +81,8 @@ export default function Header() {
     ],
     secretary: [
       { path: "/control/approve-loan", label: "Approve Loan", icon: <FaCheckCircle /> },
-      { path: "/admin/add-customer", label: "Add New Customer", icon: <FaUsers /> },
-      { path: "/admin/edit-customer", label: "Edit Customer", icon: <FaUsers /> },
+      { path: "/control/add-customer-secretary", label: "Add New Customer", icon: <FaUsers /> },
+      { path: "/control/edit-customer-secretary", label: "Edit Customer", icon: <FaUsers /> },
     ],
     chairman: [
       { path: "/control/approve-loan", label: "Approve Loan", icon: <FaCheckCircle /> },
