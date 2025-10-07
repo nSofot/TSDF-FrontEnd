@@ -19,6 +19,7 @@ import {
   FaSignOutAlt
 } from "react-icons/fa";
 import { useEffect, useState } from "react";
+import { FaU } from "react-icons/fa6";
 
 export default function Header() {
   const [sideDrawerOpened, setSideDrawerOpened] = useState(false);
@@ -80,6 +81,8 @@ export default function Header() {
     ],
     secretary: [
       { path: "/control/approve-loan", label: "Approve Loan", icon: <FaCheckCircle /> },
+      { path: "/admin/add-customer", label: "Add New Customer", icon: <FaUsers /> },
+      { path: "/admin/edit-customer", label: "Edit Customer", icon: <FaUsers /> },
     ],
     chairman: [
       { path: "/control/approve-loan", label: "Approve Loan", icon: <FaCheckCircle /> },

@@ -26,29 +26,21 @@ export default function MembersPage() {
     }, [location]);
 
     return (
-        <div className="max-w-6xl w-full h-full flex flex-col">
-            <div className="flex justify-between items-center p-4 mb-4">
-                <div>
-                    <h1 className="text-xl md:text-2xl font-semibold text-gray-800">🧑‍🤝‍🧑සාමාජික ලැයිස්තුව</h1>
-                    <p className="text-sm text-gray-600">පදනමේ සාමාජික ලැයිස්තුව</p>
+        <div className="max-w-5xl w-full h-full flex flex-col space-y-6 overflow-hidden">
+            <div className="bg-white shadow rounded-md max-h-[calc(100vh-120px)] space-y-8">
+                <div className="bg-gray-50 shadow-lg rounded-xl p-6 space-y-4 border-l-6 border-green-700">
+                    <h1 className="text-xl md:text-2xl font-semibold text-green-700">🧑‍🤝‍🧑සාමාජික ලැයිස්තුව</h1>
+                    <p className="text-sm text-green-700">පදනමේ සාමාජික ලැයිස්තුව</p>
                 </div>
             </div>
 
 
-            <div className="bg-white shadow rounded-md overflow-hidden">
+            <div className="bg-gray-50 shadow-lg rounded-xl p-6 space-y-4 border-l-6 border-red-700 max-h-[calc(100vh-250px)] space-y-8 overflow-y-auto">
                 {isLoading ? (
                     <LoadingSpinner />
                 ) : (
-                    <div className="overflow-y-auto max-h-[calc(100vh-200px)]">
-                        <table className="w-full text-sm text-left border border-gray-200 bg-orange-100">
-                            <thead className="bg-orange-600 text-white sticky top-0 z-10">
-                                <tr>
-                                    <th className="px-2 py-2">#</th>
-                                    <th className="px-2 py-2">Id</th>
-                                    <th className="px-2 py-2">Name</th>
-                                    <th className="px-2 py-2">Mobile</th>
-                                </tr>
-                            </thead>
+                    <div className="overflow-y-auto max-h-[calc(100vh-230px)]">
+                        <table className="">
                             <tbody className="divide-y divide-orange-300">
                                 {customers.map((item, index) => (
                                     <tr
@@ -63,7 +55,6 @@ export default function MembersPage() {
                                         <td className="px-2 py-2">{index + 1}</td>
                                         <td className="px-2 py-2">{item.customerId}</td>
                                         <td className="px-2 py-2">{item.nameSinhala ? item.nameSinhala : item.name }</td>
-                                        <td className="px-2 py-2">{item.mobile}</td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -72,17 +63,18 @@ export default function MembersPage() {
                 )}
             </div>
 
-			<Modal
-				isOpen={isModalOpen}
-				onRequestClose={() => setIsModalOpen(false)}
-				contentLabel="Member Details"
-				overlayClassName="fixed inset-0 bg-[#00000099] bg-opacity-50 flex items-center justify-center z-50"
-				className="max-w-5xl w-full h-[97vh] overflow-y-auto bg-white p-6 rounded-lg shadow-2xl border-4 border-gray-400"
-			>
+            <Modal
+                isOpen={isModalOpen}
+                onRequestClose={() => setIsModalOpen(false)}
+                appElement={document.getElementById('root')}
+                contentLabel="Member Details"
+                overlayClassName="fixed inset-0 bg-[#00000099] flex items-center justify-center"
+                className="max-w-5xl w-full h-[97vh]-[100px] overflow-y-auto bg-orange-50 p-6 rounded-lg shadow-2xl border-4 border-gray-400"
+            >
 				{activeRecord && (
 					<div className="space-y-4">
 						<div className="w-full flex justify-between items-center pb-2">
-							<h2 className="text-2xl font-bold text-gray-800">👤 Member Details</h2>
+							<h2 className="text-2xl font-bold text-orange-600">👤 Member Details</h2>
 							<button
 								className="text-gray-500 hover:text-gray-800"
 								onClick={() => setIsModalOpen(false)}
@@ -90,33 +82,53 @@ export default function MembersPage() {
 								✖
 							</button>
 						</div>
-                        <div>
-				            <p className="text-lg font-semibold">Number: {activeRecord.customerId}</p>
-                            <p className="text-lg font-semibold">Name  : {activeRecord.title ? `${activeRecord.title} ${activeRecord.name}` : activeRecord.name}</p>
-                        </div>
-		
-						{/* Tabs */}
-						<div className="flex border-b gap-6 text-sm font-medium text-gray-600">
-							{['Overview' ].map(tab => (
-							<button
-								key={tab}
-								onClick={() => setActiveTab(tab)}
-								className={`pb-2 ${
-								activeTab === tab ? 'border-b-2 border-blue-600 text-blue-600' : ''
-								}`}
-							>
-								{tab}
-							</button>
-							))}
-						</div>
+                        <div className="bg-orange-50 border border-orange-400 rounded-lg p-4 mt-4">
+                        <table className="w-full text-sm text-left">
+                            <tbody>
+                            {[
+                                ["Number", activeRecord.customerId],
+                                ["Name", activeRecord.title ? `${activeRecord.title} ${activeRecord.name}` : activeRecord.name],
+                                ["Address", activeRecord.address],
+                                ["Mobile", activeRecord.mobile],
+                                ["Email", activeRecord.email],
+                                ["Status", activeRecord.status],
+                                ["Date Joined", activeRecord.date ? activeRecord.date.slice(0, 10) : "—"],
+                                ["Role", activeRecord.memberRole],
+                                ["Notes", activeRecord.notes],
+                            ].map(([label, value]) => (
+                                <tr key={label} className="border-b border-gray-200">
+                                <td className="py-2 font-medium text-orange-600 w-1/3">{label}</td>
+                                <td className="py-2 text-gray-800">{value || "—"}</td>
+                                </tr>
+                            ))}
 
-					   	{/* {activeTab === 'Overview' && (
-							<CustomerOverview customerId={activeRecord.customerId} />
-						)} */}
+                            {/* Family Members Row */}
+                            <tr className="border-b border-gray-200 align-top">
+                                <td className="py-2 font-medium text-orange-600 w-1/3">Family Members</td>
+                                <td className="py-2 text-gray-800">
+                                {activeRecord.familyMembers && activeRecord.familyMembers.length > 0 ? (
+                                    <ul className="space-y-1 list-disc list-inside">
+                                    {activeRecord.familyMembers.map((fm, index) => (
+                                        <li key={index} className="text-sm">
+                                        <span className="font-semibold text-gray-700">{fm.name}</span>{" "}
+                                        <span className="text-gray-500">({fm.relationship})</span>
+                                        </li>
+                                    ))}
+                                    </ul>
+                                ) : (
+                                    "—"
+                                )}
+                                </td>
+                            </tr>
+                            </tbody>
+
+                        </table>
+                        </div>
+
+
 					</div>
 				)}
 			</Modal>
-
         </div>
     );
 }

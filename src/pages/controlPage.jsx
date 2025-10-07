@@ -18,6 +18,8 @@ import FundTransferPage from "./control/fundTransferPage";
 import ExpensePage from "./control/expensePage";
 import OtherExpensePage from "./control/otherExpensePage";
 import IncomePage from "./control/incomePage";
+import AddCustomer from "./admin/addCustomerPage";
+import EditCustomer from "./admin/editCustomerPage";
 
 import ProductOverview from "./client/productOverview";
 import CartPage from "./client/cart";
@@ -100,6 +102,8 @@ export default function ControlPage() {
         <Route path="expense" element={<ExpensePage />} />
         <Route path="expense-other" element={<OtherExpensePage />} />
         <Route path="income" element={<IncomePage />} />
+        <Route path="add-customer" element={<AddCustomer />} />
+        <Route path="edit-customer/:Id" element={<EditCustomer />} />
         <Route path="contact" element={<Contact />} />
         <Route path="overview/:Id" element={<ProductOverview />} />
         <Route path="cart" element={<CartPage />} />
