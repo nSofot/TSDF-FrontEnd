@@ -104,7 +104,7 @@ export default function LoanGrantPage() {
         try {
           const trxType = "voucher";
           const res = await axios.get(
-            `${import.meta.env.VITE_BACKEND_URL}/api/loanTransactions/trxbook/${no}/${trxType}`
+            `${import.meta.env.VITE_BACKEND_URL}/api/bookReferences/trxbook/${no}/${trxType}`
           );
           if (res.data.exists) {
             setError("🚨 This voucher number already exists!");
@@ -115,7 +115,7 @@ export default function LoanGrantPage() {
           console.error("Error checking voucher:", err);
           setError("⚠️ Error validating voucher");
         }
-    }; 
+    };  
     
 
     const validateLoanGrant = () => {
@@ -366,7 +366,20 @@ export default function LoanGrantPage() {
                 await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/ledgerTransactions`, accTrxPayload);
             } catch (error) {
                 console.log('6️⃣⚠️ create loan account transaction error: ', error); 
-            }          
+            }  
+            
+            //7️⃣create book reference
+            try {
+                const refPayload = {
+                    referenceType: "voucher",
+                    bookNo: voucherNo,
+                    trxReference: newReferenceNo
+                };
+                await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/bookReferences`, refPayload);
+            } catch (error) {
+                console.log('3️⃣⚠️ create book reference error: ', error);
+            } 
+
             toast.success("ඔබගේ ණය නිකුතුව සාර්ථකව අවසන් කර ඇත. කරුණාකර ඔබගේ ගිණුම පරීක්ෂා කරන්න.");
         } catch (error) {
             console.log(error);

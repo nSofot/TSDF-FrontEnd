@@ -42,21 +42,21 @@ export default function FundTransferPage() {
     }, [isLoading]);
 
 
-    const handleFromAccountChange = (e) => {
-      const value = e.target.value;
-      setAccountFrom(value);
-      const selected = accounts.find((a) => a.accountId === value || a._id === value);
-      setAccountFromBalance(selected?.accountBalance ?? 0);
-      setTransferAmount("");
-    };
+    // const handleFromAccountChange = (e) => {
+    //   const value = e.target.value;
+    //   setAccountFrom(value);
+    //   const selected = accounts.find((a) => a.accountId === value || a._id === value);
+    //   setAccountFromBalance(selected?.accountBalance ?? 0);
+    //   setTransferAmount("");
+    // };
 
-    const handleToAccountChange = (e) => {
-      const value = e.target.value;
-      setAccountTo(value);
-      const selected = accounts.find((a) => a.accountId === value || a._id === value);
-      setAccountToBalance(selected?.accountBalance ?? 0);
-      setTransferAmount("");
-    };    
+    // const handleToAccountChange = (e) => {
+    //   const value = e.target.value;
+    //   setAccountTo(value);
+    //   const selected = accounts.find((a) => a.accountId === value || a._id === value);
+    //   setAccountToBalance(selected?.accountBalance ?? 0);
+    //   setTransferAmount("");
+    // };    
 
     const handleTransfer = async () => {
       const token = localStorage.getItem("token");
@@ -198,6 +198,8 @@ export default function FundTransferPage() {
                             );
                             if (selectedAccount) {
                                 setAccountFromName(selectedAccount.accountName || selectedAccount.accountsName);
+                                setAccountFromBalance(selectedAccount.accountBalance);
+                                setTransferAmount("");
                             }
                         }}
                         className="w-full mt-1 px-3 py-2 text-sm text-orange-600 rounded-lg border border-orange-600 focus:ring-2 focus:ring-orange-700"
@@ -210,7 +212,6 @@ export default function FundTransferPage() {
                         ))}
                     </select>
                 </div>
-
 
                 <div className="flex-1">                   
                     <div className="mt-1 text-sm flex justify-end font-semibold text-orange-600">
@@ -237,6 +238,8 @@ export default function FundTransferPage() {
                             );
                             if (selectedAccount) {
                                 setAccountToName(selectedAccount.accountName || selectedAccount.accountsName);
+                                setAccountToBalance(selectedAccount.accountBalance);
+                                setTransferAmount("");
                             }
                         }}
                         className="w-full mt-1 px-3 py-2 text-sm text-orange-600 rounded-lg border border-orange-600 focus:ring-2 focus:ring-orange-700"

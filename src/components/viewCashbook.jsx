@@ -15,7 +15,7 @@ export default function ViewCashbook({ accountId, fromDate, toDate }) {
     return (
         <div className="w-full h-full text-sm text-gray-700 rounded bg-gray-50 shadow">
 
-               <div className="mb-4 ml-2 mr-2 p-2 text-sm flex flex-col rounded-lg border bg-pink-50 font-semibold text-pink-700">
+               <div className="mb-4 ml-2 mr-2 p-2 text-sm flex flex-col rounded-lg border bg-orange-50 font-semibold text-orange-600">
                     <div className="p-1 flex justify-between">
                         <label className="text-xs font-semibold">ඉදිරියට ගෙන ආ ශේෂය</label>
                         Rs.{" "}
