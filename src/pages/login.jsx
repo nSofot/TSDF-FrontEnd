@@ -7,16 +7,13 @@ import { useNavigate, Link } from "react-router-dom";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
+  const [loginId, setLoginId] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   // Google OAuth Login
   const googleLogin = useGoogleLogin({
     onSuccess: async ({ access_token }) => {
-      if (!email) {
-        toast.error("Email is required");
-        return;
-      }
       try {
         const res = await axios.post(
           `${import.meta.env.VITE_BACKEND_URL}/api/user/login-google`,
@@ -37,7 +34,7 @@ export default function LoginPage() {
 
   // Email/Password Login
   async function handleLogin() {
-    if (!email && !password) {
+    if (!loginId && !password) {
       toast.error("User ID, Mobile or Email and password are required");
       return;
     }
@@ -45,7 +42,7 @@ export default function LoginPage() {
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/user/login`,
-        { email, password }
+        { loginId, password }
       );
 
       toast.success("Login Success");
@@ -74,8 +71,8 @@ export default function LoginPage() {
             <input
               type="text"
               placeholder="Enter your User ID / Mobile / Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={loginId}
+              onChange={(e) => setLoginId(e.target.value)}
               autoComplete="off" 
               className="w-full h-11 px-3 rounded-lg border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-purple-400"
             />

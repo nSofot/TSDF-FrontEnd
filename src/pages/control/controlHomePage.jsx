@@ -87,7 +87,7 @@ export default function ControlHomePage() {
             </div>
 
             {/* SCROLLABLE CONTENT */}
-            <div className="bg-white shadow rounded-md max-h-[calc(100vh-200px)] overflow-y-auto mt-4">
+            <div className="bg-orange-200 shadow rounded-md max-h-[calc(100vh-200px)] overflow-y-auto mt-4">
 
                 {/* Pending Approvals */}
                 <div className="bg-orange-100 rounded-xl shadow-md p-4">

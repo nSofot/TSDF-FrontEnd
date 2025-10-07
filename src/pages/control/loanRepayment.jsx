@@ -176,22 +176,22 @@ export default function LoanRepaymentPage() {
 
 
     // function VoucherInput() {
-    const checkReceiptExists = async (no) => {      
+    const checkVoucherExists = async (no) => {
         try {
-            const trxType = "receipt";
-            const res = await axios.get(
-            `${import.meta.env.VITE_BACKEND_URL}/api/loanTransactions/trxbook/${no}/${trxType}`
-          );                
-          if (res.data.length>0) {           
-            setError("🚨 මෙම රිසිට්පත් අංකය දැනටමත් පවතී!");
+          const trxType = "receipt";
+          const res = await axios.get(
+            `${import.meta.env.VITE_BACKEND_URL}/api/bookReferences/trxbook/${no}/${trxType}`
+          );
+          if (res.data.exists) {
+            setError("🚨 This voucher number already exists!");
           } else {
             setError("");
           }
         } catch (err) {
-          console.error("Error checking receipt:", err);
-          setError("⚠️ Error validating receipt number");
+          console.error("Error checking voucher:", err);
+          setError("⚠️ Error validating voucher");
         }
-    }; 
+    };  
 
 
     const handleSave = async () => {
@@ -340,7 +340,19 @@ export default function LoanRepaymentPage() {
                 await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/ledgerTransactions`, accTrxPayload);
             } catch (error) {
                 console.log('6️⃣⚠️ create loan account transaction error: ', error); 
-            }                
+            }   
+            
+            //7️⃣create book reference
+            try {
+                const refPayload = {
+                    referenceType: "receipt",
+                    bookNo: receiptNo,
+                    trxReference: newReferenceNo
+                };
+                await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/bookReferences`, refPayload);
+            } catch (error) {
+                console.log('3️⃣⚠️ create book reference error: ', error);
+            }
 
             toast.success("🎉 කුවිතාන්සිය සාර්ථකව ඉදිරිපත් කළා!");
             setIsSubmitted(true); // ✅ only on success

@@ -52,81 +52,79 @@ export default function CashRegisterPage() {
     };
 
     return (
-        <div className="flex flex-col  max-w-5xl mx-auto min-h-screen">
-            {/* HEADER */}
-            <div className="sticky top-0 z-30 bg-gradient-to-r from-blue-500 to-indigo-500 text-white p-4 shadow-md flex flex-col md:flex-row md:items-center md:justify-between gap-3 rounded-b-lg">
-                <div>
-                    <h1 className="text-xl font-bold">💵 මුදල් පොත</h1>
-                    <p className="text-xs opacity-90">මුදල් සහ බැංකු ගනුදෙනු නිරීක්ෂණය කරන්න</p>
+        <div className="max-w-6xl w-full h-full flex flex-col space-y-6 overflow-hidden">
+            <div className="bg-white shadow rounded-md max-h-[calc(100vh-120px)] space-y-8 overflow-y-auto">
+                <div className="bg-gray-50 shadow-lg rounded-xl p-6 space-y-4 border-l-6 border-green-700">
+                    <h1 className="text-lg md:text-2xl green-700 font-bold">💵 මුදල් පොත</h1>
+                    <p className="text-xs green-700 opacity-90">මුදල් සහ බැංකු ගනුදෙනු නිරීක්ෂණය කරන්න</p>
                 </div>
-            </div>
+         
 
-            <div className="bg-gray-50 shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-indigo-500 mt-6">
-                <div className="flex-1">
-                    <label className="text-xs font-semibold text-indigo-600">ගිණුම</label>
-                    <select
-                      value={selectAccount}
-                      onChange={handleAccountChange}
-                      className="w-full mt-1 px-3 py-2 text-sm text-indigo-600 rounded-lg border border-indigo-500 focus:ring-2 focus:ring-indigo-400"
-                    >
-                      <option value="">-- Select --</option>
-                      {accounts.map((a, idx) => (
-                        <option key={`${a.accountId || a._id}-${idx}`} value={a.accountId || a._id}>
-                          {a.accountName || a.accountsName}
-                        </option>
-                      ))}
-                    </select>
-                </div>
+                <div className="bg-gray-50 shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-indigo-500 mt-6">
+                    <div className="flex-1">
+                        <label className="text-xs font-semibold text-indigo-600">ගිණුම</label>
+                        <select
+                          value={selectAccount}
+                          onChange={handleAccountChange}
+                          className="w-full mt-1 px-3 py-2 text-sm text-indigo-600 rounded-lg border border-indigo-500 focus:ring-2 focus:ring-indigo-400"
+                        >
+                          <option value="">-- Select --</option>
+                          {accounts.map((a, idx) => (
+                            <option key={`${a.accountId || a._id}-${idx}`} value={a.accountId || a._id}>
+                              {a.accountName || a.accountsName}
+                            </option>
+                          ))}
+                        </select>
+                    </div>
 
-                <div className="flex-1">                   
-                    <div className="mt-1 px-3 py-2 text-sm flex justify-between rounded-lg border bg-indigo-50 font-semibold text-indigo-700">
-                        <label className="text-xs font-semibold">ගිණුම් ශේෂය</label>
-                        Rs.{" "}
-                        {Number(accountBalance ?? 0).toLocaleString("en-US", {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                      })}
+                    <div className="flex-1">                   
+                        <div className="mt-1 px-3 py-2 text-sm flex justify-between rounded-lg border bg-indigo-50 font-semibold text-indigo-700">
+                            <label className="text-xs font-semibold">ගිණුම් ශේෂය</label>
+                            Rs.{" "}
+                            {Number(accountBalance ?? 0).toLocaleString("en-US", {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                          })}
+                        </div>
+                    </div>
+                  
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className="text-xs font-semibold text-indigo-600">දින සිට</label>
+                            <input
+                                type="date"
+                                value={fromDate}
+                                onChange={(e) => {
+                                  setFromDate(e.target.value);
+                                  validateDates(e.target.value, toDate);
+                                }}
+                                max={toDate}
+                                className="w-full mt-1 px-3 py-2 text-sm text-indigo-600 border border-indigo-600 rounded-lg focus:ring-2 focus:ring-blue-400"
+                            />
+                        </div>
+                        <div>
+                            <label className="text-xs font-semibold text-indigo-600">දිනය දක්වා</label>
+                            <input
+                                type="date"
+                                value={toDate}
+                                onChange={(e) => {
+                                  setToDate(e.target.value);
+                                  validateDates(fromDate, e.target.value);
+                                }}
+                                min={fromDate}
+                                className="w-full mt-1 px-3 py-2 text-sm text-indigo-600 border border-indigo-600 rounded-lg focus:ring-2 focus:ring-blue-400"
+                            />
+                        </div>
                     </div>
                 </div>
-             </div>         
+                {error && <p className="px-4 text-red-600 text-xs">{error}</p>}
 
-            {/* DATES */}
-            <div className="bg-gray-50 shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-orange-500 mt-6">
-                <div className="grid grid-cols-2 gap-4">
-                    <div>
-                        <label className="text-xs font-semibold text-orange-600">දින සිට</label>
-                        <input
-                            type="date"
-                            value={fromDate}
-                            onChange={(e) => {
-                              setFromDate(e.target.value);
-                              validateDates(e.target.value, toDate);
-                            }}
-                            max={toDate}
-                            className="w-full mt-1 px-3 py-2 text-sm border border-orange-600 rounded-lg focus:ring-2 focus:ring-blue-400"
-                        />
-                    </div>
-                    <div>
-                        <label className="text-xs font-semibold text-orange-600">දිනය දක්වා</label>
-                        <input
-                            type="date"
-                            value={toDate}
-                            onChange={(e) => {
-                              setToDate(e.target.value);
-                              validateDates(fromDate, e.target.value);
-                            }}
-                            min={fromDate}
-                            className="w-full mt-1 px-3 py-2 text-sm border border-orange-600 rounded-lg focus:ring-2 focus:ring-blue-400"
-                        />
-                    </div>
+        
+                {/* CASHBOOK */}
+                <div className="bg-gray-50 shadow-lg rounded-xl py-6 px-2 space-y-4 border-l-4 border-orange-600 mt-6">
+                    <Cashbook accountId={selectAccount} fromDate={fromDate} toDate={toDate} />
                 </div>
-            </div>
-            {error && <p className="px-4 text-red-600 text-xs">{error}</p>}
-
-    
-            {/* CASHBOOK */}
-            <div className="bg-gray-50 shadow-lg rounded-xl py-6 px-2 space-y-4 border-l-4 border-pink-500 mt-6">
-              <Cashbook accountId={selectAccount} fromDate={fromDate} toDate={toDate} />
             </div>
         </div>
     );

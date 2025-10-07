@@ -6,6 +6,7 @@ import About from "./client/about";
 import Contact from "./client/contact";
 import Home from "./client/homePage";
 import ApplyLoanPage from "./control/applyLoanPage";
+import MemberLedger from "./control/memberLedger";
 import LedgerLoan from "./control/ledgerLoan";
 import NotFoundPage from "./notFoundPage";
 
@@ -31,6 +32,7 @@ export default function HomePage() {
         <Route path="constitution" element={<ConstitutionPage />} />
 
         <Route path="apply-loan" element={<ApplyLoanPage />} />
+        <Route path="ledger-membership" element={<MemberLedger />} />
         <Route path="ledger-loan" element={<LedgerLoan />} />
         
         <Route path="*" element={<NotFoundPage />} />
