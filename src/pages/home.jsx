@@ -5,6 +5,7 @@ import Gallery from "./client/galleryPage";
 import About from "./client/about";
 import Contact from "./client/contact";
 import Home from "./client/homePage";
+import MemberProfilePage from "./client/memberProfile";
 import ApplyLoanPage from "./control/applyLoanPage";
 import MemberLedger from "./control/memberLedger";
 import LedgerLoan from "./control/ledgerLoan";
@@ -30,7 +31,7 @@ export default function HomePage() {
         <Route path="about" element={<About />} />
         <Route path="contact" element={<Contact />} />
         <Route path="constitution" element={<ConstitutionPage />} />
-
+        <Route path="member-profile" element={<MemberProfilePage />} />
         <Route path="apply-loan" element={<ApplyLoanPage />} />
         <Route path="ledger-membership" element={<MemberLedger />} />
         <Route path="ledger-loan" element={<LedgerLoan />} />

@@ -63,7 +63,7 @@ export default function Header() {
 
   // Authenticated links
   const authLinks = [
-    { to: "/profile", label: "Profile", icon: FaRegUser },
+    { to: "/member-profile", label: "Member Profile", icon: FaRegUser },
     { to: "/ledger-membership", label: "Membership Fee", icon: FaMoneyCheck },
     { to: "/ledger-loan", label: "Loan Ledger", icon: FaMoneyCheck },
     { to: "/apply-loan", label: "Apply Loan", icon: FaMoneyCheck },
