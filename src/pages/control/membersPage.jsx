@@ -109,9 +109,18 @@ export default function MembersPage() {
                                 {activeRecord.familyMembers && activeRecord.familyMembers.length > 0 ? (
                                     <ul className="space-y-1 list-disc list-inside">
                                     {activeRecord.familyMembers.map((fm, index) => (
-                                        <li key={index} className="text-sm">
-                                        <span className="font-semibold text-gray-700">{fm.name}</span>{" "}
-                                        <span className="text-gray-500">({fm.relationship})</span>
+                                        <li key={index} className="text-sm flex justify-between">
+                                            <div className="flex justify-start space-x-2">
+                                                <span className="text-orange-500 font-bold">•</span>
+                                                <span className="font-semibold text-gray-700">{fm.name}</span>{" "}
+                                            </div>
+                                            <span
+                                                className={`block text-sm capitalize ${
+                                                    fm.relationship === "other" ? "text-red-600" : "text-gray-600"
+                                                }`}
+                                                >
+                                                {fm.relationship || "—"}
+                                            </span>
                                         </li>
                                     ))}
                                     </ul>
@@ -124,8 +133,6 @@ export default function MembersPage() {
 
                         </table>
                         </div>
-
-
 					</div>
 				)}
 			</Modal>

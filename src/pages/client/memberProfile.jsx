@@ -118,9 +118,12 @@ export default function MemberProfilePage() {
                                                     className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2"
                                                 >
                                                     <div className="w-full sm:w-2/3 flex justify-between">
-                                                        <span className="block text-sm text-gray-800 font-medium">
-                                                            {fm.name || "Unnamed"}
-                                                        </span>                                                          
+                                                        <div className="flex justify-start space-x-2">
+                                                            <span className="text-gray-800 font-bold">•</span>
+                                                            <span className="block text-sm text-gray-800 font-medium">
+                                                                {fm.name || "Unnamed"}
+                                                            </span>   
+                                                        </div>                                                       
                                                         <span
                                                             className={`block text-sm capitalize ${
                                                                 fm.relationship === "other" ? "text-red-600" : "text-gray-600"
@@ -139,7 +142,7 @@ export default function MemberProfilePage() {
                             </div>
 
                             {/* Right Column */}
-                            <div className="flex flex-col gap-3 flex-1">
+                            <div className="flex flex-col gap-3 flex-1 space-y-4">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">
                                         Address
