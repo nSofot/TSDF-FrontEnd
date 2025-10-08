@@ -42,7 +42,8 @@ export default function Header() {
 
   const roleBasedNavLinks = {
     common: [
-      { path: "/control/", label: "Home", icon: <FaHome /> },
+      { path: "/", label: "Home", icon: <FaHome /> },
+      { path: "/control/", label: "Dashboard", icon: <FaRegUser /> },
       { path: "/control/members", label: "Members", icon: <FaUsers /> },
       { path: "/control/cash-book", label: "Cash Book", icon: <FaBook /> },
       { path: "/contact", label: "Shares", icon: <FaChartPie /> },      
