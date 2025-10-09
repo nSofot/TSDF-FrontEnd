@@ -39,24 +39,7 @@ export default function FundTransferPage() {
         }
       };
       fetchAllAccounts();
-    }, [isLoading]);
-
-
-    // const handleFromAccountChange = (e) => {
-    //   const value = e.target.value;
-    //   setAccountFrom(value);
-    //   const selected = accounts.find((a) => a.accountId === value || a._id === value);
-    //   setAccountFromBalance(selected?.accountBalance ?? 0);
-    //   setTransferAmount("");
-    // };
-
-    // const handleToAccountChange = (e) => {
-    //   const value = e.target.value;
-    //   setAccountTo(value);
-    //   const selected = accounts.find((a) => a.accountId === value || a._id === value);
-    //   setAccountToBalance(selected?.accountBalance ?? 0);
-    //   setTransferAmount("");
-    // };    
+    }, [isLoading]);    
 
     const handleTransfer = async () => {
       const token = localStorage.getItem("token");
@@ -166,12 +149,12 @@ export default function FundTransferPage() {
         <div className="max-w-5xl p-2 w-full h-full flex flex-col space-y-6 overflow-hidden">
             {/* HEADER */}
             <div className="text-left p-2 sticky top-0 z-10">
-                <h1 className="text-lg md:text-2xl font-bold">🔁 මුදල් මාරු කිරීම්</h1>
+                <h1 className="text-lg md:text-2xl font-bold text-orange-600">🔁 මුදල් මාරු කිරීම්</h1>
                 <p className="text-gray-600 text-sm sm:text-base">සියලුම අභ්‍යන්තර මුදල් චලනයන් කළමනාකරණය කිරීම.</p>
             </div>
 
             {/* DATES */}
-            <div className="bg-gray-50 shadow-lg rounded-xl p-6 space-y-4 border-l-6 border-orange-500">
+            <div className="bg-gray-50 shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-orange-500">
                 <div>
                     <label className="text-xs font-semibold text-orange-600">දිනය</label>
                     <input
@@ -297,7 +280,7 @@ export default function FundTransferPage() {
 
                 <button
                     disabled={isSubmitting}
-                    onClick={() => navigate(-1)}
+                    onClick={() => navigate('/control')}
                     className="w-full h-12 text-gray-600 border border-gray-600 hover:bg-gray-700 rounded-lg font-semibold transition mb-4"
                 >
                     ආපසු යන්න

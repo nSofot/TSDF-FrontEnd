@@ -367,8 +367,8 @@ export default function LoanRepaymentPage() {
     return (
         <div className="max-w-5xl w-full h-full flex flex-col space-y-6 overflow-hidden">
             {/* Header */}
-            <div className="text-center border-b pb-2 space-y-1">
-                <h1 className="text-lg md:text-2xl font-bold text-gray-800">🧾 ණය ආපසු ගෙවීම</h1>
+            <div className="text-center space-y-1">
+                <h1 className="text-lg md:text-2xl font-bold text-orange-600">🧾 ණය ආපසු ගෙවීම</h1>
                 <p className="text-sm text-gray-600">
                     ණය වාරික සහ පොලී ගෙවීම් පිළිබඳ විස්තර සහ ගෙවීම් සිදුකිරීම.
                 </p>
@@ -377,7 +377,7 @@ export default function LoanRepaymentPage() {
             <div className="bg-white shadow rounded-md max-h-[calc(100vh-230px)] space-y-8 overflow-y-auto">
          
                 {/* Applicant Card */}
-                <div className="bg-white shadow-md rounded-xl border-l-6 border-blue-500 p-6 space-y-4">
+                <div className="bg-white shadow-md rounded-xl border-l-4 border-blue-500 p-6 space-y-4">
                     <div>
                         <label className="block text-sm font-medium text-blue-500 mb-1">
                             සාමාජික අංකය
@@ -442,7 +442,7 @@ export default function LoanRepaymentPage() {
                 {isLoadingLoan ? (
                 <LoadingSpinner />
                 ) : loanDetails && loanDetails.loanId ? (
-                    <div className="bg-white shadow-md rounded-xl border-l-6 border-pink-500 p-6 space-y-3">
+                    <div className="bg-white shadow-md rounded-xl border-l-4 border-pink-500 p-6 space-y-3">
                         <h2 className="font-semibold text-pink-500">📊 ණය විස්තර</h2>
                         <div className="space-y-2 text-sm text-pink-500">
                             <div className="flex justify-between">
@@ -484,7 +484,7 @@ export default function LoanRepaymentPage() {
                     {/* Payment Section */}
                     {loanDetails && loanDetails.loanId ? (
                     <>
-                        <div className="bg-white shadow-md rounded-xl border-l-6 border-orange-500 p-6 space-y-4">
+                        <div className="bg-white shadow-md rounded-xl border-l-4 border-orange-500 p-6 space-y-4">
                             <h2 className="font-semibold text-orange-500">💰 ගෙවීම් විස්තර</h2>
 
                             <div>

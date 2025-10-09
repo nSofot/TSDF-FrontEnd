@@ -5,223 +5,151 @@ import { formatNumber } from "../../utils/numberFormat.js";
 import { FaMoneyCheckAlt, FaUserClock, FaHandHoldingUsd } from "react-icons/fa";
 
 export default function ControlHomePage() {
-    const token = localStorage.getItem("token");
-    const [isLoading, setIsLoading] = useState(true);
-    const [customers, setCustomers] = useState([]);
-    const [pendingApprovals, setPendingApprovals] = useState([]);
-    const [pendingLoans, setPendingLoans] = useState([]);
-    const [cashRegister, setCashRegister] = useState([]);
-    const [bankRegister, setBankRegister] = useState([]);
-    const [loanRegister, setLoanRegister] = useState([]);
+  const token = localStorage.getItem("token");
+  const [isLoading, setIsLoading] = useState(true);
+  const [customers, setCustomers] = useState([]);
+  const [pendingApprovals, setPendingApprovals] = useState([]);
+  const [pendingLoans, setPendingLoans] = useState([]);
+  const [cashRegister, setCashRegister] = useState([]);
+  const [bankRegister, setBankRegister] = useState([]);
+  const [loanRegister, setLoanRegister] = useState([]);
 
-    useEffect(() => {
-      const fetchData = async () => {
-        try {
-          setIsLoading(true);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
 
-          // 1️⃣ Fetch customers
-          const cusRes = await axios.get(
-            import.meta.env.VITE_BACKEND_URL + "/api/customer"
-          );
-          const customers = cusRes.data;
-          setCustomers(customers);
+        // Fetch customers
+        const cusRes = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/customer`);
+        const customers = cusRes.data;
+        setCustomers(customers);
 
-          // 2️⃣ Fetch pending approvals & grants
-          const [approvalsRes, loansRes] = await Promise.all([
-            axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/loanMaster/approval`),
-            axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/loanMaster/grant`),
-          ]);
+        // Fetch pending approvals & grants
+        const [approvalsRes, loansRes] = await Promise.all([
+          axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/loanMaster/approval`),
+          axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/loanMaster/grant`),
+        ]);
 
-          setPendingApprovals(
-            approvalsRes.data.map((loan) => ({
-              ...loan,
-              customerName:
-                customers.find((c) => String(c.customerId) === String(loan.customerId))
-                  ?.name || "Unknown",
-            }))
-          );
+        setPendingApprovals(
+          approvalsRes.data.map((loan) => ({
+            ...loan,
+            customerName:
+              customers.find((c) => String(c.customerId) === String(loan.customerId))?.name ||
+              "Unknown",
+          }))
+        );
 
-          setPendingLoans(
-            loansRes.data.map((loan) => ({
-              ...loan,
-              customerName:
-                customers.find((c) => String(c.customerId) === String(loan.customerId))
-                  ?.name || "Unknown",
-            }))
-          );
+        setPendingLoans(
+          loansRes.data.map((loan) => ({
+            ...loan,
+            customerName:
+              customers.find((c) => String(c.customerId) === String(loan.customerId))?.name ||
+              "Unknown",
+          }))
+        );
 
-          // 3️⃣ Fetch cash register
-          const cashRegisterRes = await axios.get(
-            import.meta.env.VITE_BACKEND_URL + "/api/ledgerAccounts"
-          );
-          const cashAccounts = cashRegisterRes.data.filter(
-            (account) => account.headerAccountId === "325"
-          );
-          setCashRegister(cashAccounts);
-          const bankAccounts = cashRegisterRes.data.filter(
-            (account) => account.headerAccountId === "327"
-          );
-          setBankRegister(bankAccounts);     
-          const loanAccounts = cashRegisterRes.data.filter(
-            (account) => account.headerAccountId === "330"
-          );
-          setLoanRegister(loanAccounts);               
-        } catch (err) {
-          console.error("Fetch error:", err);
-        } finally {
-          setIsLoading(false);
-        }
-      };
+        // Fetch ledger accounts
+        const cashRegisterRes = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/ledgerAccounts`);
+        const accounts = cashRegisterRes.data;
 
-      fetchData();
-    }, []);
+        setCashRegister(accounts.filter((a) => a.headerAccountId === "325"));
+        setBankRegister(accounts.filter((a) => a.headerAccountId === "327"));
+        setLoanRegister(accounts.filter((a) => a.headerAccountId === "330"));
+      } catch (err) {
+        console.error("Fetch error:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-    if (isLoading) return <LoadingSpinner />;
+    fetchData();
+  }, []);
 
-    return (
-        <div className="max-w-4xl w-full h-full flex flex-col overflow-hidden">
-            {/* PAGE HEADER */}
-            <div className="sticky top-0 z-30 text-orange-600 p-4 sticky top-0 z-10 border border-orange-600 rounded-md">
-                <h1 className="text-lg md:text-2xl font-bold">🖥️ පාලන පුවරුව</h1>
-                <p className="text-sm opacity-80">ණය සහ මූල්‍ය දළ විශ්ලේෂණය</p>
-            </div>
+  if (isLoading) return <LoadingSpinner />;
 
-            {/* SCROLLABLE CONTENT */}
-            <div className="bg-orange-200 shadow rounded-md max-h-[calc(100vh-200px)] overflow-y-auto mt-4">
+  const Card = ({ title, icon, children }) => (
+    <div className="bg-white shadow-md rounded-xl border-l-4 border-orange-600 p-4 flex flex-col gap-3 hover:shadow-lg transition-shadow duration-200">
+      <h2 className="flex items-center gap-2 text-gray-700 font-semibold text-lg">
+        {icon} {title}
+      </h2>
+      {children}
+    </div>
+  );
 
-                {/* Pending Approvals */}
-                <div className="bg-orange-100 rounded-xl shadow-md p-4">
-                    <h2 className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                        <FaUserClock className="text-blue-500" /> අනුමැතිය සඳහා පොරොත්තු ණය අයදුම්පත්
-                    </h2>
-                    {pendingApprovals.length > 0 ? (
-                        <div className="mt-3 space-y-3">
-                          {pendingApprovals.map((loan) => (
-                            <div
-                                key={loan._id}
-                                className="p-3 rounded-lg border bg-gradient-to-r from-blue-50 to-blue-100 flex justify-between items-center"
-                            >
-                                <div>
-                                    <p className="font-medium text-gray-800">{loan.customerName}</p>
-                                    <p className="text-xs text-gray-500">
-                                        ID: {loan.customerId} • {loan.loanType}
-                                    </p>
-                                </div>
-                                <span className="text-blue-700 font-semibold">
-                                    {formatNumber(loan.amount)}
-                                </span>
-                            </div>
-                          ))}
-                        </div>
-                    ) : (
-                      <p className="text-gray-400 mt-3 text-sm">No pending approvals</p>
-                    )}
-                </div>
+  const AccountItem = ({ name, balance }) => (
+    <div className="flex justify-between items-center p-3 rounded-md bg-gray-50 border border-gray-200">
+      <span className="font-medium text-gray-800">{name}</span>
+      <span className="font-semibold text-gray-700">{formatNumber(balance)}</span>
+    </div>
+  );
 
-                {/* Pending Loans */}
-                <div className="bg-orange-100 rounded-xl shadow-md p-4">
-                  <h2 className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                    <FaHandHoldingUsd className="text-green-500" /> නිකුත් කිරීම සඳහා පොරොත්තු ණය
-                  </h2>
-                  {pendingLoans.length > 0 ? (
-                    <div className="mt-3 space-y-3">
-                      {pendingLoans.map((loan) => (
-                        <div
-                          key={loan._id}
-                          className="p-3 rounded-lg border bg-gradient-to-r from-green-50 to-green-100 flex justify-between items-center"
-                        >
-                          <div>
-                            <p className="font-medium text-gray-800">{loan.customerName}</p>
-                            <p className="text-xs text-gray-500">
-                              ID: {loan.customerId} • {loan.loanType}
-                            </p>
-                          </div>
-                          <span className="text-green-700 font-semibold">
-                            {formatNumber(loan.amount)}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-gray-400 mt-3 text-sm">No pending loans</p>
-                  )}
-                </div>
+  const LoanItem = ({ customerName, customerId, loanType, amount }) => (
+    <div className="flex justify-between items-center p-3 rounded-md bg-blue-50 border border-blue-100 hover:bg-blue-100 transition-colors">
+      <div>
+        <p className="font-medium text-gray-800">{customerName}</p>
+        <p className="text-sm text-gray-500">
+          ID: {customerId} • {loanType}
+        </p>
+      </div>
+      <span className="font-semibold text-blue-700">{formatNumber(amount)}</span>
+    </div>
+  );
 
-                {/* Cash Register */}
-                <div className="bg-orange-100 rounded-xl shadow-md p-4">
-                  <h2 className="text-sm font-semibold text-gray-700 flex items-center gap-2 mb-1">
-                    <FaMoneyCheckAlt className="text-yellow-500" /> මුදල් ගිණුම්
-                  </h2>
-                  {cashRegister && cashRegister.length > 0 ? (
-                    cashRegister.map((account) => (
-                      <div
-                        key={account._id}
-                        className="p-3 rounded-lg border border-orange-200 bg-gradient-to-r from-orange-50 to-orange-100 flex justify-between items-center"
-                      >
-                        <div>
-                          <p className="font-medium text-gray-800">{account.accountName}</p>
-                          {/* <p className="text-xs text-gray-500">ID: {account.accountId}</p> */}
-                        </div>
-                        <span className="text-yellow-700 font-semibold">
-                          {formatNumber(account.accountBalance)}
-                        </span>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-gray-400 mt-3 text-sm">No cash register found</p>
-                  )}
-                </div>
+  return (
+    <div className="max-w-6xl mx-auto p-2 flex flex-col gap-6">
+      {/* Header */}
+      <div className="flex flex-col items-start md:items-center gap-2">
+        <h1 className="text-2xl md:text-3xl font-bold text-orange-600">🖥️ පාලන පුවරුව</h1>
+        <p className="text-gray-600 text-sm md:text-base">ණය සහ මූල්‍ය දළ විශ්ලේෂණය</p>
+      </div>
 
-                {/* Bank Register */}
-                <div className="bg-orange-100 rounded-xl shadow-md p-4">
-                  <h2 className="text-sm font-semibold text-gray-700 flex items-center gap-2 mb-1">
-                    <FaMoneyCheckAlt className="text-yellow-500" /> බැංකු ගිණුම්
-                  </h2>
-                  {bankRegister && bankRegister.length > 0 ? (
-                    bankRegister.map((account) => (
-                      <div
-                        key={account._id}
-                        className="p-3 rounded-lg border border-orange-200 bg-gradient-to-r from-orange-50 to-orange-100 flex justify-between items-center"
-                      >
-                        <div>
-                          <p className="font-medium text-gray-800">{account.accountName}</p>
-                          {/* <p className="text-xs text-gray-500">ID: {account.accountId}</p> */}
-                        </div>
-                        <span className="text-yellow-700 font-semibold">
-                          {formatNumber(account.accountBalance)}
-                        </span>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-gray-400 mt-3 text-sm">No bank accounts found</p>
-                  )}
-                </div>
+      {/* Grid Layout */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        {/* Pending Approvals */}
+        <Card title="අනුමැතිය සඳහා පොරොත්තු ණය අයදුම්පත්" icon={<FaUserClock className="text-blue-500 " />}>
+          {pendingApprovals.length > 0 ? (
+            pendingApprovals.map((loan) => <LoanItem key={loan._id} {...loan} />)
+          ) : (
+            <p className="text-gray-400 text-sm">No pending approvals</p>
+          )}
+        </Card>
 
-                {/* Loan Register */}
-                <div className="bg-orange-100 rounded-xl shadow-md p-4">
-                  <h2 className="text-sm font-semibold text-gray-700 flex items-center gap-2 mb-1">
-                    <FaMoneyCheckAlt className="text-yellow-500" /> ණය ගිණුම්
-                  </h2>
-                  {loanRegister && loanRegister.length > 0 ? (
-                    loanRegister.map((account) => (
-                      <div
-                        key={account._id}
-                        className="p-3 rounded-lg border border-orange-200 bg-gradient-to-r from-orange-50 to-orange-100 flex justify-between items-center"
-                      >
-                        <div>
-                          <p className="font-medium text-gray-800">{account.accountName}</p>
-                          {/* <p className="text-xs text-gray-500">ID: {account.accountId}</p> */}
-                        </div>
-                        <span className="text-yellow-700 font-semibold">
-                          {formatNumber(account.accountBalance)}
-                        </span>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-gray-400 mt-3 text-sm">No loan accounts found</p>
-                  )}
-                </div>
-            </div>
-        </div>
-    );
+        {/* Pending Loans */}
+        <Card title="නිකුත් කිරීම සඳහා පොරොත්තු ණය" icon={<FaHandHoldingUsd className="text-green-500" />}>
+          {pendingLoans.length > 0 ? (
+            pendingLoans.map((loan) => <LoanItem key={loan._id} {...loan} />)
+          ) : (
+            <p className="text-gray-400 text-sm">No pending loans</p>
+          )}
+        </Card>
+
+        {/* Cash Register */}
+        <Card title="මුදල් ගිණුම්" icon={<FaMoneyCheckAlt className="text-yellow-500" />}>
+          {cashRegister.length > 0 ? (
+            cashRegister.map((acc) => <AccountItem key={acc._id} name={acc.accountName} balance={acc.accountBalance} />)
+          ) : (
+            <p className="text-gray-400 text-sm">No cash accounts found</p>
+          )}
+        </Card>
+
+        {/* Bank Register */}
+        <Card title="බැංකු ගිණුම්" icon={<FaMoneyCheckAlt className="text-yellow-500" />}>
+          {bankRegister.length > 0 ? (
+            bankRegister.map((acc) => <AccountItem key={acc._id} name={acc.accountName} balance={acc.accountBalance} />)
+          ) : (
+            <p className="text-gray-400 text-sm">No bank accounts found</p>
+          )}
+        </Card>
+
+        {/* Loan Register */}
+        <Card title="ණය ගිණුම්" icon={<FaMoneyCheckAlt className="text-yellow-500" />}>
+          {loanRegister.length > 0 ? (
+            loanRegister.map((acc) => <AccountItem key={acc._id} name={acc.accountName} balance={acc.accountBalance} />)
+          ) : (
+            <p className="text-gray-400 text-sm">No loan accounts found</p>
+          )}
+        </Card>
+      </div>
+    </div>
+  );
 }

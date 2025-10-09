@@ -6,14 +6,17 @@ import toast from "react-hot-toast";
 import HeaderControl from "../components/headerControl";
 import ControlHomePage from "./control/controlHomePage";
 import MembersPage from "./control/membersPage";
+import SharesPage from "./control/sharesPage";
 import ApplyLoanPage from "./control/applyLoanPage";
 import ApproveLoanPage from "./control/approveLoan";
 import LoanGrantPage from "./control/loanGrantPage";
 import LoanRepaymentPage from "./control/loanRepayment";
+import ReceiptSharesPage from "./control/receiptSharesPage";
 import ReceiptMembershipPage from "./control/receiptMembershipPage";
 import CashBook from "./control/cashRegister";
 import LedgerLoan from "./control/ledgerLoan";
 import MemberLedger from "./control/memberLedger";
+import SharesLedgerPage from "./control/sharesLedger";
 import FundTransferPage from "./control/fundTransferPage";
 import ExpensePage from "./control/expensePage";
 import OtherExpensePage from "./control/otherExpensePage";
@@ -90,17 +93,20 @@ export default function ControlPage() {
       <Route path="*" element={<Layout />}>
         <Route index element={<ControlHomePage />} />
         <Route path="members" element={<MembersPage />} />
+        <Route path="shares" element={<SharesPage />} />
         <Route path="apply-loan" element={<ApplyLoanPage />} />
         <Route path="approve-loan" element={<ApproveLoanPage />} />
         <Route path="grant-loan" element={<LoanGrantPage />} />
         <Route path="loan-repayment" element={<LoanRepaymentPage />} />
+        <Route path="receipts-shares" element={<ReceiptSharesPage />} />
         <Route path="receipts-membership" element={<ReceiptMembershipPage />} />
         <Route path="cash-book" element={<CashBook />} />
         <Route path="ledger-loan" element={<LedgerLoan />} />
         <Route path="ledger-membership" element={<MemberLedger />} />
+        <Route path="ledger-shares" element={<SharesLedgerPage />} />
         <Route path="fund-transfer" element={<FundTransferPage />} />
         <Route path="expense" element={<ExpensePage />} />
-        <Route path="expense-other" element={<OtherExpensePage />} />
+        <Route path="expense-others" element={<OtherExpensePage />} />
         <Route path="income" element={<IncomePage />} />
         <Route path="add-customer-secretary" element={<AddCustomerBySecratary />} />
         <Route path="edit-customer-secretary" element={<EditCustomerBySecratary />} />

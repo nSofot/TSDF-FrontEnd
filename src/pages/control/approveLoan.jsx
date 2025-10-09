@@ -325,15 +325,15 @@ export default function ApproveLoanPage() {
         <div className="max-w-5xl w-full h-full flex flex-col space-y-6 overflow-hidden">
           
             {/* Header */}
-            <div className="text-center p-2 border-b sticky top-0 z-10">
-              <h1 className="text-lg md:text-2xl font-bold text-gray-800">🛒 ණය අයදුම්පත් අනුමත කිරීම</h1>
+            <div className="text-center p-2">
+              <h1 className="text-lg md:text-2xl font-bold text-orange-600">🛒 ණය අයදුම්පත් අනුමත කිරීම</h1>
               <p className="text-gray-600 text-sm sm:text-base">අයදුම්පත් තොරතුරු තහවුරු කර ණය අනුමත කිරීම.</p>
             </div>
 
             <div className="bg-white shadow rounded-md max-h-[calc(100vh-200px)] space-y-8 overflow-y-auto">
 
                 {/* Applicant Info Card */}
-                <div className="bg-white shadow-lg rounded-xl p-6 border-l-6 border-indigo-500">
+                <div className="bg-white shadow-lg rounded-xl p-6 border-l-4 border-indigo-500">
                     {/* <div className="flex flex-col md:flex-row md:items-center gap-1">
                         <label className="font-semibold text-indigo-700 w-40">සාමාජික අංකය:</label>
                         <input
@@ -402,7 +402,7 @@ export default function ApproveLoanPage() {
                 </div>
 
                 {/* Membership Table */}
-                <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-6 border-purple-500">
+                <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-purple-500">
                     <p className="font-semibold text-purple-700">සාමාජික ගාස්තු පිළිබඳ විස්තර</p>
                     <table className="min-w-full bg-white rounded-lg overflow-hidden shadow-md text-sm sm:text-base">
                       <thead className="bg-purple-50 text-purple-700">
@@ -429,7 +429,7 @@ export default function ApproveLoanPage() {
                 </div>
 
                 {/* Loan Table */}
-                <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-6 border-orange-500">
+                <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-orange-500">
                     <p className="text-orange-600 font-semibold text-sm sm:text-base">ලබාගෙන ඇති අනෙකුත් ණය:</p>
                     <table className="w-full border-collapse text-sm">
                       <thead className="bg-orange-50 text-orange-700 font-semibold">
@@ -458,7 +458,7 @@ export default function ApproveLoanPage() {
                 </div>
 
                 {/* Loan Summary Card */}
-                <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-6 border-pink-500">
+                <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-pink-500">
                     <p className="text-pink-600 font-semibold sm:text-base">අයදුම් කළ ණය පිළිබඳ විස්තර:</p>
                     <div className="flex justify-between">
                       <span className="font-medium text-pink-500">ණය වර්ගය:</span>
@@ -483,7 +483,7 @@ export default function ApproveLoanPage() {
                 </div>
 
                 {/* Approval Checkboxes */}
-                <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-6 border-teal-600">
+                <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-teal-600">
                     <p className="text-teal-600 font-semibold text-sm sm:text-base">ණය අනුමත කිරීම:</p>
                     
                     {selectedLoanType === "ව්යාපෘති ණය" ||  selectedLoanType === "දිගු කාලීන ණය" && (
@@ -551,7 +551,7 @@ export default function ApproveLoanPage() {
                 </div> 
 
                 {/* Reason */}
-                <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-6 border-blue-500">
+                <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-blue-500">
                     <p className="text-blue-600 font-semibold sm:text-base">ඉදිරිපත් කළ ණය අයදුම්පත:</p>
                     <textarea
                       className={`w-full rounded p-2 focus:ring-2 focus:ring-blue-400 ${!isEligible ? "text-red-600" : "text-blue-600"}`}
@@ -591,7 +591,7 @@ export default function ApproveLoanPage() {
                     </button>
 
                     <button
-                      onClick={() => navigate(-1)}
+                      onClick={() => navigate('/control')}
                       className="w-full h-12 text-gray-600 border border-gray-600 hover:bg-gray-700 rounded-lg font-semibold transition mb-4"
                     >
                       ආපසු යන්න

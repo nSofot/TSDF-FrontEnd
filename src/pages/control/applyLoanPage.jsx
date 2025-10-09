@@ -407,14 +407,14 @@ export default function ApplyLoanPage() {
         <div className="max-w-5xl w-full h-full flex flex-col space-y-6 overflow-hidden">
 
             {/* Header */}
-            <div className="text-center p-2 sticky border-b bg-white top-0 z-10">
-                <h1 className="text-lg md:text-2xl font-bold text-gray-800 mb-1">🛒 ණය අයදුම්පත</h1>
+            <div className="text-center p-2 bg-white">
+                <h1 className="text-lg md:text-2xl font-bold text-orange-600 mb-1">🛒 ණය අයදුම්පත</h1>
                 <p className="text-gray-600 text-sm">ඉක්මනින් සහ ආරක්ෂිතව ණයක් සඳහා අයදුම් කරන්න.</p>
             </div>
 
             <div className="bg-white shadow rounded-md max-h-[calc(100vh-230px)] space-y-8 overflow-y-auto">
                 {/* Applicant Info Card */}
-                <div className="bg-white shadow-lg rounded-xl p-6 border-l-6 border-indigo-500">
+                <div className="bg-white shadow-lg rounded-xl p-6 border-l-4 border-indigo-500">
                     <div className="flex flex-col md:flex-row md:items-center gap-1">
                         <label className="font-semibold text-indigo-700 w-40">සාමාජික අංකය:</label>
                         
@@ -467,7 +467,7 @@ export default function ApplyLoanPage() {
                 </div>
 
                 {/* Loan Table */}
-                <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-6 border-orange-500">
+                <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-orange-500">
                     <p className="text-orange-600 font-semibold sm:text-base">ලබාගෙන ඇති අනෙකුත් ණය:</p>
                     <table className="w-full border-collapse text-sm">
                         <thead className="bg-orange-50 text-orange-700 font-semibold">
@@ -496,7 +496,7 @@ export default function ApplyLoanPage() {
                 </div>
 
                 {/* Loan Application Inputs */}
-                <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-6 border-pink-500">
+                <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-pink-500">
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         {/* Loan Type */}
                         <div>
@@ -598,7 +598,7 @@ export default function ApplyLoanPage() {
                 )}
 
                 {/* Reason */}
-                <div className="h-auto bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-6 border-blue-500">
+                <div className="h-auto bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-blue-500">
                     <p className="text-blue-600 font-semibold sm:text-base">ඉදිරිපත් කළ ණය අයදුම්පත:</p>
                     <textarea
                         className={`w-full h-auto focus:ring-2 focus:ring-blue-400 ${!isEligible ? "text-blue-600" : "text-blue-600"}`}

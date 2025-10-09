@@ -120,15 +120,15 @@ export default function LedgerLoanPage() {
     return (
         <div className="flex flex-col  max-w-5xl mx-auto min-h-screen">
             {/* HEADER */}
-            <div className="sticky top-0 z-30 bg-gradient-to-r from-blue-500 to-indigo-500 text-white p-4 shadow-md flex flex-col md:flex-row md:items-center md:justify-between gap-3 rounded-b-lg">
+            <div className="p-4 shadow-md flex flex-col md:flex-row md:items-center md:justify-between gap-3">
                 <div>
-                    <h1 className="text-xl font-bold">💵 ණය ලෙජරය</h1>
+                    <h1 className="text-lg md:text-2xl font-bold text-orange-600">💵 ණය ලෙජරය</h1>
                     <p className="text-xs opacity-90">සියලුම ණය ගනුදෙනු සහ ශේෂයන් නිරීක්ෂණය කරන්න</p>
                 </div>
             </div>
 
             {/* Applicant Card */}
-            <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-indigo-500 mt-6">
+            <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-indigo-500 mt-8">
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                         සාමාජික අංකය
@@ -209,7 +209,7 @@ export default function LedgerLoanPage() {
             ) : loanTransactions && loanTransactions.length > 0 ? (
                 <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-indigo-500 mt-6">
 
-                    <div className="flex justify-between w-full bg-green-50 border border-green-200 rounded-lg p-3 text-center font-medium text-green-700">
+                    <div className="flex justify-between w-full bg-green-50 border border-green-200 rounded-lg text-center font-medium text-green-700">
                         <label className="block text-sm font-medium">
                             ගිණුම් ශේෂය
                         </label>

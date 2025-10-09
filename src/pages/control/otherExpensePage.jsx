@@ -255,14 +255,14 @@ export default function OtherExpensePage() {
     };
 
     return (
-        <div className="max-w-5xl w-full h-full flex flex-col space-y-6 overflow-hidden">
-            <div className="bg-white shadow rounded-md max-h-[calc(100vh-120px)] space-y-8 overflow-y-auto">
-                <div className="bg-gray-50 shadow-lg rounded-xl p-6 space-y-4 border-l-6 border-green-700">
-                    <h1 className="text-lg md:text-2xl font-bold text-green-700">💸 වෙනත් වියදම්</h1>
-                    <p className="text-gray-600 text-sm sm:text-base text-green-700">වෙනත් වියදම් කළමනාකරණය.</p>
+        <div className="max-w-5xl p-2 w-full h-full flex flex-col overflow-hidden">
+            <div className="bg-white shadow rounded-md max-h-[calc(100vh-120px)] space-y-6 overflow-y-auto">
+                <div className="p-4 space-y-2">
+                    <h1 className="text-lg md:text-2xl font-bold text-orange-600">💸 වෙනත් වියදම්</h1>
+                    <p className="text-gray-600 text-sm sm:text-base">වෙනත් වියදම් කළමනාකරණය.</p>
                 </div>
 
-                <div className="bg-gray-50 shadow-lg rounded-xl p-6 space-y-4 border-l-6 border-orange-500">
+                <div className="bg-gray-50 shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-orange-500">
                     <div>
                         <label className="text-xs font-semibold text-orange-600">දිනය</label>
                         <input
@@ -376,7 +376,7 @@ export default function OtherExpensePage() {
                 </div>
                 {error && <p className="px-4 text-red-600 text-sm">{error}</p>}
 
-                <div className="flex flex-col sm:flex-row gap-4 mt-4">
+                <div className="flex flex-col sm:flex-row gap-4 mt-8">
                     <button
                         disabled={isSubmitting || isSubmitted}
                         className={`rounded-lg w-full h-12 text-white font-semibold ${isSubmitting || isSubmitted ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700"}`}

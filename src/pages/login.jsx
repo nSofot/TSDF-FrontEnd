@@ -113,6 +113,9 @@ export default function LoginPage() {
             Forgot Password?
           </Link>
         </div>
+      <p className="mt-8 text-sm text-gray-600 text-center">
+        © 2025 nSoft Technologies. All rights reserved.
+      </p>        
       </div>
     </div>
   );

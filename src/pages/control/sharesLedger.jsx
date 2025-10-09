@@ -4,10 +4,10 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import LoadingSpinner from "../../components/loadingSpinner";
 import { formatNumber } from "../../utils/numberFormat.js";
-import ViewMemberLedger from "../../components/viewMemberLedger.jsx";
+import ViewSharesLedger from "../../components/viewSharesLedger.jsx";
 
 
-export default function MemberLedger() {
+export default function SharesLedgerPage() {
     const navigate = useNavigate();
     const [applicantId, setApplicantId] = useState("");
     const [applicant, setApplicant] = useState({});
@@ -52,10 +52,10 @@ export default function MemberLedger() {
 
     return (
         <div className="max-w-5xl w-full h-full flex flex-col space-y-6 overflow-hidden">
-            <div className="bg-white shadow rounded-md max-h-[calc(100vh-120px)] space-y-6 overflow-y-auto">
-                <div className="p-6 space-y-4">
-                    <h1 className="text-lg md:text-2xl font-bold text-orange-700">💵 සාමාජික මුදල් ලෙජරය</h1>
-                    <p className="text-gray-600 text-sm sm:text-base">සියලුම සාමාජික මුදල් ගනුදෙනු සහ ශේෂයන් නිරීක්ෂණය කරන්න</p>
+            <div className="bg-white shadow rounded-md max-h-[calc(100vh-120px)] space-y-8 overflow-y-auto">
+                <div className="p-4 space-y-2">
+                    <h1 className="text-lg md:text-2xl font-bold text-orange-700">💵 කොටස් මුදල් ලෙජරය</h1>
+                    <p className="text-gray-600 text-sm sm:text-base">සියලුම කොටස් මුදල් ගනුදෙනු සහ ශේෂයන් නිරීක්ෂණය කරන්න</p>
                 </div>
             
 
@@ -113,7 +113,7 @@ export default function MemberLedger() {
                                 <label className="block text-sm font-medium">
                                     ගිණුම් ශේෂය
                                 </label>
-                                Rs. {formatNumber(applicant?.membership) || ""}
+                                Rs. {formatNumber(applicant?.shares) || ""}
                             </div>
                         </div>
                     ) : (
@@ -123,18 +123,18 @@ export default function MemberLedger() {
                     
                 {applicant ? (
                     <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-indigo-500 mt-6">
-                        <ViewMemberLedger customerId={applicant.customerId} />
+                        <ViewSharesLedger customerId={applicant.customerId} />
                     </div>
                 ) : (
                     <p className="text-center text-gray-500 mt-6">සාමාජික ගිණුමක් සොයාගත නොහැක.</p>
                 )}
             </div>
-                <button
-                    onClick={() => navigate('/control')}
-                    className="w-full h-12 text-gray-600 border border-gray-600 hover:bg-gray-700 rounded-lg font-semibold transition mb-4"
-                >
-                    ආපසු යන්න
-                </button>             
+            <button
+                onClick={() => navigate('/control')}
+                className="w-full h-12 text-gray-600 border border-gray-600 hover:bg-gray-700 rounded-lg font-semibold transition mb-4"
+            >
+                ආපසු යන්න
+            </button>             
         </div>
     );
 }
