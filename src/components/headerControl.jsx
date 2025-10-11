@@ -63,6 +63,7 @@ export default function Header() {
       { path: "/control/fund-transfer", label: "Fund Transfer", icon: <FaExchangeAlt /> },
       { path: "/control/ledger-membership", label: "Membership Ledger", icon: <FaAddressBook /> },
       { path: "/control/ledger-loan", label: "Loan Ledger", icon: <FaClipboardList /> },
+      { path: "/control/ledger-shares", label: "Shares Ledger", icon: <FaBook /> },
     ],
     manager: [
       { path: "/control/apply-loan", label: "Apply Loan", icon: <FaFileSignature /> },
