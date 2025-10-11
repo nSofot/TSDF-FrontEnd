@@ -3,7 +3,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import LoadingSpinner from "../../components/loadingSpinner.jsx";
-import { ArrowLeft, SendHorizontal, Search } from "lucide-react";
+import { ArrowLeft, SendHorizontal, Search, DivideIcon } from "lucide-react";
 
 export default function ExpensePage() {
   const [accounts, setAccounts] = useState([]);
@@ -15,7 +15,15 @@ export default function ExpensePage() {
   const [accountFromBalance, setAccountFromBalance] = useState(0);
   const [voucherNo, setVoucherNo] = useState("");
   const [selectedExpenseType, setSelectedExpenseType] = useState("");
-  const [transferDate, setTransferDate] = useState(new Date().toISOString().split("T")[0]);
+
+    const formatLocalISODate = (d) => {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+  };
+  const [transferDate, setTransferDate] = useState(() => formatLocalISODate(new Date()));
+
   const [transferAmount, setTransferAmount] = useState(0);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -122,26 +130,78 @@ export default function ExpensePage() {
       user.memberRole === "treasurer" ? `TEXP-${Date.now()}` : `MEXP-${Date.now()}`;
 
     try {
-      await axios.put(`${import.meta.env.VITE_BACKEND_URL}/api/ledgerAccounts/subtract-balance`, {
-        updates: [{ accountId: accountFrom, amount: Number(transferAmount) }],
-      });
+      try {
+        await axios.put(`${import.meta.env.VITE_BACKEND_URL}/api/ledgerAccounts/subtract-balance`, {
+          updates: [{ accountId: accountFrom, amount: Number(transferAmount) }],
+        });
 
-      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/ledgerTransactions`, {
-        trxId: newReferenceNo,
-        trxBookNo: voucherNo,
-        trxDate: new Date(transferDate).toISOString(),
-        transactionType: "voucher",
-        accountId: accountFrom,
-        description: selectedExpenseType,
-        isCredit: true,
-        trxAmount: Number(transferAmount),
-      });
+        await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/ledgerTransactions`, {
+          trxId: newReferenceNo,
+          trxBookNo: voucherNo,
+          trxDate: new Date(transferDate).toISOString(),
+          transactionType: "voucher",
+          accountId: accountFrom,
+          description: selectedExpenseType + " - " + member.nme,
+          isCredit: true,
+          trxAmount: Number(transferAmount),
+        });
 
-      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/bookReferences`, {
-        transactionType: "voucher",
-        trxBookNo: String(voucherNo),
-        trxReference: String(newReferenceNo),
-      });
+        await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/bookReferences`, {
+          transactionType: "voucher",
+          trxBookNo: String(voucherNo),
+          trxReference: String(newReferenceNo),
+        });
+      } catch (err) {
+        console.error(err);
+        toast.error("❌ Failed to submit transfer. Try again.");
+        return;
+      }
+
+      if ((user.memberRole === "manager") && 
+        (selectedExpenseType === "ලාභ ආපසු ගෙවීම්" ||
+         selectedExpenseType === "කොටස් ආපසු ගෙවීම්" ||
+         selectedExpenseType === "අයකර ගැනීම්"
+         )) {
+
+        try {
+            const customerPayload = {
+                updates: [
+                    {
+                    customerId: memberId,
+                    amount: parseFloat(transferAmount) || 0,
+                    },
+                ],
+            };             
+            await axios.put(
+            `${import.meta.env.VITE_BACKEND_URL}/api/customer/shares-subtract`,
+            customerPayload
+            );
+        } catch (err) {
+          console.error(err);
+          toast.error("❌ Failed to submit transfer. Try again.");
+        }
+
+        try {
+            const trxPayload = {
+                trxId: newReferenceNo,
+                trxBookNo: voucherNo,
+                customerId: memberId,
+                transactionDate: new Date(transferDate).toISOString(),
+                trxAmount: parseFloat(transferAmount) || 0,
+                transactionType: "voucher", 
+                isCredit: true,
+                description: selectedExpenseType
+              };                
+            const res = await axios.post(
+                `${import.meta.env.VITE_BACKEND_URL}/api/sharesTransactions/create`,
+                trxPayload
+            );
+        } catch (err) {
+          console.error(err);
+          toast.error("❌ Failed to submit transfer. Try again.");
+        }
+        
+      }
 
       setIsSubmitted(true);
       toast.success("✅ සාර්ථකව ඉදිරිපත් කරන ලදී");
@@ -157,105 +217,78 @@ export default function ExpensePage() {
 
   return (
     <div className="max-w-4xl mx-auto w-full px-2 sm:px-6 py-6 space-y-6">
-      {/* HEADER */}
+
       <header className="text-center">
         <h1 className="text-lg md:text-2xl font-bold text-orange-600">💸 සාමාජිකයින් සඳහා ගෙවීම්</h1>
         <p className="text-gray-500 text-sm">සාමාජික ගෙවීම් සහ වියදම් කළමනාකරණය.</p>
       </header>
 
-      {/* MEMBER SECTION */}
-      <div className="bg-white shadow-lg rounded-xl border-l-4 border-green-700 overflow-hidden">
-        <button
-          className="w-full flex justify-between items-center px-4 py-3 font-medium text-green-700 hover:bg-green-50"
-          onClick={() => setShowMemberSection((prev) => !prev)}
-        >
-          <span>සාමාජික තොරතුරු</span>
-          {showMemberSection ? "▲" : "▼"}
-        </button>
-        {showMemberSection && (
-          <div className="p-4 space-y-4">
-            <div>
+      <div className="bg-white shadow-lg rounded-xl border-l-4 border-green-700 overflow-hidden flex flex-col p-6 space-y-6">
+          <div className="w-full flex flex-col gap-2">
               <label className="text-sm font-semibold text-gray-700">සාමාජික අංකය</label>
-              <div className="flex items-center gap-2 mt-1">
-                <input
+              <input
                   type="text"
-                  maxLength={3}
-                  disabled={isSubmitted || isSubmitting}
-                  value={memberId}
-                  onChange={(e) => setMemberId(e.target.value.replace(/\D/g, ""))}
-                  onBlur={() => memberId && searchMember(memberId)}
-                  className="flex-1 text-center border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-700 focus:ring-2 focus:ring-green-600"
+                  className="w-full border border-gray-300 rounded-lg p-2 text-center text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
                   placeholder="000"
-                />
-                <button
-                  disabled={!memberId || isSubmitting}
-                  onClick={() => searchMember(memberId)}
-                  className="p-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition"
-                >
-                  <Search size={18} />
-                </button>
-              </div>
-              {member?.name && (
-                <p className="mt-2 text-center font-semibold text-green-700 bg-green-50 py-2 rounded-lg">
-                  {member.name}
-                </p>
-              )}
-            </div>
+                  maxLength={3}
+                  value={memberId}
+                  onChange={async (e) => {
+                    const value = e.target.value;
+                    setMemberId(value);
+                    if (value.length === 3) await searchMember(value);
+                  }}
+              />
           </div>
-        )}
-      </div>
+          <div>
+            <label className="text-sm font-semibold text-gray-700">සාමාජිකයාගේ නම</label>
+            {member?.name && (
+              <p className="mt-2 text-center font-semibold text-gray-700 p-2 rounded-lg">
+                {member.nameSinhala || member.name}
+              </p>
+            )}
+          </div>
 
-      {/* VOUCHER & DETAILS SECTION */}
-      <div className="bg-white shadow-lg rounded-xl border-l-4 border-blue-700 overflow-hidden">
-        <button
-          className="w-full flex justify-between items-center px-4 py-3 font-medium text-blue-700 hover:bg-blue-50"
-          onClick={() => setShowVoucherSection((prev) => !prev)}
-        >
-          <span>වවුචර් & විස්තර</span>
-          {showVoucherSection ? "▲" : "▼"}
-        </button>
-        {showVoucherSection && (
-          <div className="p-4 space-y-4">
-            <div>
+
+          <div>
               <label className="text-sm font-semibold text-gray-700">වවුචර් අංකය</label>
               <input
-                type="text"
-                className={`mt-1 w-full text-center tracking-widest rounded-lg px-3 py-2 text-sm border focus:ring-2 focus:ring-blue-500 ${
-                  error ? "border-red-500 text-red-600" : "border-gray-300 text-gray-700"
-                }`}
-                value={voucherNo}
-                disabled={isSubmitted || isSubmitting}
-                placeholder="0000"
-                onChange={(e) => setVoucherNo(e.target.value.replace(/\D/g, ""))}
-                onBlur={() => {
-                  const formatted = voucherNo.padStart(4, "0");
-                  setVoucherNo(formatted);
-                  if (formatted !== "0000") checkVoucherExists(formatted);
-                }}
+                  type="text"
+                  className={`mt-1 w-full text-center tracking-widest rounded-lg p-2 border focus:ring-2 focus:ring-blue-500 ${
+                    error ? "border-red-500 text-red-600" : "border-gray-300 text-gray-700"
+                  }`}
+                  value={voucherNo}
+                  disabled={isSubmitted || isSubmitting}
+                  placeholder="0000"
+                  onChange={(e) => setVoucherNo(e.target.value.replace(/\D/g, ""))}
+                  onBlur={() => {
+                    const formatted = voucherNo.padStart(4, "0");
+                    setVoucherNo(formatted);
+                    if (formatted !== "0000") checkVoucherExists(formatted);
+                  }}
                 maxLength={4}
               />
               {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
-            </div>
+          </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm font-semibold text-gray-700">දිනය</label>
-                <input
-                  type="date"
-                  value={transferDate}
-                  disabled={isSubmitted || isSubmitting}
-                  onChange={(e) => setTransferDate(e.target.value)}
-                  className="mt-1 w-full border rounded-lg px-3 py-2 text-sm border-gray-300 text-gray-700 focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
+            
+          <div className="">
+              <label className="text-sm font-semibold text-gray-700">දිනය</label>
+              <input
+                type="date"
+                value={transferDate}
+                disabled={isSubmitted || isSubmitting}
+                onChange={(e) => setTransferDate(e.target.value)}
+                className="mt-1 w-full border rounded-lg p-2 border-gray-300 text-gray-700 focus:ring-2 focus:ring-blue-500"
+              />
+          </div>
 
-              <div>
-                <label className="text-sm font-semibold text-gray-700">වියදම් වර්ගය</label>
-                <select
+          <div>
+              <label className="text-sm font-semibold text-gray-700">වියදම් වර්ගය</label>
+              <select
                   value={selectedExpenseType}
                   disabled={isSubmitted || isSubmitting}
                   onChange={(e) => setSelectedExpenseType(e.target.value)}
-                  className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-700 focus:ring-2 focus:ring-blue-500"
+                  className="mt-1 w-full border border-gray-300 rounded-lg p-3 text-sm text-gray-700 focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="">-- තෝරන්න --</option>
                   {expenseType.map((type, idx) => (
@@ -263,68 +296,51 @@ export default function ExpensePage() {
                       {type}
                     </option>
                   ))}
-                </select>
-              </div>
-            </div>
+              </select>
           </div>
-        )}
-      </div>
-
-      {/* ACCOUNT & AMOUNT SECTION */}
-      <div className="bg-white shadow-lg rounded-xl border-l-4 border-purple-700 overflow-hidden">
-        <button
-          className="w-full flex justify-between items-center px-4 py-3 font-medium text-purple-700 hover:bg-purple-50"
-          onClick={() => setShowAccountSection((prev) => !prev)}
-        >
-          <span>ගිණුම & මුදල</span>
-          {showAccountSection ? "▲" : "▼"}
-        </button>
-        {showAccountSection && (
-          <div className="p-4 space-y-4">
-            <div>
+   
+          <div>
               <label className="text-sm font-semibold text-gray-700">ගිණුම</label>
               <select
-                value={accountFrom}
-                disabled={isSubmitted || isSubmitting}
-                onChange={(e) => {
-                  const selectedId = e.target.value;
-                  setAccountFrom(selectedId);
-                  const acc = accounts.find((a) => a.accountId === selectedId);
-                  if (acc) {
-                    setAccountFromName(acc.accountName);
-                    setAccountFromBalance(acc.accountBalance);
-                  }
-                }}
-                className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-700 focus:ring-2 focus:ring-purple-500"
+                  value={accountFrom}
+                  disabled={isSubmitted || isSubmitting}
+                  onChange={(e) => {
+                    const selectedId = e.target.value;
+                    setAccountFrom(selectedId);
+                    const acc = accounts.find((a) => a.accountId === selectedId);
+                    if (acc) {
+                      setAccountFromName(acc.accountName);
+                      setAccountFromBalance(acc.accountBalance);
+                    }
+                  }}
+                  className="mt-1 w-full border border-gray-300 rounded-lg p-3 text-sm text-gray-700 focus:ring-2 focus:ring-purple-500"
               >
-                <option value="">-- තෝරන්න --</option>
-                {accounts.map((a, idx) => (
-                  <option key={idx} value={a.accountId}>
-                    {a.accountName}
-                  </option>
-                ))}
+                  <option value="">-- තෝරන්න --</option>
+                  {accounts.map((a, idx) => (
+                    <option key={idx} value={a.accountId}>
+                      {a.accountName}
+                    </option>
+                  ))}
               </select>
               <div className="mt-1 text-sm text-right text-gray-500">
-                <span className="font-semibold text-purple-600">ශේෂය: </span>
-                {Number(accountFromBalance ?? 0).toLocaleString("en-US", {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
+                  <span className="font-semibold text-purple-600">ශේෂය: </span>
+                  {Number(accountFromBalance ?? 0).toLocaleString("en-US", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
               </div>
-            </div>
+          </div>
 
-            <div>
+          <div>
               <label className="text-sm font-semibold text-gray-700">මුදල</label>
               <input
                 type="number"
                 value={transferAmount}
                 disabled={isSubmitted || isSubmitting}
                 onChange={(e) => setTransferAmount(e.target.value)}
-                className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-700 focus:ring-2 focus:ring-purple-500"
+                className="mt-1 w-full border border-gray-300 rounded-lg p-3 text-sm text-gray-700 focus:ring-2 focus:ring-purple-500"
               />
-            </div>
           </div>
-        )}
       </div>
 
       {/* ACTION BUTTONS */}
@@ -339,9 +355,9 @@ export default function ExpensePage() {
           }`}
         >
           {isSubmitting
-            ? "ඉදිරිපත් වෙමින්..."
+            ? "ඉදිරිපත් කිරීම සිදු වෙමින් පවතී ..."
             : isSubmitted
-            ? "ඉදිරිපත් අවසන්"
+            ? "ඉදිරිපත් කිරීම අවසන්"
             : "ඉදිරිපත් කරන්න"}
         </button>
         <button

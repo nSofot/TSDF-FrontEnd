@@ -148,7 +148,7 @@ export default function FundTransferPage() {
     return (
         <div className="max-w-5xl p-2 w-full h-full flex flex-col space-y-6 overflow-hidden">
             {/* HEADER */}
-            <div className="text-left p-2 sticky top-0 z-10">
+            <div className="text-left p-2">
                 <h1 className="text-lg md:text-2xl font-bold text-orange-600">🔁 මුදල් මාරු කිරීම්</h1>
                 <p className="text-gray-600 text-sm sm:text-base">සියලුම අභ්‍යන්තර මුදල් චලනයන් කළමනාකරණය කිරීම.</p>
             </div>

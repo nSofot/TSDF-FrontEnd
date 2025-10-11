@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import axios from "axios";
 import LoadingSpinner from "../../components/loadingSpinner.jsx";
+import { t } from "i18next";
 
 export default function ReceiptMembershipPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -60,6 +61,7 @@ export default function ReceiptMembershipPage() {
 
   const handleSave = async () => {
     setIsSubmitting(true);
+
     if (!memberId || memberId === "0") {
       toast.error("🚫 වලංගු නොවන සාමාජික අංකයක්");
       setIsSubmitting(false);
@@ -86,11 +88,104 @@ export default function ReceiptMembershipPage() {
       return;
     }
 
+    let newRefferenceNo = "";
+    const lgAcIdDr = "325-0002";
+
     try {
-      // Your save logic here (membership transaction, update customer, cashbook, etc.)
+      //1️⃣ save receipt
+      try {
+          const updates = [{
+            customerId: memberId,
+            amount: parseFloat(totalAmount) || 0
+          }];
+
+          await axios.put(
+            `${import.meta.env.VITE_BACKEND_URL}/api/customer/membershipFee-subtract`,
+            { updates } // wrap in an object!
+          );
+                    
+      } catch (err) {
+        toast.error("1️⃣⚠️රිසිට්පත ඉදිරිපත් කිරීමට අසමත් විය. නැවත උත්සාහ කරන්න.");
+        console.error(err);
+      }
+
+      //2️⃣ update member
+      try {
+          const trxPayload = {
+              trxBookNo: String(receiptNo),
+              customerId: memberId,
+              transactionDate: new Date(trxDate).toISOString(),
+              trxAmount: parseFloat(totalAmount) || 0,
+              transactionType: "receipt",
+              isCredit: true,
+              description: 'සාමාජික ගාස්තු',
+          };
+          const res = await axios.post(
+              `${import.meta.env.VITE_BACKEND_URL}/api/membershipTransactions/create`,
+              trxPayload
+          );
+          newRefferenceNo = res.data.trxNumber;
+      } catch (err) {
+        toast.error("2️⃣⚠️රිසිට්පත ඉදිරිපත් කිරීමට අසමත් විය. නැවත උත්සාහ කරන්න.");
+        console.error(err);
+      }
+
+      //3️⃣ update cash book
+      try {
+          const payload = {
+              updates: [
+                  {
+                  accountId: lgAcIdDr,
+                  amount: parseFloat(totalAmount) || 0
+                  }
+              ]
+          };
+          await axios.put(
+              `${import.meta.env.VITE_BACKEND_URL}/api/ledgerAccounts/add-balance`,
+              payload
+
+          );
+      } catch (err) {
+        toast.error("3️⃣⚠️රිසිට්පත ඉදිරිපත් කිරීමට අසමත් විය. නැවත උත්සාහ කරන්න.");
+        console.error(err);
+      }
+
+      //4️⃣ update ledger transaction
+      try {
+          const accTrxPayload = {
+              trxId: String(newRefferenceNo),
+              trxBookNo: String(receiptNo),
+              trxDate: new Date(trxDate).toISOString(),
+              transactionType: "receipt",
+              accountId: lgAcIdDr,
+              description: `'සාමාජික ගාස්තු' - ${member?.nameSinhala || member?.name}`,
+              isCredit: false,
+              trxAmount: parseFloat(totalAmount) || 0
+          };
+          await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/ledgerTransactions`, accTrxPayload);
+
+      } catch (err) {
+        toast.error("4️⃣⚠️රිසිට්පත ඉදිරිපත් කිරීමට අසමත් විය. නැවත උත්සාහ කරන්න.");
+        console.error(err);
+      }
+
+      //5️⃣ update book reference
+      try {
+          const refPayload = {
+              transactionType: "receipt",
+              trxBookNo: String(receiptNo),
+              trxReference: String(newRefferenceNo)
+          };
+          await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/bookReferences`, refPayload);
+      } catch (err) {
+        toast.error("5️⃣⚠️රිසිට්පත ඉදිරිපත් කිරීමට අසමත් විය. නැවත උත්සාහ කරන්න.");
+        console.error(err);
+      }
+
       toast.success("🎉 රිසිට්පත සාර්ථකව ඉදිරිපත් කළා!");
       setIsSubmitted(true);
     } catch (err) {
+      setIsSubmitting(false);
       toast.error("❌ රිසිට්පත ඉදිරිපත් කිරීමට අසමත් විය. නැවත උත්සාහ කරන්න.");
       console.error(err);
     } finally {
@@ -165,25 +260,6 @@ export default function ReceiptMembershipPage() {
         {showPaymentSection && (
           <div className="p-4 space-y-4">
             <div>
-              <label className="block text-sm text-orange-700">ගෙවීම් දිනය</label>
-              <input
-                type="date"
-                value={trxDate}
-                onChange={(e) => setTrxDate(e.target.value)}
-                className="w-full p-3 border border-orange-300 rounded-lg text-center text-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-400"
-              />
-            </div>
-            <div>
-              <label className="block text-sm text-orange-700">ගෙවන මුදල</label>
-              <input
-                type="number"
-                value={totalAmount}
-                placeholder="0.00"
-                onChange={(e) => setTotalAmount(e.target.value)}
-                className="w-full p-3 border border-orange-300 rounded-lg text-center text-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-400"
-              />
-            </div>
-            <div>
               <label className="block text-sm text-orange-700">රිසිට් අංකය</label>
               <input
                 type="text"
@@ -201,6 +277,25 @@ export default function ReceiptMembershipPage() {
                 } focus:outline-none focus:ring-2 focus:ring-purple-400`}
               />
               {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
+            </div>            
+            <div>
+              <label className="block text-sm text-orange-700">ගෙවීම් දිනය</label>
+              <input
+                type="date"
+                value={trxDate}
+                onChange={(e) => setTrxDate(e.target.value)}
+                className="w-full p-3 border border-orange-300 rounded-lg text-center text-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-400"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-orange-700">ගෙවන මුදල</label>
+              <input
+                type="number"
+                value={totalAmount}
+                placeholder="0.00"
+                onChange={(e) => setTotalAmount(e.target.value)}
+                className="w-full p-3 border border-orange-300 rounded-lg text-center text-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-400"
+              />
             </div>
           </div>
         )}

@@ -7,9 +7,9 @@ import toast from "react-hot-toast";
 import AdminMembersPage from "./admin/adminMembersPage";
 import AddCustomerPage from "./admin/addCustomerPage";
 import EditCustomerPage from "./admin/editCustomerPage";
-import UsersPage from "./admin/usersPage";
-// import AdminOrdersPage from "./admin/adminOrdersPage";
-// import ReviewsPage from "./admin/reviewsPage";
+import PostAnnualMembershipFee from "./admin/postAnnualMembershipFee";
+import InitalizeMasterFields from "./admin/initalizeMasterFields";
+import ImportData from "./admin/dataImport";
 import Loading from "../components/loadingSpinner";
 import NotFoundPage from "./notFoundPage";
 
@@ -77,9 +77,13 @@ export default function AdminPage() {
           <div className="flex flex-col space-y-2">
             <h2 className="text-lg font-semibold text-purple-800 mb-4">Admin Panel</h2>
             <Link className={getClass("members")} to="/admin/members">📦 Members</Link>
-            <Link className={getClass("users")} to="/admin/users">👤 Users</Link>
-            {/* <Link className={getClass("orders")} to="/admin/orders">🧾 Orders</Link>
-            <Link className={getClass("reviews")} to="/admin/reviews">⭐ Reviews</Link> */}
+            <Link className={getClass("Membership Fee Adjustment")} to="/admin/membership-fee-adjustment">💰 Membership Fee Adjustment</Link>
+            <Link className={getClass("Shares Adjustment")} to="/admin/shares-adjustment">💰 Shares Adjustment</Link>
+            <Link className={getClass("Ledger Adjustment")} to="/admin/ledger-adjustment">💰 Ledger Adjustment</Link>
+            <Link className={getClass("Post Annual Membership Fee")} to="/admin/post-annual-membership-fee">💰 Post Annual Membership Fee</Link>
+            <Link className={getClass("Initalize Master Fields")} to="/admin/master-fields">📦 Initalize Master Fields</Link>
+            <Link className={getClass("Upload Data")} to="/admin/upload-data">📦 Upload Data</Link>
+            <Link className={getClass("edit-customer")} to="/admin/edit-customer">✏️ Edit Customer</Link>
             <Link className={getClass("add-product")} to="/admin/add-customer">➕ Add Customer</Link>
           </div>
 
@@ -96,11 +100,11 @@ export default function AdminPage() {
           <Routes>
             <Route index element={<Navigate to="members" replace />} />
             <Route path="members" element={<AdminMembersPage />} />
-            <Route path="users" element={<UsersPage />} />
-            {/* <Route path="orders" element={<AdminOrdersPage />} />
-            <Route path="reviews" element={<ReviewsPage />} /> */}
             <Route path="add-customer" element={<AddCustomerPage />} />
             <Route path="edit-customer" element={<EditCustomerPage />} />
+            <Route path="post-annual-membership-fee" element={<PostAnnualMembershipFee />} />
+            <Route path="master-fields" element={<InitalizeMasterFields />} />
+            <Route path="upload-data" element={<ImportData />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </main>

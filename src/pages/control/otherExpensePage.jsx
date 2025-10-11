@@ -8,6 +8,7 @@ export default function OtherExpensePage() {
     const [accounts, setAccounts] = useState([]);
     const [members, setMembers] = useState([]);
     const [accountFrom, setAccountFrom] = useState("");
+    const [accountFromName, setAccountFromName] = useState("");
     const [accountFromBalance, setAccountFromBalance] = useState(0);
     const [voucherNo, setVoucherNo] = useState("");
     const [selectedExpenseType, setSelectedExpenseType] = useState("");
@@ -263,6 +264,30 @@ export default function OtherExpensePage() {
                 </div>
 
                 <div className="bg-gray-50 shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-orange-500">
+
+                    <div>
+                        <label className="text-xs font-semibold text-orange-600">වවුචර් අංකය</label>
+                        <input
+                            type="text"
+                            className={`mt-1 px-3 py-2 text-sm text-orange-600 border border-orange-600 rounded-lg w-full text-center tracking-widest focus:ring-2 focus:ring-purple-500 outline-none ${
+                            error ? "border-red-500" : "border-gray-300"
+                            }`}
+                            value={voucherNo}
+                            placeholder="0000"
+                            disabled={isSubmitted || isSubmitting}
+                            onChange={(e) => {
+                            const val = e.target.value.replace(/\D/g, "");
+                            setVoucherNo(val);
+                            }}
+                            onBlur={() => {
+                            const formatted = voucherNo.padStart(4, "0");
+                            setVoucherNo(formatted);
+                            if (formatted !== "0000") checkVoucherExists(formatted);
+                            }}
+                            maxLength={4}
+                        />
+                    </div>
+
                     <div>
                         <label className="text-xs font-semibold text-orange-600">දිනය</label>
                         <input
@@ -350,29 +375,6 @@ export default function OtherExpensePage() {
                             className="w-full mt-1  px-3 py-2 text-sm text-orange-600 border border-orange-600 rounded-lg focus:ring-2 focus:ring-blue-400"
                         />
                     </div>    
-
-                    <div>
-                        <label className="text-xs font-semibold text-orange-600">වවුචර් අංකය</label>
-                        <input
-                            type="text"
-                            className={`mt-1 px-3 py-2 text-sm text-orange-600 border border-orange-600 rounded-lg w-full text-center tracking-widest focus:ring-2 focus:ring-purple-500 outline-none ${
-                            error ? "border-red-500" : "border-gray-300"
-                            }`}
-                            value={voucherNo}
-                            placeholder="0000"
-                            disabled={isSubmitted || isSubmitting}
-                            onChange={(e) => {
-                            const val = e.target.value.replace(/\D/g, "");
-                            setVoucherNo(val);
-                            }}
-                            onBlur={() => {
-                            const formatted = voucherNo.padStart(4, "0");
-                            setVoucherNo(formatted);
-                            if (formatted !== "0000") checkVoucherExists(formatted);
-                            }}
-                            maxLength={4}
-                        />
-                    </div>
                 </div>
                 {error && <p className="px-4 text-red-600 text-sm">{error}</p>}
 
@@ -386,9 +388,9 @@ export default function OtherExpensePage() {
                         }}
                     >
                         {isSubmitting
-                        ? "මාරු කිරීම වෙමින් පවතී"
+                        ? "ඉදිරිපත් කිරීම සිදු වෙමින් පවතී ..."
                         : isSubmitted
-                        ? "මාරු කිරීම අවසන්"
+                        ? "ඉදිරිපත් කිරීම අවසන්"
                         : "ඉදිරිපත් කරන්න"}
                     </button>
 

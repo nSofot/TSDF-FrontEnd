@@ -12,7 +12,14 @@ export default function IncomePage() {
   const [voucherNo, setVoucherNo] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [selectedExpenseType, setSelectedExpenseType] = useState("");
-  const [transferDate, setTransferDate] = useState(new Date().toISOString().split("T")[0]);
+  const formatLocalISODate = (d) => {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+  };
+  const [transferDate, setTransferDate] = useState(() => formatLocalISODate(new Date()));
+
   const [transferAmount, setTransferAmount] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -143,24 +150,12 @@ export default function IncomePage() {
         {showDetailsSection && (
           <div className="p-4 space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {/* DATE */}
-              <div>
-                <label className="text-sm font-semibold text-gray-700">දිනය</label>
-                <input
-                  type="date"
-                  disabled={isSubmitted || isSubmitting}
-                  value={transferDate}
-                  onChange={(e) => setTransferDate(e.target.value)}
-                  className="mt-1 w-full border rounded-lg px-3 py-2 text-sm text-gray-700 border-gray-300 focus:ring-2 focus:ring-orange-500"
-                />
-              </div>
-
               {/* RECEIPT NO */}
               <div >
                 <label className="text-sm font-semibold text-gray-700">රිසිට්පත් අංකය</label>
                 <input
                   type="text"
-                  className={`mt-1 w-full text-center tracking-widest rounded-lg px-3 py-2 text-sm border focus:ring-2 focus:ring-orange-500 ${
+                  className={`mt-1 w-full text-center tracking-widest rounded-lg p-3 border focus:ring-2 focus:ring-orange-500 ${
                     error ? "border-red-500 text-red-600" : "border-gray-300 text-gray-700"
                   }`}
                   value={voucherNo}
@@ -175,6 +170,17 @@ export default function IncomePage() {
                   maxLength={6}
                 />
                 {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
+              </div>              
+              {/* DATE */}
+              <div>
+                <label className="text-sm font-semibold text-gray-700">දිනය</label>
+                <input
+                  type="date"
+                  disabled={isSubmitted || isSubmitting}
+                  value={transferDate}
+                  onChange={(e) => setTransferDate(e.target.value)}
+                  className="mt-1 w-full border rounded-lg p-3 text-gray-700 border-gray-300 focus:ring-2 focus:ring-orange-500"
+                />
               </div>
             </div>
 
@@ -185,7 +191,7 @@ export default function IncomePage() {
                 value={selectedExpenseType}
                 disabled={isSubmitted || isSubmitting}
                 onChange={(e) => setSelectedExpenseType(e.target.value)}
-                className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-700 focus:ring-2 focus:ring-orange-500"
+                className="mt-1 w-full border border-gray-300 rounded-lg p-3 text-gray-700 focus:ring-2 focus:ring-orange-500"
               >
                 <option value="">-- තෝරන්න --</option>
                 {expenseType.map((type, idx) => (
@@ -225,7 +231,7 @@ export default function IncomePage() {
                     setAccountFromBalance(acc.accountBalance);
                   }
                 }}
-                className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-700 focus:ring-2 focus:ring-blue-500"
+                className="mt-1 w-full border border-gray-300 rounded-lg p-3 text-gray-700 focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">-- තෝරන්න --</option>
                 {accounts.map((a, idx) => (
@@ -251,7 +257,7 @@ export default function IncomePage() {
                 disabled={isSubmitted || isSubmitting}
                 value={transferAmount}
                 onChange={(e) => setTransferAmount(e.target.value)}
-                className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-700 focus:ring-2 focus:ring-blue-500"
+                className="mt-1 w-full border border-gray-300 rounded-lg p-3 text-gray-700 focus:ring-2 focus:ring-blue-500"
                 placeholder="උදාහරණයක් ලෙස: 1500.00"
               />
             </div>
@@ -268,7 +274,7 @@ export default function IncomePage() {
           }`}
           onClick={handleTransfer}
         >
-          {isSubmitting ? "මාරු වෙමින්..." : isSubmitted ? "මාරු අවසන්" : "ඉදිරිපත් කරන්න"}
+          {isSubmitting ? "ඉදිරිපත් කිරීම සිදු වෙමින් පවතී ..." : isSubmitted ? "ඉදිරිපත් කිරීම අවසන්" : "ඉදිරිපත් කරන්න"}
         </button>
         <button
           disabled={isSubmitting}
