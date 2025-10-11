@@ -127,9 +127,6 @@ export default function ReceiptSharesPage() {
             } catch (error) {
                 console.log('1️⃣⚠️ create shares transaction error: ', error);
             }
-
-            //2️⃣update customer
-            try {
                 const customerPayload = {
                     updates: [
                         {
@@ -142,6 +139,9 @@ export default function ReceiptSharesPage() {
                 `${import.meta.env.VITE_BACKEND_URL}/api/customer/shares-add`,
                 customerPayload
                 );
+            //2️⃣update customer
+            try {
+
             } catch (error) {
                 console.log('2️⃣⚠️ update customer error: ', error);
             }   
@@ -267,26 +267,6 @@ export default function ReceiptSharesPage() {
                 </div>
 
                 <div className="bg-white shadow-md rounded-xl border-l-4 border-orange-500 p-6 space-y-4">
-                    <div>
-                        <label className="block text-sm text-orange-500 mb-1">ගෙවීම් දිනය</label>
-                        <input 
-                            type="date" 
-                            value={trxDate} 
-                            onChange={(e) => setTrxDate(e.target.value)} 
-                            className="w-full p-3 border border-orange-300 rounded-lg text-orange-500 text-center focus:outline-none focus:ring-2 focus:ring-orange-500"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block text-sm text-orange-500 mb-1">ගෙවන මුදල</label>
-                        <input
-                            type="number"
-                            value={totalAmount}
-                            placeholder="0.00"
-                            onChange={(e) => setTotalAmount(e.target.value)}
-                            className="w-full p-3 border border-orange-300 rounded-lg text-orange-500 text-center focus:outline-none focus:ring-2 focus:ring-orange-500"
-                        />
-                    </div>
 
                     <div>
                         <label className="block text-sm text-orange-500 mb-1">රිසිට් අංකය</label>
@@ -309,6 +289,26 @@ export default function ReceiptSharesPage() {
                             maxLength={6}
                         />
                         {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
+                    </div>                   
+                    <div>
+                        <label className="block text-sm text-orange-500 mb-1">ගෙවීම් දිනය</label>
+                        <input 
+                            type="date" 
+                            value={trxDate} 
+                            onChange={(e) => setTrxDate(e.target.value)} 
+                            className="w-full p-3 border border-orange-300 rounded-lg text-orange-500 text-center focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm text-orange-500 mb-1">ගෙවන මුදල</label>
+                        <input
+                            type="number"
+                            value={totalAmount}
+                            placeholder="0.00"
+                            onChange={(e) => setTotalAmount(e.target.value)}
+                            className="w-full p-3 border border-orange-300 rounded-lg text-orange-500 text-center focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        />
                     </div>
                 </div>
 
@@ -327,10 +327,10 @@ export default function ReceiptSharesPage() {
                         }`}
                     >
                         {isSubmitting
-                        ? "ගෙවීම ඉදිරිපත් කරයි..."
+                        ? "ගෙවීම සිදු වෙමින් පවතී ..."
                         : isSubmitted
-                        ? "✅ ගෙවීම් සම්පූර්ණයි"
-                        : "තහවුරු කරන්න"}
+                        ? "✅ ගෙවීම් කිරීම අවසන්"
+                        : "ගෙවීම තහවුරු කරන්න"}
                     </button>
 
                     <button

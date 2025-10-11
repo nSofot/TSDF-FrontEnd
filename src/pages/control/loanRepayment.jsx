@@ -344,14 +344,14 @@ export default function LoanRepaymentPage() {
             
             //7️⃣create book reference
             try {
-                const refPayload = {
-                    referenceType: "receipt",
-                    bookNo: receiptNo,
-                    trxReference: newReferenceNo
-                };
-                await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/bookReferences`, refPayload);
-            } catch (error) {
-                console.log('3️⃣⚠️ create book reference error: ', error);
+                await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/bookReferences`, {
+                    transactionType: "receipt",
+                    trxBookNo: receiptNo,
+                    trxReference: newReferenceNo,
+                });
+
+             } catch (error) {
+                console.log('7️⃣⚠️ create book reference error: ', error);
             }
 
             toast.success("🎉 කුවිතාන්සිය සාර්ථකව ඉදිරිපත් කළා!");
@@ -528,7 +528,7 @@ export default function LoanRepaymentPage() {
                                     onBlur={() => {
                                         const formatted = String(receiptNo).padStart(6, "0");
                                         setReceiptNo(formatted);
-                                        if (formatted !== "000000") checkReceiptExists(formatted);
+                                        if (formatted !== "000000") checkVoucherExists(formatted);
                                     }}
                                     maxLength={6}
                                 />
@@ -551,10 +551,10 @@ export default function LoanRepaymentPage() {
                                 }`}
                             >
                                 {isSubmitting
-                                ? "ගෙවීම ඉදිරිපත් කරයි..."
+                                ? "ගෙවීම් කිරීම සිදු වෙමින් පවතී ..."
                                 : isSubmitted
-                                ? "✅ ගෙවීම් සම්පූර්ණයි"
-                                : "තහවුරු කරන්න"}
+                                ? "ගෙවීම් කිරීම සම්පූර්ණයි"
+                                : "ගෙවීම් කිරීම තහවුරු කරන්න"}
                             </button>
 
                             <button
