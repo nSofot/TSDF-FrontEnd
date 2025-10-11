@@ -21,12 +21,12 @@ export default function ControlHomePage() {
   const [loanRegister, setLoanRegister] = useState([]);
   const [excoMembers, setExcoMembers] = useState([]);
   const [openSections, setOpenSections] = useState({
-    approvals: true,
-    loans: true,
-    cash: true,
-    bank: true,
-    loanAcc: true,
-    exco: true,
+    approvals: false,
+    loans: false,
+    cash: false,
+    bank: false,
+    loanAcc: false,
+    exco: false,
   });
 
   useEffect(() => {

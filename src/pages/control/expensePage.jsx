@@ -16,7 +16,7 @@ export default function ExpensePage() {
   const [voucherNo, setVoucherNo] = useState("");
   const [selectedExpenseType, setSelectedExpenseType] = useState("");
 
-    const formatLocalISODate = (d) => {
+  const formatLocalISODate = (d) => {
     const y = d.getFullYear();
     const m = String(d.getMonth() + 1).padStart(2, "0");
     const day = String(d.getDate()).padStart(2, "0");
