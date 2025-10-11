@@ -57,7 +57,7 @@ export default function Home() {
       {/* ---------- HERO ---------- */}
       <section className="relative w-full h-[60vh] sm:h-[70vh] bg-gradient-to-r from-indigo-600 to-purple-700 flex items-center justify-center overflow-hidden">
         <motion.img
-          src="/foundation-banner.jpg"
+          src="/gallery/event1.jpg"
           alt="Foundation banner"
           className="absolute inset-0 w-full h-full object-cover opacity-40"
           initial={{ scale: 1.2 }}
@@ -73,6 +73,8 @@ export default function Home() {
             transition={{ delay: 0.3 }}
           >
             Thewana Shakthi Development Foundation
+            <br />
+            තෙවන ශක්ති සංවර්ධන පදනම
           </motion.h1>
 
           <motion.p
@@ -83,6 +85,9 @@ export default function Home() {
           >
             Empowering members through social, financial, and personal development
             for a brighter future.
+            <br />
+            දීප්තිමත් අනාගතයක් සඳහා සමාජීය, මූල්‍ය සහ පුද්ගලික සංවර්ධනය තුළින් 
+            සාමාජිකයින් බලගැන්වීම.
           </motion.p>
 
           <motion.div
@@ -92,7 +97,7 @@ export default function Home() {
             transition={{ delay: 0.7 }}
           >
             <Link
-              to="/programs"
+              to="/gallery"
               className="px-6 py-3 bg-white text-indigo-700 font-semibold rounded-full shadow hover:bg-gray-100"
             >
               Explore Programs
@@ -113,18 +118,18 @@ export default function Home() {
           {[
             {
               icon: <FiUsers size={36} />,
-              title: "Social Development",
-              desc: "Community programs to uplift and unite members.",
+              title: "Social Development / සමාජ සංවර්ධනය ",
+              desc: "Community programs to uplift and unite members. සාමාජිකයින් නඟා සිටුවීමට සහ එක්සත් කිරීමට ප්‍රජා වැඩසටහන්.",
             },
             {
               icon: <FiTrendingUp size={36} />,
-              title: "Financial Growth",
-              desc: "Guidance, training, and opportunities for stability.",
+              title: "Financial Growth / මූල්ය වර්ධනය",
+              desc: "Guidance, training, and opportunities for stability. මඟ පෙන්වීම, පුහුණුව සහ ස්ථාවරත්වය සඳහා අවස්ථා.",
             },
             {
               icon: <FiHeart size={36} />,
-              title: "Personal Support",
-              desc: "Mentorship and education for personal empowerment.",
+              title: "Personal Support / පුද්ගලික සහාය",
+              desc: "Mentorship and education for personal empowerment. පුද්ගලික බලගැන්වීම සඳහා උපදේශනය සහ අධ්‍යාපනය.",
             },
           ].map(({ icon, title, desc }) => (
             <div key={title} className="flex flex-col items-center">
@@ -177,7 +182,7 @@ export default function Home() {
 
         <div className="text-center mt-10">
           <Link
-            to="/programs"
+            to="/gallery"
             className="inline-block px-8 py-3 border border-indigo-600 text-indigo-600 font-semibold rounded-full hover:bg-indigo-50"
           >
             View All Initiatives
@@ -190,17 +195,25 @@ export default function Home() {
         <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold">
           Join Thewana Shakthi Development Foundation
         </h2>
+        <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold">
+          තෙවන ශක්ති සංවර්ධන පදනම හා එක්වන්න
+        </h3>
         <p className="mt-4 max-w-2xl mx-auto px-4">
           Become a member, volunteer, or supporter and be part of a mission to
-          uplift lives and create lasting impact.
+          uplift lives and create lasting impact.</p>
+        <p>සාමාජිකයෙකු, ස්වේච්ඡා සේවකයෙකු හෝ ආධාරකරුවෙකු වී ජීවිත නගා සිටුවීමේ සහ 
+          කල් පවතින බලපෑමක් ඇති කිරීමේ මෙහෙවරක කොටස්කරුවෙකු වන්න.
         </p>
         <Link
-          to="/register"
+          to="/about"
           className="mt-8 inline-block px-8 py-3 bg-white text-indigo-700 font-semibold rounded-full shadow hover:bg-gray-100"
         >
           Get Involved
         </Link>
       </section>
+              <p className="mt-4 text-sm text-gray-600 text-center">
+          © 2025 nSoft Technologies. All rights reserved.
+        </p>  
     </Fragment>
   );
 }

@@ -23,7 +23,7 @@ export default function SharesPage() {
   }, [location]);
 
   return (
-    <div className="max-w-6xl w-full mx-auto px-2 py-6 flex flex-col space-y-6">
+    <div className="max-w-6xl w-full mx-auto p-2 flex flex-col space-y-6">
       {/* Page Header */}
       <div className="flex flex-col items-start items-center gap-2">
           <h1 className="text-lg md:text-3xl font-bold text-orange-600">🧑‍🤝‍🧑 සාමාජික කොටස් මුදල්</h1>

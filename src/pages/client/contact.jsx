@@ -76,12 +76,12 @@ export default function Contact() {
       {/* ------------ hero banner ------------ */}
       <section className="relative h-[40vh] bg-indigo-700 flex items-center justify-center overflow-hidden">
         <img
-          src="/contact-hero.jpg" // replace with foundation-specific image
+          src="/gallery/event4.jpg" // replace with foundation-specific image
           alt="Contact us"
           className="absolute inset-0 w-full h-full object-cover opacity-50 mix-blend-overlay"
         />
         <h1 className="relative text-4xl md:text-5xl font-extrabold text-white drop-shadow-lg text-center">
-          Get in Touch
+          Get in Touch 
         </h1>
       </section>
 
@@ -89,10 +89,17 @@ export default function Contact() {
       <section className="flex-1 max-w-6xl mx-auto px-6 py-16 grid lg:grid-cols-2 gap-12">
         {/* ====== contact information ====== */}
         <div className="flex flex-col gap-8">
-          <h2 className="text-3xl font-bold">We’d love to hear from you</h2>
+          <div>
+            <h2 className="text-3xl font-bold">We’d love to hear from you</h2>
+            <h3 className="text-2xl font-semibold">අපි ඔබෙන් අසන්නට කැමතියි.</h3>
+          </div>
           <p className="text-gray-700">
             Whether you have questions about our programs, want to volunteer, 
             or wish to support our initiatives—our team is ready to help!
+          </p>
+          <p className="text-gray-700">
+            අපගේ වැඩසටහන් පිළිබඳව ඔබට ප්‍රශ්න තිබේද, ස්වේච්ඡාවෙන් ඉදිරිපත් වීමට කැමතිද, 
+            හෝ අපගේ මුලපිරීම්වලට සහාය වීමට කැමතිද - අපගේ කණ්ඩායම ඔබට උදව් කිරීමට සූදානම්!
           </p>
 
           <ul className="space-y-6">
@@ -184,6 +191,9 @@ export default function Contact() {
           </form>
         </div>
       </section>
+        <p className="text-sm text-gray-600 text-center">
+          © 2025 nSoft Technologies. All rights reserved.
+        </p>        
     </main>
   );
 }

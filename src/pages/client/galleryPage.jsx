@@ -43,7 +43,7 @@ export default function Gallery() {
       {/* Hero Section */}
       <section className="relative w-full h-[40vh] bg-indigo-700 flex items-center justify-center overflow-hidden">
         <img
-          src="/login-image3.jpg"
+          src="/gallery/event3.jpg"
           alt="Gallery Banner"
           className="absolute inset-0 w-full h-full object-cover opacity-50 mix-blend-overlay"
         />
@@ -93,8 +93,11 @@ export default function Gallery() {
             />
             <p className="text-white text-center mt-4">{selectedImage.caption}</p>
           </div>
-        </div>
+        </div> 
       )}
-    </Fragment>
+        <p className="text-sm text-gray-600 text-center">
+          © 2025 nSoft Technologies. All rights reserved.
+        </p>
+    </Fragment>   
   );
 }

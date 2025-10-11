@@ -55,6 +55,7 @@ export default function Header() {
       { path: "/control/approve-loan", label: "Approve Loan", icon: <FaCheckCircle /> },
       { path: "/control/grant-loan", label: "Grant Loan", icon: <FaHandHoldingUsd /> },
       { path: "/control/loan-repayment", label: "Loan Repayment", icon: <FaMoneyBillWave /> },
+      { path: "/control/receipts-shares", label: "Shares Receipts", icon: <FaReceipt /> },
       { path: "/control/receipts-membership", label: "Membership Receipt", icon: <FaReceipt /> },
       { path: "/control/expense", label: "Expenses", icon: <FaWallet /> },
       { path: "/control/expense-others", label: "Other Expenses", icon: <FaMoneyBillWave /> },
@@ -91,6 +92,9 @@ export default function Header() {
       { path: "/control/edit-customer-secretary", label: "Edit Customer", icon: <FaUserEdit /> },
     ],
     chairman: [
+      { path: "/control/approve-loan", label: "Approve Loan", icon: <FaCheckCircle /> },
+    ],
+    executive: [
       { path: "/control/approve-loan", label: "Approve Loan", icon: <FaCheckCircle /> },
     ],
   };

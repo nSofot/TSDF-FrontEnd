@@ -11,8 +11,22 @@ export default function CashRegisterPage() {
   const [selectAccount, setSelectAccount] = useState("");
   const [accountBalance, setAccountBalance] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  const [fromDate, setFromDate] = useState(new Date().toISOString().split("T")[0]);
-  const [toDate, setToDate] = useState(new Date().toISOString().split("T")[0]);
+
+  const formatLocalISODate = (d) => {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+  };
+
+  const [fromDate, setFromDate] = useState(() => {
+    const today = new Date();
+    const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+    return formatLocalISODate(firstDay);
+  });
+
+  const [toDate, setToDate] = useState(() => formatLocalISODate(new Date()));
+
   const [error, setError] = useState("");
 
   const [showAccountSection, setShowAccountSection] = useState(true);
@@ -79,7 +93,7 @@ export default function CashRegisterPage() {
               <select
                 value={selectAccount}
                 onChange={handleAccountChange}
-                className="mt-1 w-full md:w-auto px-3 py-2 border border-green-400 rounded-lg text-sm focus:ring-2 focus:ring-green-300"
+                className="mt-1 w-full md:w-auto p-3 border border-green-400 rounded-lg text-sm focus:ring-2 focus:ring-green-300"
               >
                 <option value="">-- Select --</option>
                 {accounts.map((a, idx) => (
@@ -110,7 +124,7 @@ export default function CashRegisterPage() {
           {showDateSection ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
         </button>
         {showDateSection && (
-          <div className="px-4 py-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="px-4 py-4 grid grid-cols-2 gap-4">
             <div>
               <label className="text-sm font-medium text-green-700">දින සිට</label>
               <input
@@ -121,7 +135,7 @@ export default function CashRegisterPage() {
                   validateDates(e.target.value, toDate);
                 }}
                 max={toDate}
-                className="mt-1 w-full px-3 py-2 border border-green-400 rounded-lg text-sm focus:ring-2 focus:ring-green-300"
+                className="mt-1 w-full p-3 border border-green-400 rounded-lg text-sm focus:ring-2 focus:ring-green-300"
               />
             </div>
             <div>
@@ -134,7 +148,7 @@ export default function CashRegisterPage() {
                   validateDates(fromDate, e.target.value);
                 }}
                 min={fromDate}
-                className="mt-1 w-full px-3 py-2 border border-green-400 rounded-lg text-sm focus:ring-2 focus:ring-green-300"
+                className="mt-1 w-full p-3 border border-green-400 rounded-lg text-sm focus:ring-2 focus:ring-green-300"
               />
             </div>
           </div>
