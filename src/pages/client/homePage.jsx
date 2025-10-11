@@ -55,7 +55,7 @@ export default function Home() {
   return (
     <Fragment>
       {/* ---------- HERO ---------- */}
-      <section className="relative w-full h-[60vh] sm:h-[70vh] bg-gradient-to-r from-indigo-600 to-purple-700 flex items-center justify-center overflow-hidden">
+      <section className="relative w-full h-[70vh] sm:h-[70vh] py-12 px-4 bg-gradient-to-r from-indigo-600 to-purple-700 flex items-center justify-center overflow-hidden">
         <motion.img
           src="/gallery/event1.jpg"
           alt="Foundation banner"
@@ -191,7 +191,7 @@ export default function Home() {
       </section>
 
       {/* ---------- CTA BANNER ---------- */}
-      <section className="w-full bg-indigo-700 text-white py-16 text-center">
+      <section className="w-full bg-indigo-700 text-white py-16 px-4 text-center">
         <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold">
           Join Thewana Shakthi Development Foundation
         </h2>

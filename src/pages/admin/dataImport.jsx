@@ -42,11 +42,11 @@ export default function DataImport() {
 
         try {
             const res = await axios.post(
-                import.meta.env.VITE_BACKEND_URL + "/api/import-ledger-accounts",
+                import.meta.env.VITE_BACKEND_URL + "/api/importSharesProfits",
                 formData,
                 { headers: { "Content-Type": "multipart/form-data" } }
             );
-            alert(`✅ Imported ${res.data.inserted} chart of accounts records`);
+            alert(`✅ Imported ${res.data.inserted} shares profits records`);
         } catch (err) {
             console.error(err);
             alert("❌ Error importing: " + err.message);
@@ -84,7 +84,7 @@ export default function DataImport() {
                     <button
                         onClick={handleUploadSharesProfits}
                         disabled={loadingProfitsSheet}
-                        className={`bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 cursor-pointer ${loadingChartOfAccounts ? "opacity-50 cursor-not-allowed" : ""}`}
+                        className={`bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 cursor-pointer ${loadingProfitsSheet ? "opacity-50 cursor-not-allowed" : ""}`}
                         >
                         {loadingProfitsSheet ? "Uploading..." : "Upload"}
                     </button>              
