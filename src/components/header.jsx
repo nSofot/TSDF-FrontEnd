@@ -24,7 +24,15 @@ export default function Header() {
   const isCommittee = ["admin", "executive", "manager", "chairman", "secretary", "treasurer"].includes(
     user?.memberRole
   );
+
   const isAdmin = user?.memberRole === "admin";
+  const isChairman = user?.memberRole === "chairman";
+  const isSecretary = user?.memberRole === "secretary";
+  const isTreasurer = user?.memberRole === "treasurer";
+  const isManager = user?.memberRole === "manager";
+  const isExecutive = user?.memberRole === "executive";
+  const isMember = user?.memberRole === "member";
+
 
   const handleLogout = () => {
     localStorage.removeItem("token");
