@@ -17,17 +17,23 @@ export default function MembersPage() {
   useEffect(() => {
     window.scrollTo(0, 0);
     setIsLoading(true);
+
     axios
       .get(import.meta.env.VITE_BACKEND_URL + "/api/customer")
       .then((res) => {
-        setCustomers(res.data);
+        const filteredList = res.data.filter(
+          (customer) => customer.customerType === "shareholder"
+        );
+
+        setCustomers(filteredList);
         setIsLoading(false);
       })
       .catch(() => setIsLoading(false));
   }, [location]);
 
+
   return (
-    <div className="max-w-6xl mx-auto p-4 flex flex-col gap-6">
+    <div className="w-full max-w-6xl mx-auto p-2 flex flex-col gap-6">
       {/* Page Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
         <h1 className="text-lg md:text-3xl font-bold text-orange-600">🧑‍🤝‍🧑 සාමාජික ලැයිස්තුව</h1>
@@ -35,18 +41,18 @@ export default function MembersPage() {
       </div>
 
       {/* Members Table Card */}
-      <div className="bg-white sm:p-6 overflow-x-auto">
+      <div className="bg-white overflow-x-auto">
         {isLoading ? (
-          <div className="flex justify-center py-20">
+          <div className="flex justify-center">
             <LoadingSpinner />
           </div>
         ) : (
           <table className="min-w-full text-left divide-y divide-orange-300">
             <thead className="bg-orange-100">
               <tr>
-                <th className="px-3 py-2 text-sm font-medium text-gray-700">#</th>
-                <th className="px-3 py-2 text-sm font-medium text-gray-700">Member ID</th>
-                <th className="px-3 py-2 text-sm font-medium text-gray-700">Name</th>
+                <th className="px-2 py-2 text-sm font-medium text-orange-700">#</th>
+                <th className="px-2 py-2 px-2 text-sm font-medium text-orange-700">ID</th>
+                <th className="px-2 py-2 text-sm font-medium text-orange-700">Name</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-orange-300">
@@ -59,9 +65,9 @@ export default function MembersPage() {
                   }}
                   className="hover:bg-orange-100 cursor-pointer transition-colors"
                 >
-                  <td className="px-3 py-2">{index + 1}</td>
-                  <td className="px-3 py-2">{item.customerId}</td>
-                  <td className="px-3 py-2">{item.nameSinhala || item.name}</td>
+                  <td className="px-2 py-2">{index + 1}</td>
+                  <td className="px-2 py-2">{item.customerId}</td>
+                  <td className="px-2 py-2">{item.nameSinhala || item.name}</td>
                 </tr>
               ))}
             </tbody>
