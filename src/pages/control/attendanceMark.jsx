@@ -15,6 +15,7 @@ export default function MembersPage() {
   const [markedDate, setMarkedDate] = useState(() =>
     formatLocalISODate(new Date())
   );
+
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);

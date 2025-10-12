@@ -61,11 +61,11 @@ export default function ControlPage() {
       .get(`${import.meta.env.VITE_BACKEND_URL}/api/user/`, {
         headers: { Authorization: `Bearer ${token}` },
         signal: controller.signal,
-      })
+      })     
       .then((res) => {
         const role = res.data.memberRole?.toLowerCase();
-        const allowedRoles = ["admin", "chairman", "secretary", "treasurer", "manager"];
-
+        const allowedRoles = ["admin", "executive", "chairman", "secretary", "treasurer", "manager"];
+        
         if (!allowedRoles.includes(role)) {
           setStatus("unauthorized");
           toast.error("Unauthorized access");
