@@ -235,7 +235,7 @@ export default function ControlHomePage() {
               <Exco
                 key={acc._id}
                 customerId={acc.customerId}
-                customerName={acc.name}
+                customerName={acc.nameSinhala || acc.name}
                 memberRole={acc.memberRole}
                 image={acc.image}
               />
