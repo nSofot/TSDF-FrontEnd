@@ -6,7 +6,7 @@ import { FcGoogle } from "react-icons/fc";
 import { useNavigate, Link } from "react-router-dom";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
+  // const [email, setEmail] = useState("");
   const [loginId, setLoginId] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();

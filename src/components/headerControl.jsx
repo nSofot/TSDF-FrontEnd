@@ -19,6 +19,7 @@ import {
   FaSignOutAlt,
   FaUserPlus,
   FaUserEdit,
+  FaUserCheck,
 } from "react-icons/fa";
 import { useEffect, useState } from "react";
 
@@ -64,6 +65,7 @@ export default function Header() {
       { path: "/control/ledger-membership", label: "Membership Ledger", icon: <FaAddressBook /> },
       { path: "/control/ledger-loan", label: "Loan Ledger", icon: <FaClipboardList /> },
       { path: "/control/ledger-shares", label: "Shares Ledger", icon: <FaBook /> },
+      { path: "/control/attendance-mark", label: "Mark Attendance", icon: <FaUserCheck /> },
     ],
     manager: [
       { path: "/control/apply-loan", label: "Apply Loan", icon: <FaFileSignature /> },
@@ -88,6 +90,7 @@ export default function Header() {
       { path: "/control/ledger-shares", label: "Shares Ledger", icon: <FaBook /> },
     ],
     secretary: [
+      { path: "/control/attendance-mark", label: "Mark Attendance", icon: <FaUserCheck /> },
       { path: "/control/approve-loan", label: "Approve Loan", icon: <FaCheckCircle /> },
       { path: "/control/add-customer-secretary", label: "Add Customer", icon: <FaUserPlus /> },
       { path: "/control/edit-customer-secretary", label: "Edit Customer", icon: <FaUserEdit /> },

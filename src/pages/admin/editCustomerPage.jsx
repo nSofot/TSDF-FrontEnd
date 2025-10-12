@@ -97,7 +97,7 @@ export default function EditCustomerPage() {
 			};
 
 			await axios.put(
-				`${import.meta.env.VITE_BACKEND_URL}/api/customer/${customerId}`,
+				`${import.meta.env.VITE_BACKEND_URL}/api/customer/update/${customerId}`,
 				updatedProduct,
 				{
 					headers: {

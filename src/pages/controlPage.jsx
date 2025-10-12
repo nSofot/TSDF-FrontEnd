@@ -23,6 +23,7 @@ import OtherExpensePage from "./control/otherExpensePage";
 import IncomePage from "./control/incomePage";
 import AddCustomerBySecratary from "./control/addCustomerBySecratary";
 import EditCustomerBySecratary from "./control/editCustomerBySecratary";
+import AttendanceMark from "./control/attendanceMark";
 
 import ProductOverview from "./client/productOverview";
 import CartPage from "./client/cart";
@@ -60,11 +61,11 @@ export default function ControlPage() {
       .get(`${import.meta.env.VITE_BACKEND_URL}/api/user/`, {
         headers: { Authorization: `Bearer ${token}` },
         signal: controller.signal,
-      })
+      })     
       .then((res) => {
         const role = res.data.memberRole?.toLowerCase();
-        const allowedRoles = ["admin", "chairman", "secretary", "treasurer", "manager"];
-
+        const allowedRoles = ["admin", "executive", "chairman", "secretary", "treasurer", "manager"];
+        
         if (!allowedRoles.includes(role)) {
           setStatus("unauthorized");
           toast.error("Unauthorized access");
@@ -108,6 +109,7 @@ export default function ControlPage() {
         <Route path="expense" element={<ExpensePage />} />
         <Route path="expense-others" element={<OtherExpensePage />} />
         <Route path="income" element={<IncomePage />} />
+        <Route path="attendance-mark" element={<AttendanceMark />} />
         <Route path="add-customer-secretary" element={<AddCustomerBySecratary />} />
         <Route path="edit-customer-secretary" element={<EditCustomerBySecratary />} />
         <Route path="contact" element={<Contact />} />
