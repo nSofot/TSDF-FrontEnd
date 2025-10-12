@@ -15,24 +15,40 @@ export default function ForgetPasswordPage() {
   const navigate = useNavigate();
 
   async function sendOtp() {
-    if ( !mobile && !userId) {
-      toast.error("Please submit a valid user ID, email and mobile number");
+    if (!userId) {
+      toast.error("User ID is required");
       return;
     }
-    // if (!email) {
-    //   setEmail('nihalranathunge@gmail.com');
-    // }
-    // try {
-    //   const res = await axios.post(
-    //     `${import.meta.env.VITE_BACKEND_URL}/api/user/send-OTP`,
-    //     { email, userId, mobile }
-    //   );
-      setOtpSent(true);
-    //   toast.success("OTP sent to your email. Check your inbox.");
-    //   console.log(res.data);
-    // } catch (err) {
-    //   toast.error("Email not found");
-    // }
+
+    if (!mobile && !email) {
+      toast.error("Please provide at least a mobile number or email");
+      return;
+    }
+
+    try {
+      const res = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/api/customer/${userId}`
+      );     
+      if (res.data) {
+        if (mobile) {
+          if (mobile !== res.data.mobile)  {
+            toast.error("Mobile number does not match.");
+            return;
+          }
+          toast.success("OTP sent to your mobile number. Check your inbox.");
+        } else if (email) {
+          if (email !== res.data.email) {
+            toast.error("Email does not match.");
+            return;
+          }
+          toast.success("OTP sent to your email. Check your inbox.");
+        }
+        setOtpSent(true);
+      }
+    } catch (err) {
+      toast.error("User Id not found");
+      return;
+    }
   }
 
   async function verifyOtp() {
@@ -64,6 +80,9 @@ export default function ForgetPasswordPage() {
 
   function handleResend() {
     setOtp("");
+    setUserId("");
+    setMobile("");
+    setEmail("");
     setNewPassword("");
     setConfirmPassword("");
     setOtpSent(false);
@@ -113,32 +132,41 @@ export default function ForgetPasswordPage() {
             <>
               <input
                 type="text"
-                placeholder="Enter OTP"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-                className="w-full h-12 px-4 mb-4 rounded-lg border border-purple-200 bg-white focus:outline-none focus:ring-2 focus:ring-purple-400"
-              />
-              <input
-                type="text"
+                readOnly
                 placeholder="Enter your user ID"
                 value={userId}
                 onChange={(e) => setUserId(e.target.value)}
+                autoComplete="off"
                 className="w-full h-12 px-4 mb-6 rounded-lg border border-purple-200 bg-white focus:outline-none focus:ring-2 focus:ring-purple-400"
+              />            
+
+              <input
+                type="text"
+                placeholder="Enter OTP"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                autoComplete="off"
+                className="w-full h-12 px-4 mb-4 rounded-lg border border-purple-200 bg-white focus:outline-none focus:ring-2 focus:ring-purple-400"
               />
+
               <input
                 type="password"
                 placeholder="New Password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
+                autoComplete="new-password"
                 className="w-full h-12 px-4 mb-4 rounded-lg border border-purple-200 bg-white focus:outline-none focus:ring-2 focus:ring-purple-400"
               />
+
               <input
                 type="password"
                 placeholder="Confirm New Password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
+                autoComplete="new-password"
                 className="w-full h-12 px-4 mb-6 rounded-lg border border-purple-200 bg-white focus:outline-none focus:ring-2 focus:ring-purple-400"
               />
+
               <button
                 onClick={verifyOtp}
                 className="w-full h-12 text-white font-semibold bg-purple-600 hover:bg-purple-700 active:bg-purple-800 rounded-lg mb-4 transition"
@@ -154,11 +182,10 @@ export default function ForgetPasswordPage() {
               </button>
             </>
           )}
-       
-        </div>
-        <p className="mt-8 text-sm text-gray-600 text-center">
-          © 2025 nSoft Technologies. All rights reserved.
-        </p>          
+          <p className="mt-8 text-sm text-gray-600 text-center">
+            © 2025 nSoft Technologies. All rights reserved.
+          </p>         
+        </div>        
       </div>
     </div>
   );

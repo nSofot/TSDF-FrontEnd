@@ -40,9 +40,9 @@ export default function SharesPage() {
           <table className="w-full table-auto text-left border-collapse">
             <thead>
               <tr className="bg-orange-100">
-                <th className="px-4 py-2 text-sm font-semibold text-orange-700">ID</th>
-                <th className="px-4 py-2 text-sm font-semibold text-orange-700">Name</th>
-                <th className="px-4 py-2 text-sm font-semibold text-orange-700 text-right">Shares</th>
+                <th className="px-2 py-2 text-sm font-semibold text-orange-700">ID</th>
+                <th className="px-2 py-2 text-sm font-semibold text-orange-700">Name</th>
+                <th className="px-2 py-2 text-sm font-semibold text-orange-700 text-right">Shares</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-orange-300">
@@ -51,9 +51,9 @@ export default function SharesPage() {
                   key={item.customerId}
                   className="hover:bg-orange-100 cursor-pointer transition-colors"
                 >
-                  <td className="px-4 py-2">{item.customerId}</td>
-                  <td className="px-4 py-2">{item.nameSinhala || item.name}</td>
-                  <td className="px-4 py-2 text-right">{formatNumber(item.shares)}</td>
+                  <td className="px-2 py-2">{item.customerId}</td>
+                  <td className="px-2 py-2">{item.nameSinhala || item.name}</td>
+                  <td className="px-2 py-2 text-right">{formatNumber(item.shares)}</td>
                 </tr>
               ))}
             </tbody>
