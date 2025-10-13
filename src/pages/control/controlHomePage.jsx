@@ -39,9 +39,13 @@ export default function ControlHomePage() {
         setCustomers(customers);
 
         const executiveRoles = ["chairman", "secretary", "treasurer", "manager", "executive"];
-        const filteredExcoMembers = customers.filter((c) =>
-          executiveRoles.includes(c.memberRole?.toLowerCase())
-        );
+        const filteredExcoMembers = customers
+          .filter((c) => executiveRoles.includes(c.memberRole?.toLowerCase()))
+          .sort(
+            (a, b) =>
+              executiveRoles.indexOf(a.memberRole?.toLowerCase()) -
+              executiveRoles.indexOf(b.memberRole?.toLowerCase())
+          );
         setExcoMembers(filteredExcoMembers);
 
         const [approvalsRes, loansRes] = await Promise.all([
