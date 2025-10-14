@@ -4,6 +4,7 @@ import axios from "axios";
 
 export default function DataImport() {
     const [file, setFile] = useState(null);
+    const [dateAsAt, setDateAsAt] = useState(new Date().toISOString().split("T")[0]);
     const [loadingCustomers, setLoadingCustomers] = useState(false);
     const [loadingProfitsSheet, setLoadingProfitsSheet] = useState(false);
 
@@ -39,6 +40,7 @@ export default function DataImport() {
 
         const formData = new FormData();
         formData.append("file", file);
+        formData.append("dateAsAt", dateAsAt);
 
         try {
             const res = await axios.post(
@@ -75,6 +77,12 @@ export default function DataImport() {
             <div className="flex flex-col items-center p-4 gap-4">
                 <div className="bg-white shadow rounded-md flex justify-between w-full p-4">
                     <h1 className="text-lg font-semibold text-gray-800">Upload Share Profits from Excel File</h1>
+                    <input
+                        type="date"
+                        value={dateAsAt}
+                        onChange={(e) => setDateAsAt(e.target.value)}
+                        className="cursor-pointer text-blue-600"
+                    />
                     <input
                         type="file"
                         accept=".xlsx, .xls"

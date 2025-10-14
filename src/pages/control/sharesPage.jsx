@@ -27,7 +27,7 @@ export default function SharesPage() {
       {/* Page Header */}
       <div className="flex flex-col items-start items-center gap-2">
           <h1 className="text-lg md:text-3xl font-bold text-orange-600">🧑‍🤝‍🧑 සාමාජික කොටස් මුදල්</h1>
-          <p className="text-gray-600 text-sm md:text-base">පදනමේ සාමාජික කොටස් මුදල් ලැයිස්තුව</p>
+          <p className="text-gray-600 text-sm md:text-base">පදනමේ සාමාජික කොටස් මුදල් සහ ලාභාංශ ලැයිස්තුව</p>
       </div>
 
       {/* Customer Shares List */}
