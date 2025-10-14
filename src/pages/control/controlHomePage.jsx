@@ -75,7 +75,11 @@ export default function ControlHomePage() {
         const accounts = cashRegisterRes.data;
 
         setCashRegister(accounts.filter((a) => a.headerAccountId === "325"));
-        setBankRegister(accounts.filter((a) => a.headerAccountId === "327"));
+        setBankRegister(
+          accounts
+            .filter((a) => a.headerAccountId === "327")
+            .sort((a, b) => a.accountId.localeCompare(b.accountId))
+        );
         setLoanRegister(accounts.filter((a) => a.headerAccountId === "330"));
       } catch (err) {
         console.error("Fetch error:", err);

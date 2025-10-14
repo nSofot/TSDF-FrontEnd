@@ -58,11 +58,12 @@ function transformSharesLedger(data) {
   const beforeStart = [];
   const inRange     = [];
 
-  for (const trx of data) {
-    const d = new Date(trx.transactionDate);
-    if (d < start)      beforeStart.push(trx);
-    else if (d <= end)  inRange.push(trx);
-  }
+  // for (const trx of data) {
+  //   const d = new Date(trx.transactionDate);
+  //   if (d < start)      beforeStart.push(trx);
+  //   else if (d <= end)  inRange.push(trx);
+  // }
+  inRange.push(...data);
 
   // 🔹 Balance B/F
   const balanceBF = beforeStart.reduce(

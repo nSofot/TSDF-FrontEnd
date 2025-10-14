@@ -52,7 +52,7 @@ export default function IncomePage() {
           filtered = res.data.filter((a) =>
             ["325-0002", "327-0005", "327-0006", "327-0007", "327-0008"].includes(a.accountId)
           );
-        }
+        }      
         setAccounts(filtered.sort((a, b) => a.accountId.localeCompare(b.accountId)));
       } catch (err) {
         toast.error("Failed to fetch account/bank data.");
@@ -139,15 +139,8 @@ export default function IncomePage() {
       </header>
 
       {/* DETAILS SECTION */}
-      <div className="bg-white shadow-lg rounded-xl border-l-4 border-orange-700 overflow-hidden">
-        <button
-          onClick={() => setShowDetailsSection((prev) => !prev)}
-          className="w-full flex justify-between items-center px-4 py-3 font-medium text-orange-700 hover:bg-orange-50"
-        >
-          <span>ලැබීම් තොරතුරු</span>
-          {showDetailsSection ? "▲" : "▼"}
-        </button>
-        {showDetailsSection && (
+      <div className="bg-white shadow-lg p-2 rounded-xl border-l-4 border-orange-700 overflow-hidden">
+     
           <div className="p-4 space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* RECEIPT NO */}
@@ -202,19 +195,7 @@ export default function IncomePage() {
               </select>
             </div>
           </div>
-        )}
-      </div>
-
-      {/* ACCOUNT SECTION */}
-      <div className="bg-white shadow-lg rounded-xl border-l-4 border-blue-700 overflow-hidden">
-        <button
-          onClick={() => setShowAccountSection((prev) => !prev)}
-          className="w-full flex justify-between items-center px-4 py-3 font-medium text-blue-700 hover:bg-blue-50"
-        >
-          <span>ගිණුම් තොරතුරු</span>
-          {showAccountSection ? "▲" : "▼"}
-        </button>
-        {showAccountSection && (
+      
           <div className="p-4 space-y-4">
             {/* ACCOUNT SELECTION */}
             <div>
@@ -262,7 +243,6 @@ export default function IncomePage() {
               />
             </div>
           </div>
-        )}
       </div>
 
       {/* ACTION BUTTONS */}
