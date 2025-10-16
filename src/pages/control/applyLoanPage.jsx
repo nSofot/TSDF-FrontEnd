@@ -37,17 +37,20 @@ export default function ApplyLoanPage() {
 
     const loanTypes = ["සුභසාධන ණය", "කෙටි කාලීන ණය", "දිගු කාලීන ණය", "ව්යාපෘති ණය"];
     const loanTypesValue = ["Welfare Loan", "Short Term Loan", "Long Term Loan", "Project Loan"];
+    const currentMonth = new Date().getMonth();
 
     const user = JSON.parse(localStorage.getItem("user") || "null");
 
   
     useEffect(() => {      
-      if (user?.userId) {
-        setApplicantId(user.userId);
-        if (user.userId.length === 3) {
-          searchApplicant(user.userId);
+        if (user.memberRole === "manager") {
+          setApplicant("");
+        } else {
+          setApplicantId(user.userId);
+          if (user.userId.length === 3) {
+            searchApplicant(user.userId);
+          }
         }
-      }
     }, [user?.userId]);
 
 
@@ -58,7 +61,6 @@ export default function ApplyLoanPage() {
       setApplicant({});
       
       try {
-          // fetch applicant details
           try {
               const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/customer/${id}`);
               if (!res.data) {
@@ -67,53 +69,74 @@ export default function ApplyLoanPage() {
               }
               setApplicant(res.data);
           } catch (error) {
-              if (error.response?.status === 404) {
                   toast.error("සාමාජික අංකය නොමැත.");
-              } else {
-                  toast.error("අයදුම්පත සෙවීම අසාර්ථක විය.");
-                  console.error(error);
-              }
           }
 
-        // fetch applicant loans
-        const loan = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/loanMaster/pending-customer/${id}`);
-        setApplicantLoans(loan.data);    
+          try {
+            const loan = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/loanMaster/pending-customer/${id}`);
+            setApplicantLoans(loan.data);    
+          } catch (error) {
+            setApplicantLoans([]);
+          }
           
-        // fetch applcant submitted loans
-        try {         
+          try {
             const appRes = await axios.get(
               `${import.meta.env.VITE_BACKEND_URL}/api/loanMaster/application/${id}`
-            );                     
-            if (appRes.data) {          
-                setReferenceNo(appRes.data.loanId);
-                setSelectedLoanType(appRes.data.loanType);
-                setAmount(appRes.data.amount ?? 0);
-                setMaxAmount(appRes.data.maxAmount ?? 0);
-                setInterest(appRes.data.loanInterestRate ?? 0);
-                setDuration(appRes.data.loanDuration ?? 0);
-                setMaxDuration(appRes.data.maxDuration ?? 0);
-                setFirstInstallment(appRes.data.firstInstallment ?? 0);     
-                // setIsApproved(appRes.data.isApproved);
-                setIsGranted(appRes.data.isGranted);
-                setFirstGuranterId(appRes.data.firstGuarantorId ?? "");
-                setSecondGuranterId(appRes.data.secondGuarantorId ?? "");
+            );
+
+            const data = appRes.data;
+
+            if (data && Object.keys(data).length > 0) {
+                setReferenceNo(data.loanId);
+                setSelectedLoanType(data.loanType);
+                setAmount(data.amount ?? 0);
+                setMaxAmount(data.maxAmount ?? 0);
+                setInterest(data.loanInterestRate ?? 0);
+                setDuration(data.loanDuration ?? 0);
+                setMaxDuration(data.maxDuration ?? 0);
+                setFirstInstallment(data.firstInstallment ?? 0);
+                // setIsGranted(data.isGranted);
+                setFirstGuranterId(data.firstGuarantorId ?? "");
+                setSecondGuranterId(data.secondGuarantorId ?? "");
                 setIsNewLoan(false);
-                if (appRes.data.isRejected) {
-                    setReason("⛔කණගාටුයි, ඔබේ ණය අයදුම්පත ප්‍රතික්ෂේප කර ඇත. කරුණාකර වැඩි විස්තර සඳහා කළමනාකරු අමතන්න.");   
-                } else if (appRes.data.isApproved)  {
-                    setReason("✅ඔබගේ ණය අයදුම්පත අනුමත කර ඇත. කරුණාකර කළමනාකරුගෙන් ණය මුදල ලබා ගන්න.");
+
+                if (data.isRejected) {
+                  setReason("⛔ කණගාටුයි, ඔබේ ණය අයදුම්පත ප්‍රතික්ෂේප කර ඇත. කරුණාකර වැඩි විස්තර සඳහා කළමනාකරු අමතන්න.");
+                } else if (data.isApproved) {
+                  setReason("✅ ඔබගේ ණය අයදුම්පත අනුමත කර ඇත. කරුණාකර කළමනාකරුගෙන් ණය මුදල ලබා ගන්න.");
                 } else {
-                    setReason("⌛ඔබගේ ණය අයදුම්පත අනුමැතිය සඳහා සමාලෝචනය කෙරෙමින් පවතී. කරුණාකර රැඳී සිටින්න.");
+                  setReason("⌛ ඔබගේ ණය අයදුම්පත අනුමැතිය සඳහා සමාලෝචනය කෙරෙමින් පවතී. කරුණාකර රැඳී සිටින්න.");
                 }
-            }
-        } catch (error) {
-            if (error.response?.status === 404) {
-                // reset fields
-              resetFields();
             } else {
-                toast.error("අයදුම්පත සෙවීම අසාර්ථක විය.");
+                // reset values
+                setReferenceNo("");
+                setSelectedLoanType("");
+                setAmount("");
+                setMaxAmount("");
+                setInterest("");
+                setDuration("");
+                setMaxDuration("");
+                setFirstInstallment("");
+                setFirstGuranterId("");
+                setSecondGuranterId("");
+                setIsNewLoan(true);
+                setReason("");
             }
-        }
+          } catch (error) {
+              // reset values
+              setReferenceNo("");
+              setSelectedLoanType("");
+              setAmount("");
+              setMaxAmount("");
+              setInterest("");
+              setDuration("");
+              setMaxDuration("");
+              setFirstInstallment("");
+              setFirstGuranterId("");
+              setSecondGuranterId("");
+              setIsNewLoan(true);
+              setReason("");
+          }
       } finally {
         setIsLoading(false);
       }
@@ -190,6 +213,7 @@ export default function ApplyLoanPage() {
         setInterest(1.5);
         setMaxAmount(applicant.shares * 1.5);
       } else if (loanType === "Project Loan") {
+        setMaxDuration(24);
         setInterest(1.5);
         setMaxAmount(200000);
       }
@@ -200,28 +224,6 @@ export default function ApplyLoanPage() {
         setFirstInstallment(((amount / duration) + ((amount * interest) / 100)).toFixed(2));
       } else setFirstInstallment("");
     }, [selectedLoanType, amount, duration]);
-
-    const resetFields = () => {         
-        // reset fields
-        // setReferenceNo("");
-        // setSelectedLoanType("");
-        // setAmount(0);
-        // setMaxAmount(0);
-        // setInterest(0);
-        // setDuration(0);
-        // setMaxDuration(0);
-        // setFirstInstallment(0);
-        // setFirstGuranterId("");
-        // setSecondGuranterId("");   
-        // setApplicantLoans([]);  
-        // setReason("");    
-        // setIsNewLoan(true);
-        // setIsValidating(false);
-        // setIsEligible(false);
-        // setIsSubmitting(false);
-        // setIsSubmitted(false);
-        // setIsRemoving(false);
-    }
 
 
     const validateLoanGrant = () => {     
@@ -294,10 +296,13 @@ export default function ApplyLoanPage() {
         setIsValidating(false);
         return;
       } else if (membershipFee > 0) {
-        setReason("❌ ඔබගේ සාමාජික ගාස්තු ගෙවීම් යාවත්කාලීන නොවේ. එබැවින්, මෙම අවස්ථාවේදී ණයක් සඳහා අයදුම් කිරීමට ඔබට සුදුසුකම් නොමැත.");
-        setIsEligible(false);
-        setIsValidating(false);
-        return;
+        const membershipFeePercentage =  ((12 - currentMonth) * 150)
+        if (membershipFee < membershipFeePercentage) {
+          setReason("❌ ඔබගේ සාමාජික ගාස්තු ගෙවීම් යාවත්කාලීන නොවේ. එබැවින්, මෙම අවස්ථාවේදී ණයක් සඳහා අයදුම් කිරීමට ඔබට සුදුසුකම් නොමැත.");
+          setIsEligible(false);
+          setIsValidating(false);
+        return;        
+        }
       } else if (sharesAmount < 5000) {
         setReason("❌ ඔබගේ කොටස් දායකත්වය අවශ්‍ය අවම මුදලට ළඟා වී නොමැත. එබැවින්, මෙම අවස්ථාවේදී ණයක් නිකුත් කළ නොහැක.");
         setIsEligible(false);
@@ -631,13 +636,22 @@ export default function ApplyLoanPage() {
                     </button>
 
                     <button
-                        disabled={!isEligible || isSubmitting || isSubmitted || !isNewLoan}
-                        onClick={async () => { setIsSubmitting(true); await handleLoanGrant(); }}
-                        className={`w-full h-12 rounded-lg text-white font-semibold transition ${isEligible && !isSubmitted 
+                      disabled={!isEligible || isSubmitting || isSubmitted || !isNewLoan}
+                      onClick={async () => { 
+                        setIsSubmitting(true); 
+                        await handleLoanGrant(); 
+                      }}
+                      className={`w-full h-12 rounded-lg text-white font-semibold transition ${
+                        isEligible && !isSubmitted 
                           ? 'bg-green-500 hover:bg-green-600' 
-                          : 'bg-gray-400 cursor-not-allowed'}`}
+                          : 'bg-gray-400 cursor-not-allowed'
+                      }`}
                     >
-                        {!isSubmitted && isNewLoan ? 'අනුමැතිය සඳහා ඉදිරිපත් කරන්න' : isSubmitting ? 'අයදුම්පත ඉදිරිපත් වෙමින් පවතී' : 'ඉදිරිපත් කිරීම සම්පූර්ණයි'  }
+                      {isSubmitting
+                        ? 'අයදුම්පත ඉදිරිපත් වෙමින් පවතී...'
+                        : isSubmitted
+                          ? 'අයදුම්පත ඉදිරිපත් කර ඇත ✅'
+                          : 'අනුමැතිය සඳහා ඉදිරිපත් කරන්න'}
                     </button>
 
                     {!isNewLoan && (
