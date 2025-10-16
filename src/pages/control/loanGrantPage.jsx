@@ -319,7 +319,7 @@ export default function LoanGrantPage() {
                     trxDate: new Date(),
                     transactionType: "voucher",
                     accountId: lgAcIdCr,
-                    description: selectedLoanType + " " + applicant.name,
+                    description: selectedLoanType + " " + applicant.nameSinhala || applicant.name,
                     isCredit: true,
                     trxAmount: amount
                 }          
@@ -342,16 +342,13 @@ export default function LoanGrantPage() {
               await axios.put(
                 `${import.meta.env.VITE_BACKEND_URL}/api/ledgerAccounts/add-balance`,
                 payload
-                // {
-                //   headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
-                // }
               );
             } catch (error) {
               console.log("5️⃣⚠️ update loan account error: ", error);
             }
 
 
-            //6️⃣create cash book transaction
+            //6️⃣create loan account transaction
             try {
                 const accTrxPayload = {
                     trxId: newReferenceNo,
@@ -370,15 +367,15 @@ export default function LoanGrantPage() {
             
             //7️⃣create book reference
             try {
-                const refPayload = {
-                    referenceType: "voucher",
-                    bookNo: voucherNo,
-                    trxReference: newReferenceNo
-                };
-                await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/bookReferences`, refPayload);
+              const refPayload = {
+                transactionType: "voucher",
+                trxBookNo: voucherNo,
+                trxReference: newReferenceNo
+              };
+              await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/bookReferences`, refPayload);
             } catch (error) {
-                console.log('3️⃣⚠️ create book reference error: ', error);
-            } 
+              console.log("7️⃣⚠️ create book reference error:", error);
+            }
 
             toast.success("ඔබගේ ණය නිකුතුව සාර්ථකව අවසන් කර ඇත. කරුණාකර ඔබගේ ගිණුම පරීක්ෂා කරන්න.");
         } catch (error) {
@@ -453,24 +450,26 @@ export default function LoanGrantPage() {
         <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-teal-600">
           <p className="text-teal-600 font-semibold sm:text-base">ණය අනුමත කිරීම:</p>
           <div className="flex flex-col gap-2">
-            {selectedLoanType === "ව්යාපෘති ණය" ||
-            selectedLoanType === "දිගු කාලීන ණය" ? (
-              <ApprovalCheckbox label="සභාපති" checked={approvals.chairman} />
-            ) : null}
 
-            <ApprovalCheckbox label="ලේකම්" checked={approvals.secretary} />
+              {(selectedLoanType === "ව්යාපෘති ණය" ||
+              selectedLoanType === "දිගු කාලීන ණය") && (
+                <ApprovalCheckbox label="සභාපති" checked={approvals.chairman} />
+              )}
 
-            {(selectedLoanType === "ව්යාපෘති ණය" ||
-              selectedLoanType === "දිගු කාලීන ණය" ||
-              selectedLoanType === "කෙටි කාලීන ණය") && (
-              <ApprovalCheckbox label="භාණ්ඩාගාරික" checked={approvals.treasurer} />
-            )}
+              <ApprovalCheckbox label="ලේකම්" checked={approvals.secretary} />
 
-            {selectedLoanType === "ව්යාපෘති ණය" && (
-              <ApprovalCheckbox label="විධායක කමිටුව" checked={approvals.executive} />
-            )}
+              {(selectedLoanType === "ව්යාපෘති ණය" ||
+                selectedLoanType === "දිගු කාලීන ණය" ||
+                selectedLoanType === "කෙටි කාලීන ණය") && (
+                <ApprovalCheckbox label="භාණ්ඩාගාරික" checked={approvals.treasurer} />
+              )}
 
-            <ApprovalCheckbox label="කළමනාකරු" checked={approvals.manager} />
+              {(selectedLoanType === "ව්යාපෘති ණය") && (
+                <ApprovalCheckbox label="විධායක කමිටුව" checked={approvals.executive} />
+              )}
+
+              <ApprovalCheckbox label="කළමනාකරු" checked={approvals.manager} />
+
           </div>
         </div>
 

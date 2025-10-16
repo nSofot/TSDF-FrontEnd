@@ -15,7 +15,6 @@ export default function ApproveLoanPage() {
     const [applicant, setApplicant] = useState({});
     const [applicantLoans, setApplicantLoans] = useState([]);
     const [selectedLoanType, setSelectedLoanType] = useState("");
-    const [memberShipFee, setMemberShipFee] = useState([]);
     const [amount, setAmount] = useState("");
     const [maxAmount, setMaxAmount] = useState("");
     const [interest, setInterest] = useState("");
@@ -26,6 +25,8 @@ export default function ApproveLoanPage() {
     const [secondGuarantor, setSecondGuarantor] = useState("");
     const [firstGuarantorId, setFirstGuarantorId] = useState("");
     const [secondGuarantorId, setSecondGuarantorId] = useState("");
+    const [fGuarantoredLoans, setFGuarantoredLoans] = useState([]);
+    const [sGuarantoredLoans, setSGuarantoredLoans] = useState([]);
     const [reason, setReason] = useState("");
     const [isEligible, setIsEligible] = useState(false);
     const [approvals, setApprovals] = useState({
@@ -35,6 +36,8 @@ export default function ApproveLoanPage() {
       executive: false,
       manager: false
     });
+
+    const currentMonth = new Date().getMonth();
 
     const user = JSON.parse(localStorage.getItem("user"));
 
@@ -60,8 +63,6 @@ export default function ApproveLoanPage() {
             setLoanApplication(appRes.data);
             const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/customer/${id}`);
             setApplicant(res.data);
-            const memRes = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/memberTransaction/membership-fee/${id}`);
-            setMemberShipFee(memRes.data);
             const loan = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/loanMaster/pending-customer/${id}`);
             setApplicantLoans(loan.data);  
             const loanDetails = appRes.data;
@@ -86,6 +87,7 @@ export default function ApproveLoanPage() {
               searchFirstGuarantor(loanDetails.firstGuarantorId);
               searchSecondGuarantor(loanDetails.secondGuarantorId);
             } else if (loanDetails.loanType === "Project Loan") {
+              setMaxDuration(24);
               setInterest(1.5);
               setMaxAmount(200000);
               setSelectedLoanType("ව්යාපෘති ණය");           
@@ -114,8 +116,8 @@ export default function ApproveLoanPage() {
         try {
           const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/customer/${id}`);
           setFirstGuarantor(res.data);
-          const loan = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/loanMaster/pending-customer/${id}`);
-          setFirstGuarantorLoans(loan.data);
+          // const loan = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/loanMaster/pending-customer/${id}`);
+          // setFirstGuarantorLoans(loan.data);
           const fGLoans = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/loanMaster/pending-guarantor/${id}`);
           setFGuarantoredLoans(fGLoans.data);
         } catch (err) {
@@ -131,8 +133,8 @@ export default function ApproveLoanPage() {
         try {
           const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/customer/${id}`);
           setSecondGuarantor(res.data);
-          const loan = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/loanMaster/pending-customer/${id}`);
-          setSecondGuarantorLoans(loan.data);
+          // const loan = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/loanMaster/pending-customer/${id}`);
+          // setSecondGuarantorLoans(loan.data);
           const sGLoans = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/loanMaster/pending-guarantor/${id}`);
           setSGuarantoredLoans(sGLoans.data);
         } catch (err) {
@@ -147,23 +149,6 @@ export default function ApproveLoanPage() {
           setFirstInstallment(((amount / duration) + ((amount * interest) / 100)).toFixed(2));
         } else setFirstInstallment("");
     }, [selectedLoanType, amount, duration]);
-
-
-    const checkVoucherExists = async (no) => {
-          try {
-            const res = await axios.get(
-              `${import.meta.env.VITE_BACKEND_URL}/api/loanTransactions/trxbook/${no}`
-            );
-            if (res.data.exists) {
-              setError("🚨 This voucher number already exists!");
-            } else {
-              setError("");
-            }
-          } catch (err) {
-            console.error("Error checking voucher:", err);
-            setError("⚠️ Error validating voucher");
-          }
-    }; 
       
 
     const validateLoanGrant = () => {
@@ -174,7 +159,7 @@ export default function ApproveLoanPage() {
         if (!amount) return toast.error("ණය මුදල ඇතුළත් කරන්න");
         if (!duration) return toast.error("ආපසු ගෙවීමේ කාලය ඇතුළත් කරන්න");
 
-        if (selectedLoanType === "Long Term Loan" || selectedLoanType === "Project Loan") {
+        if (selectedLoanType === "දිගු කාලීන ණය" || selectedLoanType === "ව්යාපෘති ණය") {
           if (!firstGuarantorId || !secondGuarantorId) return toast.error("ඇපකරුවන්ගේ විස්තර සපයන්න");
           if (firstGuarantorId === secondGuarantorId) return toast.error("ඇපකරුවන්ට එකම සාමාජිකයෙකු විය නොහැක.");
           if (firstGuarantorId === applicantId || secondGuarantorId === applicantId) return toast.error("අයදුම්කරුට ඇපකරුවෙකු විය නොහැක.");
@@ -224,9 +209,13 @@ export default function ApproveLoanPage() {
             setIsEligible(false);
             return;
         } else if (membershipFee > 0) {
-            setReason("❌ ඔබගේ සාමාජික ගාස්තු ගෙවීම් යාවත්කාලීන නොවේ. එබැවින්, මෙම අවස්ථාවේදී ණයක් සඳහා අයදුම් කිරීමට ඔබට සුදුසුකම් නොමැත.");
-            setIsEligible(false);
-            return;
+            const membershipFeePercentage =  ((12 - currentMonth) * 150)
+            if (membershipFee < membershipFeePercentage) {
+              setReason("❌ ඔබගේ සාමාජික ගාස්තු ගෙවීම් යාවත්කාලීන නොවේ. එබැවින්, මෙම අවස්ථාවේදී ණයක් සඳහා අයදුම් කිරීමට ඔබට සුදුසුකම් නොමැත.");
+              setIsEligible(false);
+              setIsValidating(false);
+            return;        
+            }
         } else if (sharesAmount < 5000) {
             setReason("❌ ඔබගේ කොටස් දායකත්වය අවශ්‍ය අවම මුදලට ළඟා වී නොමැත. එබැවින්, මෙම අවස්ථාවේදී ණයක් නිකුත් කළ නොහැක.");
             setIsEligible(false);
@@ -249,7 +238,7 @@ export default function ApproveLoanPage() {
             }
         })}
         if (selectedLoanType === "Long Term Loan") {
-          if (firstGuarantorLoans.length > 0) {
+          if (fGuarantoredLoans.length > 0) {
               setReason("❌ තෝරාගත් පළමු ඇපකරු දැනටමත් තවත් ණයක් සඳහා අත්සන් කර ඇති අතර එම නිසා නැවත අත්සන් කිරීමට සුදුසුකම් නොලබයි.");
               setIsEligible(false);
               return;         
@@ -258,7 +247,7 @@ export default function ApproveLoanPage() {
               setIsEligible(false);
               return;          
           }
-          if (secondGuarantorLoans.length > 0) {
+          if (sGuarantoredLoans.length > 0) {
               setReason("❌ තෝරාගත් දෙවන ඇපකරු දැනටමත් තවත් ණයක් සඳහා අත්සන් කර ඇති අතර එම නිසා නැවත අත්සන් කිරීමට සුදුසුකම් නොලබයි.");
               setIsEligible(false);
               return;         
@@ -381,7 +370,7 @@ export default function ApproveLoanPage() {
                       <LoadingSpinner />
                     ) : (
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-indigo-700 font-medium">
-                          <div className="flex justify-between">
+                          <div className="mt-4 flex justify-between">
                             <span>නම:</span>
                             <span>{applicant?.name || "-"}</span>
                           </div>
@@ -402,7 +391,7 @@ export default function ApproveLoanPage() {
                 </div>
 
                 {/* Membership Table */}
-                <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-purple-500">
+                {/* <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-purple-500">
                     <p className="font-semibold text-purple-700">සාමාජික ගාස්තු පිළිබඳ විස්තර</p>
                     <table className="min-w-full bg-white rounded-lg overflow-hidden shadow-md text-sm sm:text-base">
                       <thead className="bg-purple-50 text-purple-700">
@@ -426,7 +415,7 @@ export default function ApproveLoanPage() {
                         )}
                       </tbody>
                     </table>
-                </div>
+                </div> */}
 
                 {/* Loan Table */}
                 <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-orange-500">
@@ -485,8 +474,8 @@ export default function ApproveLoanPage() {
                 {/* Approval Checkboxes */}
                 <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-teal-600">
                     <p className="text-teal-600 font-semibold text-sm sm:text-base">ණය අනුමත කිරීම:</p>
-                    
-                    {selectedLoanType === "ව්යාපෘති ණය" ||  selectedLoanType === "දිගු කාලීන ණය" && (
+
+                    {(selectedLoanType === "ව්යාපෘති ණය" || selectedLoanType === "දිගු කාලීන ණය" ) && (
                       <label className="flex items-center gap-2 text-teal-600">
                         <input
                           type="checkbox"
@@ -497,7 +486,7 @@ export default function ApproveLoanPage() {
                         />
                         සභාපති අනුමැතිය
                       </label>
-                    )}                
+                    )}
 
                     <label className="flex items-center gap-2 text-teal-600">
                       <input
@@ -565,7 +554,7 @@ export default function ApproveLoanPage() {
                 {/* Action Buttons */}
                 <div className="flex flex-col sm:flex-row gap-4 mt-4">
                     <button
-                      className="w-full h-12 bg-gradient-to-r from-indigo-400 to-indigo-600 text-white rounded-lg hover:from-indigo-500 hover:to-indigo-700"
+                      className={`w-full h-12 rounded-lg ${!isEligible ? "bg-gradient-to-r from-indigo-400 to-indigo-600 text-white hover:from-indigo-500 hover:to-indigo-700" : "bg-gray-400 cursor-not-allowed"}`}
                       onClick={validateLoanGrant}
                     >
                       {isEligible ? 'ණය සත්‍යාපනය කර ඇත' : 'ණය අයදුම්පත සත්‍යාපනය කරන්න'}
