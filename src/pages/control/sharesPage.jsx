@@ -17,7 +17,12 @@ export default function SharesPage() {
 
     axios
       .get(`${import.meta.env.VITE_BACKEND_URL}/api/customer`)
-      .then((res) => setCustomers(res.data))
+      .then((res) => {
+        const filteredList = res.data
+          .sort((a, b) => a.customerId.localeCompare(b.customerId));
+          setCustomers(filteredList);
+        setIsLoading(false);
+      })
       .catch((err) => console.error(err))
       .finally(() => setIsLoading(false));
   }, [location]);
