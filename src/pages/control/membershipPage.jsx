@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import LoadingSpinner from "../../components/loadingSpinner";
 import { formatNumber } from "../../utils/numberFormat.js";
 
-export default function SharesPage() {
+export default function MembershipPage() {
   const [customers, setCustomers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -31,8 +31,8 @@ export default function SharesPage() {
     <div className="max-w-6xl w-full mx-auto p-2 flex flex-col space-y-6">
       {/* Page Header */}
       <div className="flex flex-col items-start items-center gap-2">
-          <h1 className="text-lg md:text-3xl font-bold text-orange-600">🧑‍🤝‍🧑 සාමාජික කොටස් මුදල්</h1>
-          <p className="text-gray-600 text-sm md:text-base">පදනමේ සාමාජික කොටස් මුදල් සහ ලාභාංශ ලැයිස්තුව</p>
+          <h1 className="text-lg md:text-3xl font-bold text-orange-600">🧑‍🤝‍🧑 ගෙවිය යුතු සාමාජික මුදල්</h1>
+          <p className="text-gray-600 text-sm md:text-base">ගෙවිය යුතු සාමාජික මුදල් ලැයිස්තුව</p>
       </div>
 
       {/* Customer Shares List */}
@@ -47,7 +47,7 @@ export default function SharesPage() {
               <tr className="bg-orange-100">
                 <th className="px-2 py-2 text-sm font-semibold text-orange-700">ID</th>
                 <th className="px-2 py-2 text-sm font-semibold text-orange-700">Name</th>
-                <th className="px-2 py-2 text-sm font-semibold text-orange-700 text-right">Shares</th>
+                <th className="px-2 py-2 text-sm font-semibold text-orange-700 text-right">Amount</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-orange-300">
@@ -58,7 +58,7 @@ export default function SharesPage() {
                 >
                   <td className="px-2 py-2">{item.customerId}</td>
                   <td className="px-2 py-2">{item.nameSinhala || item.name}</td>
-                  <td className="px-2 py-2 text-right">{formatNumber(item.shares)}</td>
+                  <td className="px-2 py-2 text-right">{formatNumber(item.membership)}</td>
                 </tr>
               ))}
             </tbody>
@@ -66,9 +66,7 @@ export default function SharesPage() {
               <tr className="bg-orange-100">
                 <th className="px-2 py-2 text-sm font-semibold text-orange-700">Total</th>
                 <th className="px-2 py-2 text-sm font-semibold text-orange-700"></th>
-                <th className="px-2 py-2 text-sm font-semibold text-orange-700 text-right">
-                  {formatNumber(customers.reduce((total, item) => total + item.shares, 0))}
-                </th>
+                <th className="px-2 py-2 text-sm font-semibold text-orange-700 text-right">{formatNumber(customers.reduce((total, item) => total + item.membership, 0))}</th>
               </tr>
             </tfoot>
           </table>

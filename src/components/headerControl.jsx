@@ -48,6 +48,7 @@ export default function Header() {
       { path: "/", label: "Home", icon: <FaHome /> },
       { path: "/control/", label: "Dashboard", icon: <FaChartLine /> },
       { path: "/control/members", label: "Members", icon: <FaUsers /> },
+      { path: "/control/membership-fee", label: "Membership Fees", icon: <FaClipboardList /> },
       { path: "/control/shares", label: "Shares", icon: <FaChartPie /> },
       { path: "/control/cash-book", label: "Cash Book", icon: <FaBook /> },
     ],

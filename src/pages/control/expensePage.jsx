@@ -31,17 +31,16 @@ export default function ExpensePage() {
   const [receiptNoOk, setReceiptNoOk] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  const [showMemberSection, setShowMemberSection] = useState(true);
-  const [showVoucherSection, setShowVoucherSection] = useState(true);
-  const [showAccountSection, setShowAccountSection] = useState(true);
-
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user") || "null");
   if (!user) navigate("/login");
 
   let expenseType = [];
   if (user.memberRole === "manager") {
-    expenseType = ["ලාභ ආපසු ගෙවීම්", "කොටස් ආපසු ගෙවීම්", "අයකර ගැනීම්"];
+    expenseType = [
+      "ලාභ ආපසු ගෙවීම්", 
+      "කොටස් ආපසු ගෙවීම්", 
+      "අයකර ගැනීම්"];
   } else if (user.memberRole === "treasurer") {
     expenseType = [
       "සාමාජික පවුලේ අවමංගල්‍ය පරිත්‍යාග",
@@ -66,10 +65,11 @@ export default function ExpensePage() {
             ["325-0002", "327-0005", "327-0006", "327-0007", "327-0008"].includes(a.accountId)
           );
         }
-
         setAccounts(filtered.sort((a, b) => a.accountId.localeCompare(b.accountId)));
+
         const memberRes = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/customer`);
         setMembers(memberRes.data);
+
       } catch (err) {
         toast.error("Failed to fetch account/bank data.");
       } finally {
@@ -119,11 +119,12 @@ export default function ExpensePage() {
   const handleTransfer = async () => {
     const token = localStorage.getItem("token");
     if (!token) return toast.error("Unauthorized. Please log in.");
+    if (!memberId) return toast.error("කරුණාකර සාමාජික අංකය ඇතුලත් කරන්න.");
+    if (!voucherNo || !receiptNoOk)
+      return toast.error("කරුණාකර වලංගු වවුචර් අංකයක් ඇතුලත් කරන්න.");    
     if (!selectedExpenseType) return toast.error("කරුණාකර වියදම් වර්ගය තෝරන්න.");
     if (!accountFrom) return toast.error("කරුණාකර ගිණුම තෝරන්න.");
     if (transferAmount <= 0) return toast.error("කරුණාකර මුදල ඇතුලත් කරන්න");
-    if (!voucherNo || !receiptNoOk)
-      return toast.error("කරුණාකර වලංගු වවුචර් අංකයක් ඇතුලත් කරන්න.");
 
     setIsSubmitting(true);
     let newReferenceNo =
@@ -131,10 +132,11 @@ export default function ExpensePage() {
 
     try {
       try {
+        // 1️⃣ Update cash book account balance
         await axios.put(`${import.meta.env.VITE_BACKEND_URL}/api/ledgerAccounts/subtract-balance`, {
           updates: [{ accountId: accountFrom, amount: Number(transferAmount) }],
         });
-
+        // 2️⃣ Create ledger transaction
         await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/ledgerTransactions`, {
           trxId: newReferenceNo,
           trxBookNo: voucherNo,
@@ -145,7 +147,7 @@ export default function ExpensePage() {
           isCredit: true,
           trxAmount: Number(transferAmount),
         });
-
+        // 3️⃣ Create book reference
         await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/bookReferences`, {
           transactionType: "voucher",
           trxBookNo: String(voucherNo),
@@ -153,7 +155,7 @@ export default function ExpensePage() {
         });
       } catch (err) {
         console.error(err);
-        toast.error("❌ Failed to submit transfer. Try again.");
+        toast.error("❌ 2️⃣3️⃣ Failed to submit transfer. Try again.");
         return;
       }
 
@@ -162,7 +164,7 @@ export default function ExpensePage() {
          selectedExpenseType === "කොටස් ආපසු ගෙවීම්" ||
          selectedExpenseType === "අයකර ගැනීම්"
          )) {
-
+         // 4️⃣ Update shares for member
         try {
             const customerPayload = {
                 updates: [
@@ -178,9 +180,9 @@ export default function ExpensePage() {
             );
         } catch (err) {
           console.error(err);
-          toast.error("❌ Failed to submit transfer. Try again.");
+          toast.error("❌ 4️⃣ Failed to submit transfer. Try again.");
         }
-
+        // 5️⃣ Create member shares transaction
         try {
             const trxPayload = {
                 trxId: newReferenceNo,
@@ -198,9 +200,78 @@ export default function ExpensePage() {
             );
         } catch (err) {
           console.error(err);
-          toast.error("❌ Failed to submit transfer. Try again.");
-        }
-        
+          toast.error("❌ 5️⃣ Failed to submit transfer. Try again.");
+        }       
+      }
+
+      if ((user.memberRole === "treasurer") && (
+          (selectedExpenseType === "සාමාජික පවුලේ අවමංගල්‍ය පරිත්‍යාග" ||
+          selectedExpenseType === "කලත්රයාගේ පවුලේ අවමංගල්‍ය පරිත්‍යාග")
+      )) {
+          let funeralFee = 0;
+          if (selectedExpenseType === "සාමාජික පවුලේ අවමංගල්‍ය පරිත්‍යාග") {
+            funeralFee = 750;
+          } else if (selectedExpenseType === "කලත්රයාගේ පවුලේ අවමංගල්‍ය පරිත්‍යාග") {
+            funeralFee = 250;
+          }
+
+          const enrichedCustomers = members.map((customer) => {
+            const otherCount = customer.familyMembers
+              ? customer.familyMembers.filter((fm) => fm.relationship === "other").length
+              : 0;
+
+            let memberFee = funeralFee;
+            if (otherCount > 0) {
+              memberFee = funeralFee + (otherCount * (funeralFee / 2)); // add 50% if other family members exist
+            }
+
+            return {
+              ...customer,
+              memberFee,
+            };
+          });
+
+          setMembers(enrichedCustomers);
+       
+          for (const customer of enrichedCustomers) {
+              // 6️⃣ post annual membership fee for the customer
+              try {
+                  const customerPayload = {
+                      updates: [
+                          {
+                              customerId: customer.customerId,
+                              amount: parseFloat(customer.memberFee) || 0,
+                          },
+                      ],
+                  };
+                  await axios.put(
+                      `${import.meta.env.VITE_BACKEND_URL}/api/customer/membershipFee-add`,
+                      customerPayload
+                  );
+              } catch (err) {
+                  console.error(`6️⃣⚠️ Error posting fee for customer ${customer.customerId}:`, err);
+              }
+
+              // 7️⃣ post annual membership fee transaction for the customer
+              try {
+                  const trxPayload = {
+                      trxBookNo: "",
+                      customerId: customer.customerId,
+                      transactionDate: new Date(transferDate).toISOString(),
+                      trxAmount: parseFloat(customer.memberFee) || 0,
+                      transactionType: "funeralFee",
+                      isCredit: false,
+                      description: `අවමංගල ගාස්තු- ${member.nameSinhala || member.name}`,
+                  };
+                  const res = await axios.post(
+                      `${import.meta.env.VITE_BACKEND_URL}/api/membershipTransactions/create`,
+                      trxPayload
+                  );
+
+                } catch (err) {
+                  console.error(`7️⃣⚠️ Error posting fee transaction for customer ${customer.customerId}:`, err);
+              }
+          }    
       }
 
       setIsSubmitted(true);
@@ -287,7 +358,16 @@ export default function ExpensePage() {
               <select
                   value={selectedExpenseType}
                   disabled={isSubmitted || isSubmitting}
-                  onChange={(e) => setSelectedExpenseType(e.target.value)}
+                  onChange={(e) => {
+                    setSelectedExpenseType(e.target.value);
+                    if (e.target.value === "සාමාජික පවුලේ අවමංගල්‍ය පරිත්‍යාග") {
+                      setTransferAmount(50000);
+                    } else if (e.target.value === "කලත්රයාගේ පවුලේ අවමංගල්‍ය පරිත්‍යාග") {
+                      setTransferAmount(20000);
+                    } else {
+                      setTransferAmount(0);
+                    }
+                  }}
                   className="mt-1 w-full border border-gray-300 rounded-lg p-3 text-sm text-gray-700 focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="">-- තෝරන්න --</option>
@@ -323,7 +403,7 @@ export default function ExpensePage() {
                   ))}
               </select>
               <div className="mt-1 text-sm text-right text-gray-500">
-                  <span className="font-semibold text-purple-600">ශේෂය: </span>
+                  <span className="font-semibold text-green-600">ශේෂය: </span>
                   {Number(accountFromBalance ?? 0).toLocaleString("en-US", {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2,
@@ -349,9 +429,11 @@ export default function ExpensePage() {
           disabled={isSubmitting || isSubmitted}
           onClick={handleTransfer}
           className={`w-full sm:w-1/2 py-3 rounded-lg text-white font-semibold transition-all ${
-            isSubmitting || isSubmitted
+            isSubmitting
               ? "bg-gray-400 cursor-not-allowed"
-              : "bg-green-600 hover:bg-green-700"
+              : isSubmitted
+              ? "bg-gray-600 cursor-not-allowed"
+              : "bg-blue-600 hover:bg-blue-700"
           }`}
         >
           {isSubmitting
