@@ -15,6 +15,7 @@ export default function LoanRepaymentPage() {
     const [loanDetails, setLoanDetails] = useState({});
     const [selectedLoanType, setSelectedLoanType] = useState("");
     const [selectedLoanId, setSelectedLoanId] = useState("");
+    const [paymentDate, setPaymentDate] = useState(new Date().toISOString().split("T")[0]);
     const [dateEnded, setDateEnded] = useState("");
     const [lastTransaction, setLastTransaction] = useState({});
     const [interest, setInterest] = useState(0);
@@ -101,36 +102,36 @@ export default function LoanRepaymentPage() {
                     setLoanDetails(res.data);
                     setSelectedLoanType(res.data.loanType);
 
-                    const startDate = new Date(res.data.issuedDate);
+                    // const startDate = new Date(res.data.issuedDate);
 
-                    // calculate end date
-                    const endDate = new Date(startDate);
-                    endDate.setMonth(startDate.getMonth() + res.data.loanDuration);
-                    setDateEnded(endDate);
+                    // // calculate end date
+                    // const endDate = new Date(startDate);
+                    // endDate.setMonth(startDate.getMonth() + res.data.loanDuration);
+                    // setDateEnded(endDate);
 
-                    // interest
-                    setInterest(res.data.loanInterestRate || 0);
+                    // // interest
+                    // setInterest(res.data.loanInterestRate || 0);
 
-                    // regular monthly installment
-                    const regInstallment = Number(res.data.amount) / Number(res.data.loanDuration) || 0;
+                    // // regular monthly installment
+                    // const regInstallment = Number(res.data.amount) / Number(res.data.loanDuration) || 0;
 
-                    // number of days since last payment
-                    const dayCount = getDaysSinceLastPaid(startDate);
+                    // // number of days since last payment
+                    // const dayCount = getDaysSinceLastPaid(startDate);
 
-                    // approximate number of months passed
-                    const monthsDiff = Math.floor(dayCount / 30);
+                    // // approximate number of months passed
+                    // const monthsDiff = Math.floor(dayCount / 30);
 
-                    // total due so far
-                    const dueAmount = regInstallment * monthsDiff;
+                    // // total due so far
+                    // const dueAmount = regInstallment * monthsDiff;
 
-                    // amount already paid
-                    const paidSoFar = Number(res.data.amount) - Number(res.data.dueAmount) || 0;
+                    // // amount already paid
+                    // const paidSoFar = Number(res.data.amount) - Number(res.data.dueAmount) || 0;
 
-                    // remaining due installments
-                    const dueInstallments = regInstallment + (dueAmount - paidSoFar);
+                    // // remaining due installments
+                    // const dueInstallments = regInstallment + (dueAmount - paidSoFar);
 
-                    // set installment (never negative)
-                    setInstallment(dueInstallments > 0 ? dueInstallments.toFixed(2) : 0);
+                    // // set installment (never negative)
+                    // setInstallment(dueInstallments > 0 ? dueInstallments.toFixed(2) : 0);
                 
                 } else {
                     setLoanDetails({});
@@ -148,7 +149,48 @@ export default function LoanRepaymentPage() {
 
         fetchLoanDetails();
     }, [selectedLoanId]);
+    
+    useEffect(() => {
+        const calculatePayableAmounts = () => {
+            if (!loanDetails.issuedDate) return;
+            // const startDate = new Date(res.data.issuedDate);
 
+            // // calculate end date
+            // const endDate = new Date(startDate);
+            // endDate.setMonth(startDate.getMonth() + res.data.loanDuration);
+            // setDateEnded(endDate);
+
+            // // interest
+            // setInterest(res.data.loanInterestRate || 0);
+
+            // // regular monthly installment
+            // const regInstallment = Number(res.data.amount) / Number(res.data.loanDuration) || 0;
+
+            // // number of days since last payment
+            // const dayCount = getDaysSinceLastPaid(startDate);
+
+            // // approximate number of months passed
+            // const monthsDiff = Math.floor(dayCount / 30);
+
+            // // total due so far
+            // const dueAmount = regInstallment * monthsDiff;
+
+            // // amount already paid
+            // const paidSoFar = Number(res.data.amount) - Number(res.data.dueAmount) || 0;
+
+            // // remaining due installments
+            // const dueInstallments = regInstallment + (dueAmount - paidSoFar);
+
+            // // set installment (never negative)
+            // setInstallment(dueInstallments > 0 ? dueInstallments.toFixed(2) : 0);
+            const startDate = new Date(loanDetails.issuedDate);
+            const endDate = new Date(startDate);
+            endDate.setMonth(startDate.getMonth() + loanDetails.loanDuration);
+            setDateEnded(endDate);
+        };
+
+        calculatePayableAmounts();
+    }, [paymentDate]);
     
     function getDaysSinceLastPaid(lastPaidDate) {
         const today = new Date();
@@ -407,7 +449,7 @@ export default function LoanRepaymentPage() {
                                     සාමාජිකයාගේ නම
                                 </label>
                                 <div className="w-full bg-purple-50 border border-blue-300 rounded-lg p-3 text-center font-medium text-blue-500">
-                                    {applicant?.name || ""}
+                                    {applicant?.nameSinhala || applicant?.name || ""}
                                 </div>
                             </div>
 
@@ -488,6 +530,17 @@ export default function LoanRepaymentPage() {
                             <h2 className="font-semibold text-orange-500">💰 ගෙවීම් විස්තර</h2>
 
                             <div>
+                                <label className="text-sm font-semibold text-orange-500">දිනය</label>
+                                <input
+                                type="date"
+                                disabled={isSubmitted || isSubmitting}
+                                value={paymentDate}
+                                onChange={(e) => setPaymentDate(e.target.value)}
+                                className="mt-1 w-full border rounded-lg p-3 text-orange-500 border-orange-300 focus:ring-2 focus:ring-orange-500"
+                                />
+                            </div>
+
+                            <div>
                                 <label className="block text-sm text-orange-500 mb-1">අදාළ පොලිය</label>
                                 <input
                                 type="number"
@@ -501,6 +554,7 @@ export default function LoanRepaymentPage() {
                                 <label className="block text-sm text-orange-500 mb-1">අදාළ වාරිකය</label>
                                 <input
                                     type="number"
+                                    disabled={isSubmitted || isSubmitting}
                                     value={installment}
                                     onChange={(e) => setInstallment(e.target.value)}
                                     className="w-full p-3 border border-orange-300 rounded-lg text-orange-500 text-right focus:outline-none focus:ring-2 focus:ring-orange-500"
@@ -520,6 +574,7 @@ export default function LoanRepaymentPage() {
                                         error ? "border-red-500" : "border-gray-300"
                                     } focus:outline-none focus:ring-2 focus:ring-purple-500`}
                                     value={receiptNo}
+                                    disabled={isSubmitted || isSubmitting}
                                     placeholder="000000"
                                     onChange={(e) => {
                                         const val = e.target.value.replace(/\D/g, "");
@@ -545,9 +600,11 @@ export default function LoanRepaymentPage() {
                                 await handleSave();
                                 }}
                                 className={`w-full h-12 rounded-lg font-semibold text-white transition ${
-                                !isSubmitting && !isSubmitted
-                                    ? "bg-green-600 hover:bg-green-700"
-                                    : "bg-gray-400 cursor-not-allowed"
+                                isSubmitting
+                                    ? "bg-gray-400 hover:bg-green-700"
+                                    : isSubmitted
+                                    ? "bg-gray-600 cursor-not-allowed"
+                                    : "bg-blue-600 hover:bg-blue-700"
                                 }`}
                             >
                                 {isSubmitting
@@ -558,7 +615,7 @@ export default function LoanRepaymentPage() {
                             </button>
 
                             <button
-                                onClick={() => navigate(-1)}
+                                onClick={() => navigate('/control')}
                                 className="w-full h-12 hover:bg-gray-700 text-gray-700 rounded-lg border border-gray-700 font-semibold transition mb-6"
                             >
                                 ආපසු යන්න

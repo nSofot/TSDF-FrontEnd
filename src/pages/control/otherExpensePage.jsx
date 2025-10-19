@@ -113,6 +113,11 @@ export default function OtherExpensePage() {
       const token = localStorage.getItem("token");
       setError("");
       if (!token) return toast.error("Unauthorized. Please log in.");
+      if (!voucherNo || receiptNoOk === false) {
+        setIsSubmitting(false);
+        setError("වවුචර් අංකය ඇතුලත් කර නැත.");
+        return toast.error("කරුණාකර වවුචර් අංකය තෝරන්න.");
+      }      
       if (!selectedExpenseType) {
         setIsSubmitting(false);
         setError("වියදම් වර්ගය ඇතුලත් කර නැත.");
@@ -127,11 +132,6 @@ export default function OtherExpensePage() {
         setIsSubmitting(false);
         setError("වියදම් මුදල ඇතුලත් කර නැත.");
         return toast.error("කරුණාකර මුදල ඇතුලත් කරන්න");
-      }
-      if (!voucherNo || receiptNoOk === false) {
-        setIsSubmitting(false);
-        setError("වවුචර් අංකය ඇතුලත් කර නැත.");
-        return toast.error("කරුණාකර වවුචර් අංකය තෝරන්න.");
       }
       let newReferenceNo = "";
       if (user.memberRole === 'treasurer') {
@@ -266,10 +266,10 @@ export default function OtherExpensePage() {
                 <div className="bg-gray-50 shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-orange-500">
 
                     <div>
-                        <label className="text-xs font-semibold text-orange-600">වවුචර් අංකය</label>
+                        <label className="text-xs font-semibold text-gray-700">වවුචර් අංකය</label>
                         <input
                             type="text"
-                            className={`mt-1 px-3 py-2 text-sm text-orange-600 border border-orange-600 rounded-lg w-full text-center tracking-widest focus:ring-2 focus:ring-purple-500 outline-none ${
+                            className={`mt-1 px-3 py-2 text-sm text-gray-700 border border-gray-700 rounded-lg w-full text-center tracking-widest focus:ring-2 focus:ring-purple-500 outline-none ${
                             error ? "border-red-500" : "border-gray-300"
                             }`}
                             value={voucherNo}
@@ -289,7 +289,7 @@ export default function OtherExpensePage() {
                     </div>
 
                     <div>
-                        <label className="text-xs font-semibold text-orange-600">දිනය</label>
+                        <label className="text-xs font-semibold text-gray-700">දිනය</label>
                         <input
                             type="date"
                             value={transferDate}
@@ -297,12 +297,12 @@ export default function OtherExpensePage() {
                             onChange={(e) => {
                                 setTransferDate(e.target.value);
                             }}
-                            className="w-full mt-1 px-3 py-2 text-sm text-orange-600 border border-orange-600 rounded-lg focus:ring-2 focus:ring-blue-400"
+                            className="w-full mt-1 px-3 py-2 text-sm text-gray-700 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-400"
                         />
                     </div>
 
                     <div className="flex-1">
-                        <label className="text-xs font-semibold text-orange-600">වියදම් වර්ගය</label>
+                        <label className="text-xs font-semibold text-gray-700">වියදම් වර්ගය</label>
                         <select
                             value={selectedExpenseType}
                             disabled={isSubmitted || isSubmitting}
@@ -311,7 +311,7 @@ export default function OtherExpensePage() {
                             setSelectedExpenseType(value);
                             setTransferAmount("");
                             }}
-                            className="w-full mt-1 px-3 py-2 text-sm text-orange-600 rounded-lg border border-orange-600 focus:ring-2 focus:ring-orange-700"
+                            className="w-full mt-1 px-3 py-2 text-sm text-gray-700 rounded-lg border border-gray-700 focus:ring-2 focus:ring-orange-700"
                         >
                             <option value="">-- Select --</option>
                             {expenseType.map((type, idx) => (
@@ -323,7 +323,7 @@ export default function OtherExpensePage() {
                     </div>
 
                     <div className="flex-1">
-                        <label className="text-xs font-semibold text-orange-600">වියදම් ගිණුම</label>
+                        <label className="text-xs font-semibold text-gray-700">වියදම් ගිණුම</label>
                         <select
                             value={accountFrom}
                             disabled={isSubmitted || isSubmitting}
@@ -341,7 +341,7 @@ export default function OtherExpensePage() {
                                     setTransferAmount("");
                                 }
                             }}
-                            className="w-full mt-1 px-3 py-2 text-sm text-orange-600 rounded-lg border border-orange-600 focus:ring-2 focus:ring-orange-700"
+                            className="w-full mt-1 px-3 py-2 text-sm text-gray-700 rounded-lg border border-gray-700 focus:ring-2 focus:ring-orange-700"
                         >
                             <option value="">-- Select --</option>
                             {accounts.map((a, idx) => (
@@ -353,9 +353,9 @@ export default function OtherExpensePage() {
                     </div>
 
                     <div className="flex-1">                   
-                        <div className="mt-1 text-sm flex justify-end font-semibold text-orange-600">
-                            <label className="text-xs font-semibold">ගිණුම් ශේෂය </label>
-                            -{" "}
+                        <div className="mt-1 text-sm flex justify-end font-semibold text-gray-700">
+                            <label className="text-xs font-semibold text-orange-600">ගිණුම් ශේෂය :  </label>
+                            
                             {Number(accountFromBalance ?? 0).toLocaleString("en-US", {
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2,
@@ -364,7 +364,7 @@ export default function OtherExpensePage() {
                     </div>   
                         
                     <div>
-                        <label className="text-xs font-semibold text-orange-600">මුදල</label>
+                        <label className="text-xs font-semibold text-gray-700">මුදල</label>
                         <input
                             type="number"
                             value={transferAmount}
@@ -372,7 +372,7 @@ export default function OtherExpensePage() {
                             onChange={(e) => {
                                 setTransferAmount(e.target.value);
                             }}
-                            className="w-full mt-1  px-3 py-2 text-sm text-orange-600 border border-orange-600 rounded-lg focus:ring-2 focus:ring-blue-400"
+                            className="w-full mt-1  px-3 py-2 text-sm text-gray-700 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-400"
                         />
                     </div>    
                 </div>
@@ -381,7 +381,13 @@ export default function OtherExpensePage() {
                 <div className="flex flex-col sm:flex-row gap-4 mt-8">
                     <button
                         disabled={isSubmitting || isSubmitted}
-                        className={`rounded-lg w-full h-12 text-white font-semibold ${isSubmitting || isSubmitted ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700"}`}
+                        className={`rounded-lg w-full h-12 text-white font-semibold ${
+                            isSubmitting
+                            ? "bg-gray-400 cursor-not-allowed" 
+                            : isSubmitted 
+                            ? "bg-gray-600 cursor-not-allowed"
+                            : "bg-blue-600 hover:bg-blue-700"
+                        }`}
                         onClick={ async () => {
                             setIsSubmitting(true),
                             await handleTransfer() 

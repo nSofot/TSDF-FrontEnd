@@ -6,7 +6,9 @@ import toast from "react-hot-toast";
 import HeaderControl from "../components/headerControl";
 import ControlHomePage from "./control/controlHomePage";
 import MembersPage from "./control/membersPage";
+import MembershipPage from "./control/membershipPage";
 import SharesPage from "./control/sharesPage";
+import LoanPage from "./control/loanPage";
 import ApplyLoanPage from "./control/applyLoanPage";
 import ApproveLoanPage from "./control/approveLoan";
 import LoanGrantPage from "./control/loanGrantPage";
@@ -94,7 +96,9 @@ export default function ControlPage() {
       <Route path="*" element={<Layout />}>
         <Route index element={<ControlHomePage />} />
         <Route path="members" element={<MembersPage />} />
+        <Route path="membership-fee" element={<MembershipPage />} />
         <Route path="shares" element={<SharesPage />} />
+        <Route path="loans" element={<LoanPage />} />
         <Route path="apply-loan" element={<ApplyLoanPage />} />
         <Route path="approve-loan" element={<ApproveLoanPage />} />
         <Route path="grant-loan" element={<LoanGrantPage />} />

@@ -20,6 +20,7 @@ import {
   FaUserPlus,
   FaUserEdit,
   FaUserCheck,
+  FaGavel,
 } from "react-icons/fa";
 import { useEffect, useState } from "react";
 
@@ -48,6 +49,7 @@ export default function Header() {
       { path: "/", label: "Home", icon: <FaHome /> },
       { path: "/control/", label: "Dashboard", icon: <FaChartLine /> },
       { path: "/control/members", label: "Members", icon: <FaUsers /> },
+      { path: "/control/membership-fee", label: "Membership Fees", icon: <FaClipboardList /> },
       { path: "/control/shares", label: "Shares", icon: <FaChartPie /> },
       { path: "/control/cash-book", label: "Cash Book", icon: <FaBook /> },
     ],
@@ -57,7 +59,7 @@ export default function Header() {
       { path: "/control/grant-loan", label: "Grant Loan", icon: <FaHandHoldingUsd /> },
       { path: "/control/loan-repayment", label: "Loan Repayment", icon: <FaMoneyBillWave /> },
       { path: "/control/receipts-shares", label: "Shares Receipts", icon: <FaReceipt /> },
-      { path: "/control/receipts-membership", label: "Membership Receipt", icon: <FaReceipt /> },
+      { path: "/control/receipts-membership", label: "Membership Income", icon: <FaReceipt /> },
       { path: "/control/expense", label: "Expenses", icon: <FaWallet /> },
       { path: "/control/expense-others", label: "Other Expenses", icon: <FaMoneyBillWave /> },
       { path: "/control/income", label: "Income", icon: <FaChartLine /> },
@@ -68,12 +70,13 @@ export default function Header() {
       { path: "/control/attendance-mark", label: "Mark Attendance", icon: <FaUserCheck /> },
     ],
     manager: [
+      { path: "/control/loans", label: "View Loans", icon: <FaGavel /> },
       { path: "/control/apply-loan", label: "Apply Loan", icon: <FaFileSignature /> },
       { path: "/control/approve-loan", label: "Approve Loan", icon: <FaCheckCircle /> },
       { path: "/control/grant-loan", label: "Grant Loan", icon: <FaHandHoldingUsd /> },
       { path: "/control/loan-repayment", label: "Loan Repayment", icon: <FaMoneyBillWave /> },
       { path: "/control/receipts-shares", label: "Shares Receipts", icon: <FaReceipt /> },
-      { path: "/control/income", label: "Income", icon: <FaChartLine /> },
+      { path: "/control/income", label: "Other Income", icon: <FaChartLine /> },
       { path: "/control/expense", label: "Expenses", icon: <FaWallet /> },
       { path: "/control/expense-others", label: "Other Expenses", icon: <FaMoneyBillWave /> },
       { path: "/control/fund-transfer", label: "Fund Transfer", icon: <FaExchangeAlt /> },
@@ -81,8 +84,8 @@ export default function Header() {
       { path: "/control/ledger-shares", label: "Shares Ledger", icon: <FaBook /> },
     ],
     treasurer: [
-      { path: "/control/receipts-membership", label: "Membership Fee", icon: <FaReceipt /> },
-      { path: "/control/income", label: "Income", icon: <FaChartLine /> },
+      { path: "/control/receipts-membership", label: "Membership Income", icon: <FaReceipt /> },
+      { path: "/control/income", label: "Other Income", icon: <FaChartLine /> },
       { path: "/control/expense", label: "Expenses", icon: <FaWallet /> },
       { path: "/control/expense-others", label: "Other Expenses", icon: <FaMoneyBillWave /> },
       { path: "/control/fund-transfer", label: "Fund Transfer", icon: <FaExchangeAlt /> },
