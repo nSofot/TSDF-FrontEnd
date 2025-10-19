@@ -62,6 +62,15 @@ export default function SharesPage() {
                 </tr>
               ))}
             </tbody>
+            <tfoot>
+              <tr className="bg-orange-100">
+                <th className="px-2 py-2 text-sm font-semibold text-orange-700">Total</th>
+                <th className="px-2 py-2 text-sm font-semibold text-orange-700"></th>
+                <th className="px-2 py-2 text-sm font-semibold text-orange-700 text-right">
+                  {formatNumber(customers.reduce((total, item) => total + item.shares, 0))}
+                </th>
+              </tr>
+            </tfoot>
           </table>
         )}
       </div>

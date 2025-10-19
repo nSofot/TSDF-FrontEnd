@@ -34,8 +34,16 @@ export default function ReceiptSharesPage() {
                 setMember(res.data);
                 setTotalAmount("");
                 setReceiptNo("");
-            }           
+            } else {
+                toast.error("වලංගු නොවන සාමාජික අංකයක්");
+                setMember({});
+                setTotalAmount("");
+                setReceiptNo("");
+            }          
         } catch (err) {
+            setMember({});
+            setTotalAmount("");
+            setReceiptNo("");
             toast.error(err.response?.data?.message || "වලංගු නොවන සාමාජික අංකයක්");
         } finally {
             setIsLoading(false);
@@ -247,7 +255,7 @@ export default function ReceiptSharesPage() {
                                     සාමාජිකයාගේ නම
                                 </label>
                                 <div className="w-full bg-blue-50 border border-blue-300 rounded-lg p-3 text-center font-medium text-blue-500">
-                                    {member?.name || ""}
+                                    {member?.nameSinhala || member.name || ""}
                                 </div>
                             </div>
 
@@ -257,7 +265,7 @@ export default function ReceiptSharesPage() {
                                     කොටස් මුදල් ගිණුම ශේෂය
                                 </label>
                                 <div className="w-full bg-blue-50 border border-blue-300 rounded-lg p-3 text-center font-medium text-blue-500">
-                                    {member?.shares || ""}
+                                    {formatNumber(member?.shares) || ""}
                                 </div>                                
                             </div>
                         </div>
@@ -269,10 +277,10 @@ export default function ReceiptSharesPage() {
                 <div className="bg-white shadow-md rounded-xl border-l-4 border-orange-500 p-6 space-y-4">
 
                     <div>
-                        <label className="block text-sm text-orange-500 mb-1">රිසිට් අංකය</label>
+                        <label className="block text-sm text-gray-600 mb-1">රිසිට් අංකය</label>
                         <input
                             type="text"
-                            className={`w-full p-3 rounded-lg text-orange-500 text-center border ${
+                            className={`w-full p-3 rounded-lg text-gray-600 text-center border ${
                                 error ? "border-red-500" : "border-gray-300"
                             } focus:outline-none focus:ring-2 focus:ring-purple-500`}
                             value={receiptNo}
@@ -291,23 +299,23 @@ export default function ReceiptSharesPage() {
                         {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
                     </div>                   
                     <div>
-                        <label className="block text-sm text-orange-500 mb-1">ගෙවීම් දිනය</label>
+                        <label className="block text-sm text-gray-600 mb-1">ගෙවීම් දිනය</label>
                         <input 
                             type="date" 
                             value={trxDate} 
                             onChange={(e) => setTrxDate(e.target.value)} 
-                            className="w-full p-3 border border-orange-300 rounded-lg text-orange-500 text-center focus:outline-none focus:ring-2 focus:ring-orange-500"
+                            className="w-full p-3 border border-gray-600 rounded-lg text-gray-600 text-center focus:outline-none focus:ring-2 focus:ring-orange-500"
                         />
                     </div>
 
                     <div>
-                        <label className="block text-sm text-orange-500 mb-1">ගෙවන මුදල</label>
+                        <label className="block text-sm text-gray-600 mb-1">ගෙවන මුදල</label>
                         <input
                             type="number"
                             value={totalAmount}
                             placeholder="0.00"
                             onChange={(e) => setTotalAmount(e.target.value)}
-                            className="w-full p-3 border border-orange-300 rounded-lg text-orange-500 text-center focus:outline-none focus:ring-2 focus:ring-orange-500"
+                            className="w-full p-3 border border-gray-600 rounded-lg text-gray-600 text-center focus:outline-none focus:ring-2 focus:ring-orange-500"
                         />
                     </div>
                 </div>
@@ -321,9 +329,11 @@ export default function ReceiptSharesPage() {
                         await handleSave();
                         }}
                         className={`w-full h-12 rounded-lg font-semibold text-white transition ${
-                        !isSubmitting && !isSubmitted
-                            ? "bg-green-600 hover:bg-green-700"
-                            : "bg-gray-400 cursor-not-allowed"
+                        isSubmitting
+                            ? "bg-gray-400 hover:bg-green-700"
+                            : isSubmitted
+                            ? "bg-gray-600 cursor-not-allowed"
+                            : "bg-blue-600 hover:bg-blue-700"
                         }`}
                     >
                         {isSubmitting

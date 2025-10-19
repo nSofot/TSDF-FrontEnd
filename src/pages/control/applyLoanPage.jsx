@@ -171,7 +171,10 @@ export default function ApplyLoanPage() {
         setIsLoading(true);
         try {
           const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/customer/${id}`);
-          if (!res.data) return toast.error("සාමාජික අංකය වලංගු නැත");
+          if (!res.data) {
+            setSGuranteredLoans([]);
+             return toast.error("සාමාජික අංකය වලංගු නැත");
+          }
           setSecondGuaranter(res.data);
 
           try {
@@ -182,6 +185,7 @@ export default function ApplyLoanPage() {
               setSGuranteredLoans([]); // no loans for this guarantor
             } else {
               console.error(error);
+              setSGuranteredLoans([])
               toast.error("Guarantor loans fetch failed");
             }
           }
@@ -453,7 +457,7 @@ export default function ApplyLoanPage() {
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-indigo-700 font-medium mt-4">
                             <div className="flex justify-between">
                               <span>නම:</span>
-                              <span>{applicant?.name || "-"}</span>
+                              <span>{applicant?.nameSinhala || applicant?.name || "-"}</span>
                             </div>
                             <div className="flex justify-between">
                               <span>සම්බන්ධ දිනය:</span>
@@ -668,7 +672,7 @@ export default function ApplyLoanPage() {
                     )}
 
                     <button
-                      onClick={() => navigate(-1)}
+                      onClick={() => navigate('/control')}
                       // className="w-full bg-gray-600 hover:bg-gray-700 text-white rounded-xl p-3 font-semibold transition"
                       className="w-full h-12 text-gray-600 font-semibold border border-gray-600 hover:bg-purple-700 active:bg-purple-800 rounded-lg transition"
                     >
