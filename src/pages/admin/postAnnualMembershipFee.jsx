@@ -95,7 +95,7 @@ export default function PostAnnualMembershipFee() {
                         trxAmount: parseFloat(customer.annualFee) || 0,
                         transactionType: "membershipFee",
                         isCredit: false,
-                        description: `${postingDate.getFullYear()} සඳහා වාර්ෂික සාමාජික ගාස්තුව`,
+                        description: `වාර්ෂික සාමාජික ගාස්තුව`,
                     };
                     const res = await axios.post(
                         `${import.meta.env.VITE_BACKEND_URL}/api/membershipTransactions/create`,

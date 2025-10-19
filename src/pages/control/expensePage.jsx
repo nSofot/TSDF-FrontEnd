@@ -143,7 +143,7 @@ export default function ExpensePage() {
           trxDate: new Date(transferDate).toISOString(),
           transactionType: "voucher",
           accountId: accountFrom,
-          description: selectedExpenseType + " - " + member.nme,
+          description: {selectedExpenseType} + ` - ${member.nameSinhala || member.name}`,
           isCredit: true,
           trxAmount: Number(transferAmount),
         });
@@ -234,7 +234,7 @@ export default function ExpensePage() {
           setMembers(enrichedCustomers);
        
           for (const customer of enrichedCustomers) {
-              // 6️⃣ post annual membership fee for the customer
+              // 6️⃣ post funeral fee for the customer
               try {
                   const customerPayload = {
                       updates: [
@@ -252,7 +252,7 @@ export default function ExpensePage() {
                   console.error(`6️⃣⚠️ Error posting fee for customer ${customer.customerId}:`, err);
               }
 
-              // 7️⃣ post annual membership fee transaction for the customer
+              // 7️⃣ post funeral fee transaction for the customer
               try {
                   const trxPayload = {
                       trxBookNo: "",

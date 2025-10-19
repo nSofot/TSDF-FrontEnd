@@ -156,21 +156,23 @@ export default function FundTransferPage() {
             {/* DATES */}
             <div className="bg-gray-50 shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-orange-500">
                 <div>
-                    <label className="text-xs font-semibold text-orange-600">දිනය</label>
+                    <label className="text-xs font-semibold text-gray-600">දිනය</label>
                     <input
                         type="date"
+                        disabled={isSubmitted || isSubmitting}
                         value={transferDate}
                         onChange={(e) => {
                             setTransferDate(e.target.value);
                         }}
-                        className="w-full mt-1 px-3 py-2 text-sm text-orange-600 border border-orange-600 rounded-lg focus:ring-2 focus:ring-blue-400"
+                        className="w-full mt-1 px-3 py-2 text-sm text-gray-600 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-400"
                     />
                 </div>
 
                 <div className="flex-1">
-                    <label className="text-xs font-semibold text-orange-600">ගිණුමේ සිට</label>
+                    <label className="text-xs font-semibold text-gray-600">ගිණුමේ සිට</label>
                     <select
                         value={accountFrom}
+                        disabled={isSubmitted || isSubmitting}
                         onChange={(e) => {
                             const selectedAccountId = e.target.value;
                             setAccountFrom(selectedAccountId);
@@ -185,7 +187,7 @@ export default function FundTransferPage() {
                                 setTransferAmount("");
                             }
                         }}
-                        className="w-full mt-1 px-3 py-2 text-sm text-orange-600 rounded-lg border border-orange-600 focus:ring-2 focus:ring-orange-700"
+                        className="w-full mt-1 px-3 py-2 text-sm text-gray-600 rounded-lg border border-gray-600 focus:ring-2 focus:ring-orange-700"
                     >
                         <option value="">-- Select --</option>
                         {accounts.map((a, idx) => (
@@ -197,8 +199,8 @@ export default function FundTransferPage() {
                 </div>
 
                 <div className="flex-1">                   
-                    <div className="mt-1 text-sm flex justify-end font-semibold text-orange-600">
-                        <label className="text-xs font-semibold">ගිණුම් ශේෂය</label>
+                    <div className="mt-1 text-sm flex justify-end font-semibold text-gray-600">
+                        <label className="text-xs font-semibold text-orange-600">ගිණුම් ශේෂය</label>
                         Rs.{" "}
                         {Number(accountFromBalance ?? 0).toLocaleString("en-US", {
                         minimumFractionDigits: 2,
@@ -208,9 +210,10 @@ export default function FundTransferPage() {
                 </div>
 
                 <div className="flex-1">
-                    <label className="text-xs font-semibold text-orange-600">ගිණුම වෙත</label>
+                    <label className="text-xs font-semibold text-gray-600">ගිණුම වෙත</label>
                     <select
                         value={accountTo}
+                        disabled={isSubmitted || isSubmitting}
                         onChange={(e) => {
                             const selectedAccountId = e.target.value;
                             setAccountTo(selectedAccountId);
@@ -225,7 +228,7 @@ export default function FundTransferPage() {
                                 setTransferAmount("");
                             }
                         }}
-                        className="w-full mt-1 px-3 py-2 text-sm text-orange-600 rounded-lg border border-orange-600 focus:ring-2 focus:ring-orange-700"
+                        className="w-full mt-1 px-3 py-2 text-sm text-gray-600 rounded-lg border border-gray-600 focus:ring-2 focus:ring-orange-700"
                     >
                         <option value="">-- Select --</option>
                         {accounts.map((a, idx) => (
@@ -238,7 +241,7 @@ export default function FundTransferPage() {
 
 
                 <div className="flex-1">                   
-                    <div className="mt-1 text-sm flex justify-end font-semibold text-orange-600">
+                    <div className="mt-1 text-sm flex justify-end font-semibold text-gray-600">
                         <label className="text-xs font-semibold">ගිණුම් ශේෂය</label>
                         Rs.{" "}
                         {Number(accountToBalance ?? 0).toLocaleString("en-US", {
@@ -249,14 +252,15 @@ export default function FundTransferPage() {
                 </div>   
                     
                 <div>
-                    <label className="text-xs font-semibold text-orange-600">මුදල</label>
+                    <label className="text-xs font-semibold text-gray-600">මුදල</label>
                     <input
                         type="number"
+                        disabled={isSubmitted || isSubmitting}
                         value={transferAmount}
                         onChange={(e) => {
                             setTransferAmount(e.target.value);
                         }}
-                        className="w-full mt-1 px-3 py-2 text-sm text-orange-600 border border-orange-600 rounded-lg focus:ring-2 focus:ring-blue-400"
+                        className="w-full mt-1 px-3 py-2 text-sm text-gray-600 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-400"
                     />
                 </div>              
             </div>
@@ -265,7 +269,12 @@ export default function FundTransferPage() {
             <div className="flex flex-col sm:flex-row gap-4 mt-4">
                 <button
                     disabled={isSubmitting || isSubmitted}
-                    className={`rounded-lg w-full h-12 text-white font-semibold ${isSubmitting || isSubmitted ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700"}`}
+                    className={`rounded-lg w-full h-12 text-white font-semibold ${
+                        isSubmitting 
+                        ? "bg-gray-400 cursor-not-allowed" 
+                        :isSubmitted ?
+                        "bg-gray-600 cursor-not-allowed"
+                        : "bg-blue-600 hover:bg-blue-700"}`}
                     onClick={ async () => {
                         setIsSubmitting(true),
                         await handleTransfer() 

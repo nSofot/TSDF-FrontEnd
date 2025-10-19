@@ -372,7 +372,7 @@ export default function ApproveLoanPage() {
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-indigo-700 font-medium">
                           <div className="mt-4 flex justify-between">
                             <span>නම:</span>
-                            <span>{applicant?.name || "-"}</span>
+                            <span>{applicant?.nameSinhala || applicant?.name || "-"}</span>
                           </div>
                           <div className="flex justify-between">
                             <span>සම්බන්ධ දිනය:</span>

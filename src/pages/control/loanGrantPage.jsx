@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import LoadingSpinner from "../../components/loadingSpinner";
 import { formatNumber } from "../../utils/numberFormat.js";
+import { a } from "framer-motion/client";
 
 
 export default function LoanGrantPage() {
@@ -418,7 +419,7 @@ export default function LoanGrantPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-indigo-700 font-medium">
               <div className="flex justify-between">
                 <span>නම:</span>
-                <span>{applicant?.name}</span>
+                <span>{applicant?.nameSinhala || applicant?.name}</span>
               </div>
               <div className="flex justify-between">
                 <span>ණය වර්ගය:</span>
@@ -519,7 +520,7 @@ export default function LoanGrantPage() {
           </button>
 
           <button
-              onClick={() => navigate(-1)}
+              onClick={() => navigate('/control')}
               className="mt-6 w-full h-12 rounded-lg font-semibold text-gray-600 border border-gray-600 hover:bg-red-600 transition"
           >
               ආපසු යන්න

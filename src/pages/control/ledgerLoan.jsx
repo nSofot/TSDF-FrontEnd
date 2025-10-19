@@ -123,7 +123,7 @@ export default function LedgerLoanPage() {
             <div className="p-4 shadow-md flex flex-col md:flex-row md:items-center md:justify-between gap-3">
                 <div>
                     <h1 className="text-lg md:text-2xl font-bold text-orange-600">💵 ණය ලෙජරය</h1>
-                    <p className="text-xs opacity-90">සියලුම ණය ගනුදෙනු සහ ශේෂයන් නිරීක්ෂණය කරන්න</p>
+                    <p className="text-xs">සියලුම ණය ගනුදෙනු සහ ශේෂයන් නිරීක්ෂණය කරන්න</p>
                 </div>
             </div>
 
@@ -173,7 +173,7 @@ export default function LedgerLoanPage() {
                                 සාමාජිකයාගේ නම
                             </label>
                             <div className="w-full bg-purple-50 border border-purple-200 rounded-lg p-3 text-center font-medium text-purple-700">
-                                {applicant?.name || ""}
+                                {applicant?.nameSinhala || applicant?.name || ""}
                             </div>
                         </div>
 
