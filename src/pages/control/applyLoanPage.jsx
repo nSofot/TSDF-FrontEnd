@@ -600,7 +600,7 @@ export default function ApplyLoanPage() {
                                     }}
                                     className="border rounded-lg p-2 w-full sm:w-24 text-center focus:ring-2 focus:ring-green-400"
                                 />
-                                <span className="text-gray-600 font-medium">{guar.data?.name || "-"}</span>
+                                <span className="text-gray-600 font-medium">{guar.data?.nameSinhala || guar.data?.name || "-"}</span>
                             </div>
                         ))}
                     </div>
