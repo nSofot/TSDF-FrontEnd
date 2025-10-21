@@ -65,6 +65,12 @@ export default function LoanRepaymentPage() {
             }
         } catch (err) {
             toast.error(err.response?.data?.message || "Applicant not found");
+            setLoanDetails({});
+            setDateEnded("");
+            setLastTransaction({});
+            setInterest("");
+            setInstallment("");
+            setTotalAmount("");
         } finally {
             setIsLoading(false);
         }
@@ -102,42 +108,21 @@ export default function LoanRepaymentPage() {
                     setLoanDetails(res.data);
                     setSelectedLoanType(res.data.loanType);
 
-                    // const startDate = new Date(res.data.issuedDate);
+                    const startDate = new Date(res.data.issuedDate);
 
-                    // // calculate end date
-                    // const endDate = new Date(startDate);
-                    // endDate.setMonth(startDate.getMonth() + res.data.loanDuration);
-                    // setDateEnded(endDate);
+                    // Calculate end date by adding months to start date
+                    const endDate = new Date(startDate);
+                    endDate.setMonth(endDate.getMonth() + res.data.loanDuration);
 
-                    // // interest
-                    // setInterest(res.data.loanInterestRate || 0);
-
-                    // // regular monthly installment
-                    // const regInstallment = Number(res.data.amount) / Number(res.data.loanDuration) || 0;
-
-                    // // number of days since last payment
-                    // const dayCount = getDaysSinceLastPaid(startDate);
-
-                    // // approximate number of months passed
-                    // const monthsDiff = Math.floor(dayCount / 30);
-
-                    // // total due so far
-                    // const dueAmount = regInstallment * monthsDiff;
-
-                    // // amount already paid
-                    // const paidSoFar = Number(res.data.amount) - Number(res.data.dueAmount) || 0;
-
-                    // // remaining due installments
-                    // const dueInstallments = regInstallment + (dueAmount - paidSoFar);
-
-                    // // set installment (never negative)
-                    // setInstallment(dueInstallments > 0 ? dueInstallments.toFixed(2) : 0);
+                    setDateEnded(endDate);
                 
                 } else {
                     setLoanDetails({});
                     setDateEnded("");
                     setLastTransaction({});
-                    setInterest(0);
+                    setInterest("");
+                    setInstallment("");
+                    setTotalAmount("");
                 }
 
             } catch (err) {
@@ -149,48 +134,97 @@ export default function LoanRepaymentPage() {
 
         fetchLoanDetails();
     }, [selectedLoanId]);
+
     
     useEffect(() => {
-        const calculatePayableAmounts = () => {
-            if (!loanDetails.issuedDate) return;
-            // const startDate = new Date(res.data.issuedDate);
+    const calculatePayableAmounts = () => {
+        if (!paymentDate || !selectedLoanId || !loanDetails?.loanInterestRate) return;
+        setIsLoadingLoan(true);       
+        try {
+            const lastPaidDate =
+                lastTransaction?.transactionDate
+                ? new Date(lastTransaction.transactionDate)
+                : loanDetails?.issuedDate
+                ? new Date(loanDetails.issuedDate)
+                : null;
 
-            // // calculate end date
-            // const endDate = new Date(startDate);
-            // endDate.setMonth(startDate.getMonth() + res.data.loanDuration);
-            // setDateEnded(endDate);
+            if (!lastPaidDate) return;
 
-            // // interest
-            // setInterest(res.data.loanInterestRate || 0);
+            //calculate installment months
+            const issuedDate = new Date(loanDetails.issuedDate);
+            const payment = new Date(paymentDate);
+            // calculate difference in months
+            const monthsInstallment = Math.max(
+            0,
+            (payment.getFullYear() - issuedDate.getFullYear()) * 12 +
+                (payment.getMonth() - issuedDate.getMonth())
+            );            
+            
+            //calculate interest
+            const daysInterest = Math.max(
+                0,
+                Math.floor(
+                (new Date(paymentDate).getTime() - lastPaidDate.getTime()) /
+                    (1000 * 60 * 60 * 24)
+                )
+            );
+            let interestRate = 0;
+            if (monthsInstallment > loanDetails.loanDuration) {
+                interestRate= (loanDetails.loanInterestRate * 2).toFixed(2); // Penalty interest rate
+            } else {
+                interestRate =(loanDetails.loanInterestRate).toFixed(2);
+            }
+            const interestPerMonth =
+                ((loanDetails.dueAmount || 0) * (interestRate || 0)) / 100;
+            const interestPerDay = interestPerMonth / 30;
+            const calculatedInterest = (daysInterest * interestPerDay).toFixed(2);
 
-            // // regular monthly installment
-            // const regInstallment = Number(res.data.amount) / Number(res.data.loanDuration) || 0;
+            //calculate installment
+            // const issuedDate = new Date(loanDetails.issuedDate);
+            // const daysInstallment = Math.max(
+            //     0,
+            //     Math.floor(
+            //     (new Date(paymentDate).getTime() - issuedDate.getTime()) /
+            //         (1000 * 60 * 60 * 24)
+            //     )
+            // );
+            // const monthsInstallment = Math.floor(daysInstallment / 30);
 
-            // // number of days since last payment
-            // const dayCount = getDaysSinceLastPaid(startDate);
+            const installmentPerMonth = (((loanDetails.amount) / (loanDetails.loanDuration))).toFixed(2);
+            let calculatedInstallment = 0;
+            if (monthsInstallment >= loanDetails.loanDuration) {
+                // If the loan duration has ended, full due amount is payable
+                calculatedInstallment = loanDetails.dueAmount;
+            } else {
+                const installmentForPeriod = (installmentPerMonth * monthsInstallment).toFixed(2);
+                const calculatedDueAmount = (loanDetails.amount - installmentForPeriod).toFixed(2);
 
-            // // approximate number of months passed
-            // const monthsDiff = Math.floor(dayCount / 30);
+                if (loanDetails.dueAmount <= calculatedDueAmount) {
+                    calculatedInstallment = 0;
+                } else {
+                    calculatedInstallment = (loanDetails.dueAmount - calculatedDueAmount).toFixed(2);
+                }
+            }
 
-            // // total due so far
-            // const dueAmount = regInstallment * monthsDiff;
+            const total =
+                parseFloat(calculatedInterest || 0) + parseFloat(calculatedInstallment || 0);
 
-            // // amount already paid
-            // const paidSoFar = Number(res.data.amount) - Number(res.data.dueAmount) || 0;
+            setInterest(calculatedInterest);
+            setInstallment(calculatedInstallment);
+            setTotalAmount(total);
+        } catch (err) {
+            console.error("Error calculating payable amounts:", err);
+            setInterest("");
+            setInstallment("");
+            setTotalAmount("");
+        } finally {
+            setIsLoadingLoan(false);
+        }
+    };
 
-            // // remaining due installments
-            // const dueInstallments = regInstallment + (dueAmount - paidSoFar);
+    calculatePayableAmounts();
+    }, [paymentDate, selectedLoanId, loanDetails, lastTransaction]);
 
-            // // set installment (never negative)
-            // setInstallment(dueInstallments > 0 ? dueInstallments.toFixed(2) : 0);
-            const startDate = new Date(loanDetails.issuedDate);
-            const endDate = new Date(startDate);
-            endDate.setMonth(startDate.getMonth() + loanDetails.loanDuration);
-            setDateEnded(endDate);
-        };
-
-        calculatePayableAmounts();
-    }, [paymentDate]);
     
     function getDaysSinceLastPaid(lastPaidDate) {
         const today = new Date();
@@ -205,14 +239,8 @@ export default function LoanRepaymentPage() {
         return diffDays;
     }
 
-    useEffect(() => {     
-        const lastPaidDate = lastTransaction && lastTransaction.createdAt ? new Date(lastTransaction.createdAt) : loanDetails.issuedDate ? new Date(loanDetails.issuedDate) : null;               
-        const days = lastPaidDate ? getDaysSinceLastPaid(lastPaidDate) : 0;
-        const interestPerMonth = ((loanDetails.dueAmount || 0) * (loanDetails.loanInterestRate || 0)) / 100;
-        const interestPerDay = interestPerMonth / 30;
-        const calculatedInterest = (days * interestPerDay).toFixed(2);  
-        const total = parseFloat(calculatedInterest || 0) + parseFloat(installment || 0); 
-        setInterest(calculatedInterest);      
+    useEffect(() => {      
+        const total = parseFloat(interest || 0) + parseFloat(installment || 0);   
         setTotalAmount(total);
     }, [interest, installment]);
 
@@ -409,7 +437,7 @@ export default function LoanRepaymentPage() {
     return (
         <div className="max-w-5xl w-full h-full flex flex-col space-y-6 overflow-hidden">
             {/* Header */}
-            <div className="text-center space-y-1">
+            <div className="text-start space-y-1">
                 <h1 className="text-lg md:text-2xl font-bold text-orange-600">🧾 ණය ආපසු ගෙවීම</h1>
                 <p className="text-sm text-gray-600">
                     ණය වාරික සහ පොලී ගෙවීම් පිළිබඳ විස්තර සහ ගෙවීම් සිදුකිරීම.
@@ -545,9 +573,11 @@ export default function LoanRepaymentPage() {
                                 <input
                                 type="number"
                                 value={interest}
-                                readOnly
+                                // readOnly
+                                onChange={(e) => setInterest(e.target.value)}
                                 className="w-full p-3 border border-orange-300 rounded-lg text-orange-500 text-right focus:outline-none focus:ring-2 focus:ring-orange-500"
                                 />
+                                <small className="text-xs text-gray-500">* පොලිය ස්වයංක්‍රීයව ගණනය කර ඇත.</small>
                             </div>
 
                             <div>
@@ -556,9 +586,17 @@ export default function LoanRepaymentPage() {
                                     type="number"
                                     disabled={isSubmitted || isSubmitting}
                                     value={installment}
-                                    onChange={(e) => setInstallment(e.target.value)}
+                                    onChange={(e) =>{
+                                        const value = Number(e.target.value);
+                                        if (value <= loanDetails.dueAmount) setInstallment(value);
+                                        else {
+                                            toast.error(`Amount cannot exceed ${formatNumber(loanDetails.dueAmount)}`);
+                                            setInstallment(loanDetails.dueAmount);
+                                        }   
+                                    }}                                  
                                     className="w-full p-3 border border-orange-300 rounded-lg text-orange-500 text-right focus:outline-none focus:ring-2 focus:ring-orange-500"
                                 />
+                                <small className="text-xs text-gray-500">* වාරිකය ස්වයංක්‍රීයව ගණනය කර ඇත. අවශ්‍ය නම් වෙනස් කළ හැක. (Max.{formatNumber(loanDetails.dueAmount)})</small>
                             </div>
 
                             <div className="flex justify-between items-center text-orange-500 border border-orange-300 rounded-lg p-3 bg-orange-50 text-lg font-semibold pt-3">
