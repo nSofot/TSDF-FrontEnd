@@ -106,6 +106,7 @@ export default function MembersPage() {
                   {[
                     ["Number", activeRecord.customerId],
                     ["Name", activeRecord.title ? `${activeRecord.title} ${activeRecord.name}` : activeRecord.name],
+                    ["In Sinhala", activeRecord.nameSinhala],
                     ["Address", activeRecord.address],
                     ["Mobile", activeRecord.mobile],
                     ["Phone", activeRecord.phone],

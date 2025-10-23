@@ -29,6 +29,16 @@ export default function ControlHomePage() {
     exco: false,
   });
 
+  const roleMap = {
+    member: "සාමාජික",
+    manager: " කළමනාකරු",
+    chairman: "සභාපති",
+    secretary: "ලේකම්",
+    treasurer: "භාණ්ඩාගාරික",
+    executive: "විධායක සභික​",
+    admin: "පද්ධති පරිපාලකයා",
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -149,7 +159,11 @@ export default function ControlHomePage() {
           <p className="text-sm text-gray-500">ID: {customerId}</p>
         </div>
       </div>
-      <span className="font-semibold text-blue-700 capitalize">{memberRole}</span>
+
+    <span className="font-medium text-blue-700 capitalize">
+      {roleMap[memberRole?.toLowerCase()] || "භූමිකාව නොදනී"}
+    </span>    
+      {/* <span className="font-semibold text-blue-700 capitalize">{memberRole}</span> */}
     </div>
   );
 

@@ -1,18 +1,19 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-
-export function useMemberLedger(customerId) {
+export function useMemberLedger(customerId, fromDate, toDate) {
   const [memberLedger, setMemberLedger] = useState([]);
-  const [loading,  setLoading]  = useState(false);
-  const [error,    setError]    = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const [balanceBF, setBalanceBF] = useState(0);
+  const [receivedAm, setReceivedAm] = useState(0);
+  const [spentAm, setSpentAm] = useState(0);
 
   useEffect(() => {
-    if (!customerId) return;
+    if (!customerId || !fromDate || !toDate) return;
 
     const fetchMemberLedger = async () => {
-      if (!customerId) return;
-
       setLoading(true);
       setError(null);
 
@@ -22,49 +23,43 @@ export function useMemberLedger(customerId) {
         );
 
         const ledgerArray = Array.isArray(data) ? data : data.rows || [];
-        const { rows } = transformMemberLedger(ledgerArray);
+        const { rows, totals } = transformMemberLedger(ledgerArray, fromDate, toDate);
 
         setMemberLedger(rows);
-
+        setBalanceBF(totals.balanceBF);
+        setReceivedAm(totals.receivedAm);
+        setSpentAm(totals.spentAm);
       } catch (err) {
         console.error(err);
-        setError("Failed to fetch cash-book data.");
+        setError("Failed to fetch member ledger data.");
       } finally {
         setLoading(false);
       }
     };
 
     fetchMemberLedger();
-  }, [customerId]);
+  }, [customerId, fromDate, toDate]);
 
-  return { memberLedger, loading, error };
+  return { memberLedger, loading, error, balanceBF, receivedAm, spentAm };
 }
 
 /* ---------------------------------------------------------------------- */
-/* Helper: transform + totals                                             */
-/* ---------------------------------------------------------------------- */
-function transformMemberLedger(data) {
-
-  // Start: January 1st
-  const start = new Date();
-  start.setMonth(0);      // January
-  start.setDate(1);       // 1st
+function transformMemberLedger(data, fromDate, toDate) {
+  const start = new Date(fromDate);
   start.setHours(0, 0, 0, 0);
 
-  // End: Today
-  const end = new Date();
-  end.setHours(23, 59, 59, 999); 
+  const end = new Date(toDate);
+  end.setHours(23, 59, 59, 999);
 
   const beforeStart = [];
-  const inRange     = [];
+  const inRange = [];
 
   for (const trx of data) {
     const d = new Date(trx.transactionDate);
-    if (d < start)      beforeStart.push(trx);
-    else if (d <= end)  inRange.push(trx);
+    if (d < start) beforeStart.push(trx);
+    else if (d <= end) inRange.push(trx);
   }
 
-  // 🔹 Balance B/F
   const balanceBF = beforeStart.reduce(
     (sum, t) => sum + (!t.isCredit ? t.trxAmount : -t.trxAmount),
     0
@@ -74,42 +69,54 @@ function transformMemberLedger(data) {
   let running = balanceBF;
 
   if (balanceBF !== 0) {
-    rows.push(makeRow({
-      trxDate   : start,
-      trxId     : "B/F",
-      transactionType: "Balance B/F",
-      description: "As At " + start.toLocaleDateString("en-GB"),
-      isCredit  : balanceBF < 0,
-      trxAmount : Math.abs(balanceBF),
-      createdAt : start,
-    }, balanceBF));
+    rows.push(
+      makeRow(
+        {
+          transactionDate: start,
+          trxId: "B/F",
+          transactionType: "Balance B/F",
+          description: "As At " + start.toLocaleDateString("en-GB"),
+          isCredit: balanceBF < 0,
+          trxAmount: Math.abs(balanceBF),
+          createdAt: start,
+        },
+        balanceBF
+      )
+    );
   }
 
-  const mapped = inRange
-    .sort((a, b) => new Date(a.trxDate) - new Date(b.trxDate))
-    .map(trx => {
-      running += !trx.isCredit ? trx.trxAmount : -trx.trxAmount;
+  let receivedAm = 0;
+  let spentAm = 0;
 
+  const mapped = inRange
+    .sort((a, b) => new Date(a.transactionDate) - new Date(b.transactionDate))
+    .map((trx) => {
+      running += !trx.isCredit ? trx.trxAmount : -trx.trxAmount;
+      if (!trx.isCredit) receivedAm += trx.trxAmount;
+      else spentAm += trx.trxAmount;
       return makeRow(trx, running);
     });
 
   return {
     rows: [...rows, ...mapped],
+    totals: { balanceBF, receivedAm, spentAm },
   };
 }
 
-/* ---------------------------------------------------------------------- */
 function makeRow(trx, runningBalance) {
   const isCredit = trx.isCredit;
-
   return {
-    date       : new Date(trx.transactionDate).toLocaleDateString("en-GB"),
-    trxId      : trx.trxBookNo || trx.trxId,
-    trxType    : trx.transactionType || "",
+    date: new Date(trx.transactionDate).toLocaleDateString("en-GB"),
+    trxId: trx.trxBookNo || trx.trxId,
+    trxType: trx.transactionType || "",
     description: trx.description || "",
-    debit      : !isCredit ? trx.trxAmount.toLocaleString("en-US", { minimumFractionDigits: 2 }) : "0.00",
-    credit     : isCredit  ? trx.trxAmount.toLocaleString("en-US", { minimumFractionDigits: 2 }) : "0.00",
-    balance    : runningBalance.toLocaleString("en-US", { minimumFractionDigits: 2 }),
-    createdAt  : new Date(trx.createdAt),
+    debit: !isCredit
+      ? trx.trxAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })
+      : "0.00",
+    credit: isCredit
+      ? trx.trxAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })
+      : "0.00",
+    balance: runningBalance.toLocaleString("en-US", { minimumFractionDigits: 2 }),
+    createdAt: new Date(trx.createdAt),
   };
 }
