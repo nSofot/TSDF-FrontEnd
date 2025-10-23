@@ -138,7 +138,7 @@ export default function Header() {
 
       {/* Mobile Side Drawer */}
       <div
-        className={`fixed inset-0 bg-black/60 transition-opacity duration-300 ${
+        className={`fixed inset-0 z-[60] bg-black/60 transition-opacity duration-300 ${
           sideDrawerOpened ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
         onClick={() => setSideDrawerOpened(false)}
@@ -147,7 +147,7 @@ export default function Header() {
           role="dialog"
           aria-modal="true"
           tabIndex={-1}
-          className={`w-[280px] bg-orange-600 h-full shadow-xl transform transition-transform duration-300 ease-in-out flex flex-col justify-between ${
+          className={`fixed top-0 left-0 w-[280px] h-full bg-orange-600 shadow-xl transform transition-transform duration-300 ease-in-out flex flex-col justify-between z-[70] ${
             sideDrawerOpened ? "translate-x-0" : "-translate-x-full"
           }`}
           onClick={(e) => e.stopPropagation()}
@@ -160,7 +160,9 @@ export default function Header() {
               aria-label="Close navigation menu"
             />
             <h1 className="text-white font-semibold text-lg">
-              {user?.memberRole || "Guest"}
+              {user?.memberRole
+              ? user.memberRole.charAt(0).toUpperCase() + user.memberRole.slice(1).toLowerCase()
+              : "Guest"}
             </h1>
           </div>
 
@@ -173,7 +175,9 @@ export default function Header() {
                   to={path}
                   onClick={() => setSideDrawerOpened(false)}
                   className={`flex items-center gap-2 text-base font-semibold hover:text-gray-200 transition ${
-                    location.pathname === path ? "text-yellow-300 underline" : "text-gray-100"
+                    location.pathname === path
+                      ? "text-yellow-300 underline"
+                      : "text-gray-100"
                   }`}
                 >
                   {icon} {label}
@@ -203,6 +207,7 @@ export default function Header() {
           </div>
         </aside>
       </div>
+
     </>
   );
 }

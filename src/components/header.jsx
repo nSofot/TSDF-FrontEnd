@@ -177,7 +177,6 @@ export default function Header() {
                 </p>
                 <p className="text-sm text-white">{user?.userId}</p>
               </div>
-
           </div>
 
           {/* Nav Items */}
