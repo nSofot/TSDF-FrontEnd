@@ -33,6 +33,20 @@ export default function Header() {
   const isLoggedIn = Boolean(token);
   const user = JSON.parse(localStorage.getItem("user"));
 
+  const roleMap = {
+  member: "සාමාජික",
+  manager: " කළමනාකරු",
+  chairman: "සභාපති",
+  secretary: "ලේකම්",
+  treasurer: "භාණ්ඩාගාරික",
+  executive: "විධායක සභික​",
+  admin: "පද්ධති පරිපාලකයා",
+};
+
+const userRoleSinhala =
+  roleMap[user?.memberRole?.toLowerCase()] || "භූමිකාව නොදන්නායි";
+
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
@@ -46,12 +60,12 @@ export default function Header() {
   // Role-based navigation links
   const roleBasedNavLinks = {
     common: [
-      { path: "/", label: "Home", icon: <FaHome /> },
-      { path: "/control/", label: "Dashboard", icon: <FaChartLine /> },
-      { path: "/control/members", label: "Members", icon: <FaUsers /> },
-      { path: "/control/membership-fee", label: "Membership Fees", icon: <FaClipboardList /> },
-      { path: "/control/shares", label: "Shares", icon: <FaChartPie /> },
-      { path: "/control/cash-book", label: "Cash Book", icon: <FaBook /> },
+      { path: "/", label: "මුල් පිටුව", icon: <FaHome /> },
+      { path: "/control/", label: "පාලන පුවරුව", icon: <FaChartLine /> },
+      { path: "/control/members", label: "සාමාජික ලැයිස්තුව", icon: <FaUsers /> },
+      { path: "/control/membership-fee", label: "සාමාජික ගාස්තු ශේෂ ලැයිස්තුව", icon: <FaClipboardList /> },
+      { path: "/control/shares", label: "කොටස් මුදල් ලැයිස්තුව", icon: <FaChartPie /> },
+      { path: "/control/cash-book", label: "මුදල් පොත", icon: <FaBook /> },
     ],
     admin: [
       { path: "/control/apply-loan", label: "Apply Loan", icon: <FaFileSignature /> },
@@ -70,39 +84,39 @@ export default function Header() {
       { path: "/control/attendance-mark", label: "Mark Attendance", icon: <FaUserCheck /> },
     ],
     manager: [
-      { path: "/control/loans", label: "View Loans", icon: <FaGavel /> },
-      { path: "/control/apply-loan", label: "Apply Loan", icon: <FaFileSignature /> },
-      { path: "/control/approve-loan", label: "Approve Loan", icon: <FaCheckCircle /> },
-      { path: "/control/grant-loan", label: "Grant Loan", icon: <FaHandHoldingUsd /> },
-      { path: "/control/loan-repayment", label: "Loan Repayment", icon: <FaMoneyBillWave /> },
-      { path: "/control/receipts-shares", label: "Shares Receipts", icon: <FaReceipt /> },
-      { path: "/control/income", label: "Other Income", icon: <FaChartLine /> },
-      { path: "/control/expense", label: "Expenses", icon: <FaWallet /> },
-      { path: "/control/expense-others", label: "Other Expenses", icon: <FaMoneyBillWave /> },
-      { path: "/control/fund-transfer", label: "Fund Transfer", icon: <FaExchangeAlt /> },
-      { path: "/control/ledger-loan", label: "Loan Ledger", icon: <FaClipboardList /> },
-      { path: "/control/ledger-shares", label: "Shares Ledger", icon: <FaBook /> },
+      { path: "/control/loans", label: "ණය ශේෂ ලැයිස්තුව", icon: <FaGavel /> },
+      { path: "/control/apply-loan", label: "ණය අයදුම්පත", icon: <FaFileSignature /> },
+      { path: "/control/approve-loan", label: "ණය අනුමත කිරීම", icon: <FaCheckCircle /> },
+      { path: "/control/grant-loan", label: "ණය නිකුත් කිරීම", icon: <FaHandHoldingUsd /> },
+      { path: "/control/loan-repayment", label: "ණය ආපසු ලැබීම්", icon: <FaMoneyBillWave /> },
+      { path: "/control/receipts-shares", label: "කොටස් මුදල් ලැබීම්", icon: <FaReceipt /> },
+      { path: "/control/income", label: "වෙනත් ලැබීම්", icon: <FaChartLine /> },
+      { path: "/control/expense", label: "සාමාජිකයින් සඳහා ගෙවීම්", icon: <FaWallet /> },
+      { path: "/control/expense-others", label: "වෙනත් ගෙවීම්", icon: <FaMoneyBillWave /> },
+      { path: "/control/fund-transfer", label: "අන්තර් මුදල් හුවමාරු", icon: <FaExchangeAlt /> },
+      { path: "/control/ledger-loan", label: "ණය ලෙජරය", icon: <FaClipboardList /> },
+      { path: "/control/ledger-shares", label: "කොටස් මුදල් ලෙජරය", icon: <FaBook /> },
     ],
     treasurer: [
-      { path: "/control/receipts-membership", label: "Membership Income", icon: <FaReceipt /> },
-      { path: "/control/income", label: "Other Income", icon: <FaChartLine /> },
-      { path: "/control/expense", label: "Expenses", icon: <FaWallet /> },
-      { path: "/control/expense-others", label: "Other Expenses", icon: <FaMoneyBillWave /> },
-      { path: "/control/fund-transfer", label: "Fund Transfer", icon: <FaExchangeAlt /> },
-      { path: "/control/ledger-membership", label: "Members Ledger", icon: <FaAddressBook /> },
-      { path: "/control/ledger-shares", label: "Shares Ledger", icon: <FaBook /> },
+      { path: "/control/receipts-membership", label: "සාමාජික ගාස්තු ලැබීම්", icon: <FaReceipt /> },
+      { path: "/control/income", label: "වෙනත් ලැබීම්", icon: <FaChartLine /> },
+      { path: "/control/expense", label: "සාමාජික පරිත්‍යාග ගෙවීම්", icon: <FaWallet /> },
+      { path: "/control/expense-others", label: "වෙනත් ගෙවීම්", icon: <FaMoneyBillWave /> },
+      { path: "/control/fund-transfer", label: "අන්තර් මුදල් හුවමාරු", icon: <FaExchangeAlt /> },
+      { path: "/control/ledger-membership", label: "සාමාජික ගාස්තු ලෙජරය", icon: <FaAddressBook /> },
+      { path: "/control/ledger-shares", label: "කොටස් මුදල් ලෙජරය", icon: <FaBook /> },
     ],
     secretary: [
-      { path: "/control/attendance-mark", label: "Mark Attendance", icon: <FaUserCheck /> },
-      { path: "/control/approve-loan", label: "Approve Loan", icon: <FaCheckCircle /> },
-      { path: "/control/add-customer-secretary", label: "Add Customer", icon: <FaUserPlus /> },
-      { path: "/control/edit-customer-secretary", label: "Edit Customer", icon: <FaUserEdit /> },
+      { path: "/control/attendance-mark", label: "පැමිණීම සලකුණු කිරීම", icon: <FaUserCheck /> },
+      { path: "/control/approve-loan", label: "ණය අනුමත කිරීම", icon: <FaCheckCircle /> },
+      { path: "/control/add-customer-secretary", label: "නව සාමාජිකයින් ඇතුළත් කිරීම", icon: <FaUserPlus /> },
+      { path: "/control/edit-customer-secretary", label: "සාමාජික තොරතුරු සංශෝධනය කිරීම", icon: <FaUserEdit /> },
     ],
     chairman: [
-      { path: "/control/approve-loan", label: "Approve Loan", icon: <FaCheckCircle /> },
+      { path: "/control/approve-loan", label: "ණය අනුමත කිරීම", icon: <FaCheckCircle /> },
     ],
     executive: [
-      { path: "/control/approve-loan", label: "Approve Loan", icon: <FaCheckCircle /> },
+      { path: "/control/approve-loan", label: "ණය අනුමත කිරීම", icon: <FaCheckCircle /> },
     ],
   };
 
@@ -153,17 +167,18 @@ export default function Header() {
           onClick={(e) => e.stopPropagation()}
         >
           {/* Drawer Header */}
-          <div className="h-[64px] w-full flex justify-between items-center px-4 border-b border-white">
+          <div className="h-[74px] w-full flex justify-between items-center px-4 border-b border-white">
             <GiHamburgerMenu
               className="text-4xl text-white cursor-pointer"
               onClick={() => setSideDrawerOpened(false)}
               aria-label="Close navigation menu"
             />
-            <h1 className="text-white font-semibold text-lg">
-              {user?.memberRole
-              ? user.memberRole.charAt(0).toUpperCase() + user.memberRole.slice(1).toLowerCase()
-              : "Guest"}
-            </h1>
+            <div className="flex flex-col">
+              <h1 className="text-right text-white font-bold text-sm">{user?.nameSinhala || "Guest"}</h1>
+              <h1 className="text-right text-yellow-300 font-semibold text-sm">
+                {userRoleSinhala}
+              </h1>
+            </div>
           </div>
 
           {/* Drawer Navigation */}
@@ -193,7 +208,7 @@ export default function Header() {
                 onClick={handleLogout}
                 className="flex items-center gap-3 text-white text-lg font-semibold w-full"
               >
-                <FaSignOutAlt /> Logout
+                <FaSignOutAlt /> පිටවීම
               </button>
             ) : (
               <Link
@@ -201,7 +216,7 @@ export default function Header() {
                 onClick={() => setSideDrawerOpened(false)}
                 className="flex items-center gap-3 text-red-600 text-lg"
               >
-                <FaRegUser /> Login
+                <FaRegUser /> පිවිසෙන්න
               </Link>
             )}
           </div>
