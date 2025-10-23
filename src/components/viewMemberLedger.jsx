@@ -3,9 +3,9 @@ import { useMemberLedger } from "../hooks/useMemberLedger.js";
 import { formatNumber } from "../utils/numberFormat.js";
 
 
-export default function ViewMemberLedger({ customerId }) {
+export default function ViewMemberLedger({ customerId, fromDate, toDate }) {
 
-    const { memberLedger, loading, error } = useMemberLedger(customerId);
+    const { memberLedger, loading, error } = useMemberLedger(customerId, fromDate, toDate);
 
     if (!customerId) {
       return <p className="text-gray-500 px-4 py-2">No account selected</p>;

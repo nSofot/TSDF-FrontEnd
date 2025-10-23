@@ -34,17 +34,16 @@ export default function Header() {
   const user = JSON.parse(localStorage.getItem("user"));
 
   const roleMap = {
-  member: "සාමාජික",
-  manager: " කළමනාකරු",
-  chairman: "සභාපති",
-  secretary: "ලේකම්",
-  treasurer: "භාණ්ඩාගාරික",
-  executive: "විධායක සභික​",
-  admin: "පද්ධති පරිපාලකයා",
-};
-
-const userRoleSinhala =
-  roleMap[user?.memberRole?.toLowerCase()] || "භූමිකාව නොදන්නායි";
+    member: "සාමාජික",
+    manager: " කළමනාකරු",
+    chairman: "සභාපති",
+    secretary: "ලේකම්",
+    treasurer: "භාණ්ඩාගාරික",
+    executive: "විධායක සභික​",
+    admin: "පද්ධති පරිපාලකයා",
+  };
+  const userRoleSinhala =
+    roleMap[user?.memberRole?.toLowerCase()] || "භූමිකාව නොදනී";
 
 
   const handleLogout = () => {
