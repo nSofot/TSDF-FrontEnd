@@ -13,8 +13,34 @@ export default function MemberLedger() {
     const [applicant, setApplicant] = useState({});
     const [isLoading, setIsLoading] = useState(false);
 
+    const formatLocalISODate = (d) => {
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, "0");
+        const day = String(d.getDate()).padStart(2, "0");
+        return `${y}-${m}-${day}`;
+    };
+
+    const [fromDate, setFromDate] = useState(() => {
+        const today = new Date();
+        const firstDayOfYear = new Date(today.getFullYear(), 0, 1); // January = 0
+        return formatLocalISODate(firstDayOfYear);
+    });
+
+
+    const [toDate, setToDate] = useState(() => formatLocalISODate(new Date()));
+    const [error, setError] = useState("");
+
     const user = JSON.parse(localStorage.getItem("user") || "null");
 
+    const validateDates = (start, end) => {
+        if (start && end && new Date(start) > new Date(end)) {
+        setError("⚠️ From Date must be earlier than To Date");
+        } else {
+        setError("");
+        }
+    };
+  
+  
     useEffect(() => {      
       if (user?.userId) {
         if (user.memberRole === "member") {
@@ -115,6 +141,39 @@ export default function MemberLedger() {
                                 </label>
                                 Rs. {formatNumber(applicant?.membership) || ""}
                             </div>
+                            {user?.memberRole === "treasurer" && (
+                                <div className="bg-white rounded-xl border-l-4 border-green-700 shadow-md">                         
+                                    <div className="px-4 py-4 grid grid-cols-2 gap-4">
+                                        <div>
+                                        <label className="text-sm font-medium text-green-700">දින සිට</label>
+                                        <input
+                                            type="date"
+                                            value={fromDate}
+                                            onChange={(e) => {
+                                            setFromDate(e.target.value);
+                                            validateDates(e.target.value, toDate);
+                                            }}
+                                            max={toDate}
+                                            className="mt-1 w-full p-3 border border-green-400 rounded-lg text-sm focus:ring-2 focus:ring-green-300"
+                                        />
+                                        </div>
+
+                                        <div>
+                                        <label className="text-sm font-medium text-green-700">දිනය දක්වා</label>
+                                        <input
+                                            type="date"
+                                            value={toDate}
+                                            onChange={(e) => {
+                                            setToDate(e.target.value);
+                                            validateDates(fromDate, e.target.value);
+                                            }}
+                                            min={fromDate}
+                                            className="mt-1 w-full p-3 border border-green-400 rounded-lg text-sm focus:ring-2 focus:ring-green-300"
+                                        />
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     ) : (
                         <p className="text-center text-gray-500">සාමාජික ගිණුමක් සොයාගත නොහැක.</p>
@@ -123,7 +182,7 @@ export default function MemberLedger() {
                     
                 {applicant ? (
                     <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-indigo-500 mt-6">
-                        <ViewMemberLedger customerId={applicant.customerId} />
+                        <ViewMemberLedger customerId={applicant.customerId} fromDate={fromDate} toDate={toDate} />
                     </div>
                 ) : (
                     <p className="text-center text-gray-500 mt-6">සාමාජික ගිණුමක් සොයාගත නොහැක.</p>

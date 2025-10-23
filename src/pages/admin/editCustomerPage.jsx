@@ -3,6 +3,7 @@ import { useLocation, useNavigate, Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import axios from "axios";
 import mediaUpload from "../../utils/mediaUpload";
+import { t } from "i18next";
 
 export default function EditCustomerPage() {	
 	const location = useLocation();
@@ -56,9 +57,82 @@ export default function EditCustomerPage() {
 
 		// Validate basic fields
 		if (!name || !mobile || !memberRole) {
-			toast.error("Please fill in name, mobile number and member role");
+			toast.error("කරුණාකර නම, ජංගම දුරකථන අංකය සහ සාමාජික භූමිකාව පුරවන්න.");
 			setIsUpdating(false);
 			return;
+		}
+
+		// validate member role
+		const validRoles = ['member', 'chairman', 'secretary', 'treasurer', 'manager', 'executive', 'admin'];
+		if (!validRoles.includes(memberRole)) {
+			toast.error("Please select a valid member role");
+			setIsUpdating(false);
+			return;
+		}
+		if (memberRole === 'admin' ||
+			memberRole === 'chairman' || 
+			memberRole === 'secretary' || 
+			memberRole === 'treasurer' || 
+			memberRole === 'manager' || 
+			memberRole === 'executive'
+		) {
+			const response = await axios.get(
+				`${import.meta.env.VITE_BACKEND_URL}/api/customer`
+
+			);
+			const adminCount = response.data.filter(
+				(cust) => cust.memberRole === 'admin' && cust.customerId !== customerId
+				).length;
+			const chairmanCount = response.data.filter(
+				(cust) => cust.memberRole === 'chairman' && cust.customerId !== customerId
+				).length;
+			const secretaryCount = response.data.filter(
+				(cust) => cust.memberRole === 'secretary' && cust.customerId !== customerId
+				).length;
+			const treasurerCount = response.data.filter(
+				(cust) => cust.memberRole === 'treasurer' && cust.customerId !== customerId
+				).length;
+			const managerCount = response.data.filter(
+				(cust) => cust.memberRole === 'manager' && cust.customerId !== customerId
+				).length;
+			const executiveCount = response.data.filter(
+				(cust) => cust.memberRole === 'executive' && cust.customerId !== customerId
+				).length;	
+			if (memberRole === 'admin' && adminCount >= 1) {
+				toast.error("එක් පරිපාලකයෙකු පමණක් නිර්මාණය කළ හැකිය. කරුණාකර පළමුව පවතින පරිපාලකයෙකු මකන්න.");
+				setIsUpdating(false);
+				return;
+			}
+			if (memberRole === 'chairman' && chairmanCount >= 1) {
+				toast.error("එක් සභාපතිවරයෙකු පමණක් නිර්මාණය කළ හැකිය. කරුණාකර පළමුව පවතින සභාපතිවරයා මකා දමන්න.");
+				setIsUpdating(false);
+				return;
+			}
+			if (memberRole === 'secretary' && secretaryCount >= 1) {
+				toast.error("එක් ලේකම්වරයෙකු පමණක් නිර්මාණය කළ හැකිය. කරුණාකර පළමුව පවතින ලේකම්වරයා මකා දමන්න.");
+				setIsUpdating(false);
+				return;
+			}
+			if (memberRole === 'treasurer' && treasurerCount >= 1) {
+				toast.error("එක් භාණ්ඩාගාරිකවරයෙකු පමණක් නිර්මාණය කළ හැකිය. කරුණාකර පළමුව පවතින භාණ්ඩාගාරික මකා දමන්න.");
+				setIsUpdating(false);
+				return;
+			}
+			if (memberRole === 'manager' && managerCount >= 1) {
+				toast.error("එක් කළමනාකරුවෙකු පමණක් නිර්මාණය කළ හැකිය. කරුණාකර පළමුව පවතින කළමනාකරු මකන්න.");
+				setIsUpdating(false);
+				return;
+			}
+			if (memberRole === 'executive' && customerId > "018") {
+				toast.error("පළමු සාමාජිකයින් 10 දෙනා තුළ සිටින සාමාජිකයින්ට පමණක් විධායකයින් ලෙස පත් කළ හැකිය.");
+				setIsUpdating(false);
+				return;
+			}
+			if (memberRole === 'executive' && executiveCount > 5) {
+				toast.error("උපරිම විධායක නිලධාරීන් 5 දෙනෙකු නිර්මාණය කළ හැකිය. කරුණාකර පළමුව පවතින විධායක නිලධාරියෙකු මකා දමන්න.");
+				setIsUpdating(false);
+				return;
+			}
 		}
 
 		// Validate family members
@@ -66,7 +140,7 @@ export default function EditCustomerPage() {
 			(member) => !member.name || !member.relationship
 		);
 		if (invalidFamilyMember) {
-			toast.error("Please ensure all family members have both name and relationship");
+			toast.error("කරුණාකර පවුලේ සියලුම සාමාජිකයින්ට නම සහ ඥාතිත්වය යන දෙකම ඇති බවට සහතික වන්න.");
 			setIsUpdating(false);
 			return;
 		}

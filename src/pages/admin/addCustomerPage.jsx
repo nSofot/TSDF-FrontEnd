@@ -171,12 +171,12 @@ export default function AddCustomerPage() {
 								>
 									<option value="">Select</option>
 									<option value="member">Member</option>
-									<option value="chairman">Chairman</option>
+									{/* <option value="chairman">Chairman</option>
 									<option value="secretary">Secretary</option>
 									<option value="treasurer">Treasurer</option>
 									<option value="manager">Manager</option>									
 									<option value="executive">Executive</option>
-									<option value="admin">Admin</option>
+									<option value="admin">Admin</option> */}
 								</select>
 							</div>
 							<div className="w-[70%]">
