@@ -35,8 +35,8 @@ export default function IncomePage() {
 
   const expenseType =
     user?.memberRole === "manager"
-      ? ["බැංකු පොලිය", "සාමාජික අරමුදල් වලින්"]
-      : ["බැංකු  පොලිය", "කොටස් අරමුදල් වලින්", "ලොතරැයි ආදායම"];
+      ? ["බැංකු පොලිය", "සාමාජික අරමුදල් වලින්", "වෙනත් ආදායම්"]
+      : ["බැංකු  පොලිය", "කොටස් අරමුදල් වලින්", "ලොතරැයි ආදායම", "වෙනත් ආදායම්"];
 
   useEffect(() => {
     if (!isLoading) return;
@@ -250,7 +250,11 @@ export default function IncomePage() {
         <button
           disabled={isSubmitting || isSubmitted}
           className={`w-full sm:w-1/2 py-3 rounded-lg text-white font-semibold transition-all ${
-            isSubmitting || isSubmitted ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700"
+            isSubmitting 
+            ? "bg-gray-400 cursor-not-allowed" 
+            : isSubmitted
+            ? "bg-gray-600 cursor-not-allowed"
+            : "bg-blue-600 hover:bg-blue-700"
           }`}
           onClick={handleTransfer}
         >
