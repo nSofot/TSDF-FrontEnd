@@ -97,6 +97,15 @@ export default function ExpensePage() {
     }
   };
 
+  // 🔄 Auto-search member when 3 digits entered
+  useEffect(() => {
+    if (!memberId || memberId.length < 3) return;
+
+    const timeout = setTimeout(() => searchMember(memberId), 500);
+    return () => clearTimeout(timeout);
+  }, [memberId]);
+
+
   const checkVoucherExists = async (no) => {
     try {
       const trxType = "voucher";
@@ -143,7 +152,7 @@ export default function ExpensePage() {
           trxDate: new Date(transferDate).toISOString(),
           transactionType: "voucher",
           accountId: accountFrom,
-          description: {selectedExpenseType} + ` - ${member.nameSinhala || member.name}`,
+          description: `${selectedExpenseType} - ${member.nameSinhala || member.name}`,
           isCredit: true,
           trxAmount: Number(transferAmount),
         });
@@ -303,10 +312,14 @@ export default function ExpensePage() {
                   placeholder="000"
                   maxLength={3}
                   value={memberId}
-                  onChange={async (e) => {
-                    const value = e.target.value;
-                    setMemberId(value);
-                    if (value.length === 3) await searchMember(value);
+                  onChange={(e) => {
+                    setMember({});
+                    setError("");
+                    setIsSubmitted(false);
+                    setReceiptNoOk(false);
+                    setVoucherNo("");
+                    setTransferAmount(0);
+                    setMemberId(e.target.value.replace(/\D/g, ""));
                   }}
               />
           </div>
@@ -320,9 +333,12 @@ export default function ExpensePage() {
           </div>
 
 
-          <div>
-              <label className="text-sm font-semibold text-gray-700">වවුචර් අංකය</label>
-              <input
+          {/* Show this only if member is valid */}
+          {member?.name ? (
+            <>
+              <div>
+                <label className="text-sm font-semibold text-gray-700">වවුචර් අංකය</label>
+                <input
                   type="text"
                   className={`mt-1 w-full text-center tracking-widest rounded-lg p-2 border focus:ring-2 focus:ring-blue-500 ${
                     error ? "border-red-500 text-red-600" : "border-gray-300 text-gray-700"
@@ -336,26 +352,25 @@ export default function ExpensePage() {
                     setVoucherNo(formatted);
                     if (formatted !== "0000") checkVoucherExists(formatted);
                   }}
-                maxLength={4}
-              />
-              {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
-          </div>
+                  maxLength={4}
+                />
+                {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
+              </div>
 
-            
-          <div className="">
-              <label className="text-sm font-semibold text-gray-700">දිනය</label>
-              <input
-                type="date"
-                value={transferDate}
-                disabled={isSubmitted || isSubmitting}
-                onChange={(e) => setTransferDate(e.target.value)}
-                className="mt-1 w-full border rounded-lg p-2 border-gray-300 text-gray-700 focus:ring-2 focus:ring-blue-500"
-              />
-          </div>
+              <div className="">
+                <label className="text-sm font-semibold text-gray-700">දිනය</label>
+                <input
+                  type="date"
+                  value={transferDate}
+                  disabled={isSubmitted || isSubmitting}
+                  onChange={(e) => setTransferDate(e.target.value)}
+                  className="mt-1 w-full border rounded-lg p-2 border-gray-300 text-gray-700 focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
 
-          <div>
-              <label className="text-sm font-semibold text-gray-700">වියදම් වර්ගය</label>
-              <select
+              <div>
+                <label className="text-sm font-semibold text-gray-700">වියදම් වර්ගය</label>
+                <select
                   value={selectedExpenseType}
                   disabled={isSubmitted || isSubmitting}
                   onChange={(e) => {
@@ -376,12 +391,12 @@ export default function ExpensePage() {
                       {type}
                     </option>
                   ))}
-              </select>
-          </div>
-   
-          <div>
-              <label className="text-sm font-semibold text-gray-700">ගිණුම</label>
-              <select
+                </select>
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold text-gray-700">ගිණුම</label>
+                <select
                   value={accountFrom}
                   disabled={isSubmitted || isSubmitting}
                   onChange={(e) => {
@@ -394,61 +409,68 @@ export default function ExpensePage() {
                     }
                   }}
                   className="mt-1 w-full border border-gray-300 rounded-lg p-3 text-sm text-gray-700 focus:ring-2 focus:ring-purple-500"
-              >
+                >
                   <option value="">-- තෝරන්න --</option>
                   {accounts.map((a, idx) => (
                     <option key={idx} value={a.accountId}>
                       {a.accountName}
                     </option>
                   ))}
-              </select>
-              <div className="mt-1 text-sm text-right text-gray-500">
+                </select>
+                <div className="mt-1 text-sm text-right text-gray-500">
                   <span className="font-semibold text-green-600">ශේෂය: </span>
                   {Number(accountFromBalance ?? 0).toLocaleString("en-US", {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2,
                   })}
+                </div>
               </div>
-          </div>
 
-          <div>
-              <label className="text-sm font-semibold text-gray-700">මුදල</label>
-              <input
-                type="number"
-                value={transferAmount}
-                disabled={isSubmitted || isSubmitting}
-                onChange={(e) => setTransferAmount(e.target.value)}
-                className="mt-1 w-full border border-gray-300 rounded-lg p-3 text-sm text-gray-700 focus:ring-2 focus:ring-purple-500"
-              />
-          </div>
-      </div>
+              <div>
+                <label className="text-sm font-semibold text-gray-700">මුදල</label>
+                <input
+                  type="number"
+                  value={transferAmount}
+                  disabled={isSubmitted || isSubmitting}
+                  onChange={(e) => setTransferAmount(e.target.value)}
+                  className="mt-1 w-full border border-gray-300 rounded-lg p-3 text-sm text-gray-700 focus:ring-2 focus:ring-purple-500"
+                />
+              </div>
 
-      {/* ACTION BUTTONS */}
-      <div className="flex flex-col sm:flex-row gap-4 mt-8">
-        <button
-          disabled={isSubmitting || isSubmitted}
-          onClick={handleTransfer}
-          className={`w-full sm:w-1/2 py-3 rounded-lg text-white font-semibold transition-all ${
-            isSubmitting
-              ? "bg-gray-400 cursor-not-allowed"
-              : isSubmitted
-              ? "bg-gray-600 cursor-not-allowed"
-              : "bg-blue-600 hover:bg-blue-700"
-          }`}
-        >
-          {isSubmitting
-            ? "ඉදිරිපත් කිරීම සිදු වෙමින් පවතී ..."
-            : isSubmitted
-            ? "ඉදිරිපත් කිරීම අවසන්"
-            : "ඉදිරිපත් කරන්න"}
-        </button>
-        <button
-          disabled={isSubmitting}
-          onClick={() => navigate("/control")}
-          className="w-full sm:w-1/2 py-3 border border-gray-400 text-gray-700 rounded-lg font-semibold hover:bg-gray-100 transition"
-        >
-          ආපසු යන්න
-        </button>
+              {/* ACTION BUTTONS */}
+              <div className="flex flex-col sm:flex-row gap-4 mt-8">
+                <button
+                  disabled={isSubmitting || isSubmitted}
+                  onClick={handleTransfer}
+                  className={`w-full sm:w-1/2 py-3 rounded-lg text-white font-semibold transition-all ${
+                    isSubmitting
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : isSubmitted
+                      ? "bg-gray-600 cursor-not-allowed"
+                      : "bg-blue-600 hover:bg-blue-700"
+                  }`}
+                >
+                  {isSubmitting
+                    ? "ඉදිරිපත් කිරීම සිදු වෙමින් පවතී ..."
+                    : isSubmitted
+                    ? "ඉදිරිපත් කිරීම අවසන්"
+                    : "ඉදිරිපත් කරන්න"}
+                </button>
+                <button
+                  disabled={isSubmitting}
+                  onClick={() => navigate("/control")}
+                  className="w-full sm:w-1/2 py-3 border border-gray-400 text-gray-700 rounded-lg font-semibold hover:bg-gray-100 transition"
+                >
+                  ආපසු යන්න
+                </button>
+              </div>
+            </>
+          ) : (
+            // Shown when no valid member found
+            <div className="p-4 text-center text-gray-600 border rounded-lg bg-gray-50">
+              ⚠️ කරුණාකර වලංගු සාමාජික අංකයක් ඇතුලත් කරන්න.
+            </div>
+          )}
       </div>
     </div>
   );
