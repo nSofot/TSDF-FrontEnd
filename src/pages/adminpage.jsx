@@ -80,6 +80,7 @@ export default function AdminPage() {
             <Link className={getClass("Membership Fee Adjustment")} to="/admin/membership-fee-adjustment">💰 Membership Fee Adjustment</Link>
             <Link className={getClass("Shares Adjustment")} to="/admin/shares-adjustment">💰 Shares Adjustment</Link>
             <Link className={getClass("Ledger Adjustment")} to="/admin/ledger-adjustment">💰 Ledger Adjustment</Link>
+            <Link className={getClass("Reports")} to="/admin/reports">📊 Reports</Link>
             <Link className={getClass("Post Annual Membership Fee")} to="/admin/post-annual-membership-fee">💰 Post Annual Membership Fee</Link>
             <Link className={getClass("Initalize Master Fields")} to="/admin/master-fields">📦 Initalize Master Fields</Link>
             <Link className={getClass("Upload Data")} to="/admin/upload-data">📦 Upload Data</Link>

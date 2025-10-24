@@ -126,6 +126,12 @@ export default function LoanRepaymentPage() {
                 }
 
             } catch (err) {
+                setLoanDetails({});
+                setDateEnded("");
+                setLastTransaction({});
+                setInterest("");
+                setInstallment("");
+                setTotalAmount("");                
                 toast.error(err.response?.data?.message || "Loan details not found");
             } finally {
                 setIsLoadingLoan(false);
@@ -459,6 +465,9 @@ export default function LoanRepaymentPage() {
                             maxLength={3}
                             value={applicantId}
                             onChange={async (e) => {
+                                setSelectedLoanId("");
+                                setApplicantLoans([]);
+                                setLoanDetails({});
                                 const value = e.target.value;
                                 setApplicantId(value);
                                 if (value.length === 3) {
@@ -501,7 +510,7 @@ export default function LoanRepaymentPage() {
                                         </option>
                                     ))}
                                 </select>
-                            </div>
+                            </div>                         
                         </div>
                     ) : (
                         <p className="text-center text-blue-500">ණය ගිණුමක් සොයාගත නොහැක.</p>
@@ -511,7 +520,7 @@ export default function LoanRepaymentPage() {
                 {/* Loan Details */}
                 {isLoadingLoan ? (
                 <LoadingSpinner />
-                ) : loanDetails && loanDetails.loanId ? (
+                ) : applicantLoans && applicantLoans.length > 0 && loanDetails && loanDetails.loanId ? (
                     <div className="bg-white shadow-md rounded-xl border-l-4 border-pink-500 p-6 space-y-3">
                         <h2 className="font-semibold text-pink-500">📊 ණය විස්තර</h2>
                         <div className="space-y-2 text-sm text-pink-500">
@@ -551,8 +560,8 @@ export default function LoanRepaymentPage() {
                     </div>
                 ) : null}
 
-                    {/* Payment Section */}
-                    {loanDetails && loanDetails.loanId ? (
+                {/* Payment Section */}
+                {applicantLoans && applicantLoans.length > 0 && loanDetails && loanDetails.loanId ? (
                     <>
                         <div className="bg-white shadow-md rounded-xl border-l-4 border-orange-500 p-6 space-y-4">
                             <h2 className="font-semibold text-orange-500">💰 ගෙවීම් විස්තර</h2>
