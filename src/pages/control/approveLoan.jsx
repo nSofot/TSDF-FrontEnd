@@ -101,8 +101,15 @@ export default function ApproveLoanPage() {
             setDuration(loanDetails.loanDuration);
             setFirstInstallment(((amount / duration) + ((amount * interest) / 100)).toFixed(2));
             setReason("");            
+          } else {
+            setApplicant(null);
+            setLoanApplication(null);
+            toast.error("No pending loan application found for this member.");
           }
+
         } catch (err) {
+          setApplicant(null);
+          setLoanApplication(null);
           toast.error(err.response?.data?.message || "Applicant not found");
         } finally {
           setIsLoading(false);
@@ -350,6 +357,9 @@ export default function ApproveLoanPage() {
                             maxLength={3}
                             value={applicantId}
                             onChange={async (e) => {
+                              setApplicantId("");
+                              setApplicant(null);
+                              setLoanApplication(null);
                               const value = e.target.value;
                               setApplicantId(value);
                               if (value.length === 3) await searchApplicant(value);
@@ -368,7 +378,7 @@ export default function ApproveLoanPage() {
 
                     {isLoading ? (
                       <LoadingSpinner />
-                    ) : (
+                    ) : applicant  && loanApplication ? (
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-indigo-700 font-medium">
                           <div className="mt-4 flex justify-between">
                             <span>නම:</span>
@@ -386,6 +396,10 @@ export default function ApproveLoanPage() {
                             <span>කොටස් මුදල:</span>
                             <span>{formatNumber(applicant?.shares)}</span>
                           </div>
+                      </div>
+                    ) : (
+                      <div className="mt-4 p-4 text-center text-gray-600 border rounded-lg bg-gray-50">
+                        ⚠️ මෙම සාමාජිකයාට ණය අයදුම්පතක් නොමැත..
                       </div>
                     )}
                 </div>
@@ -418,140 +432,149 @@ export default function ApproveLoanPage() {
                 </div> */}
 
                 {/* Loan Table */}
-                <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-orange-500">
-                    <p className="text-orange-600 font-semibold text-sm sm:text-base">ලබාගෙන ඇති අනෙකුත් ණය:</p>
-                    <table className="w-full border-collapse text-sm">
-                      <thead className="bg-orange-50 text-orange-700 font-semibold">
-                        <tr>
-                          <th className="border px-3 py-2">දිනය</th>
-                          <th className="border px-3 py-2">ණය වර්ගය</th>
-                          <th className="border px-3 py-2">මුදල</th>
-                          <th className="border px-3 py-2">ශේෂය</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {applicantLoans?.length ? applicantLoans.map((loan, idx) => (
-                          <tr key={loan.id ?? idx} className="hover:bg-orange-50 transition">
-                            <td className="border px-3 py-1">{new Date(loan.issuedDate).toLocaleDateString("en-GB")}</td>
-                            <td className="border px-3 py-1">{loan.loanType}</td>
-                            <td className="border px-3 py-1">{formatNumber(loan.amount)}</td>
-                            <td className="border px-3 py-1">{formatNumber(loan.dueAmount)}</td>
-                          </tr>
-                        )) : (
+                {applicant  && loanApplication && (
+                  <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-orange-500">
+                      <p className="text-orange-600 font-semibold text-sm sm:text-base">ලබාගෙන ඇති අනෙකුත් ණය:</p>
+                      <table className="w-full border-collapse text-sm">
+                        <thead className="bg-orange-50 text-orange-700 font-semibold">
                           <tr>
-                            <td colSpan="4" className="text-center py-3 text-gray-400 italic">වෙනත් ණය ගෙන නැත</td>
+                            <th className="border px-3 py-2">දිනය</th>
+                            <th className="border px-3 py-2">ණය වර්ගය</th>
+                            <th className="border px-3 py-2">මුදල</th>
+                            <th className="border px-3 py-2">ශේෂය</th>
                           </tr>
-                        )}
-                      </tbody>
-                    </table>
-                </div>
+                        </thead>
+                        <tbody>
+                          {applicantLoans?.length ? applicantLoans.map((loan, idx) => (
+                            <tr key={loan.id ?? idx} className="hover:bg-orange-50 transition">
+                              <td className="border px-3 py-1">{new Date(loan.issuedDate).toLocaleDateString("en-GB")}</td>
+                              <td className="border px-3 py-1">{loan.loanType}</td>
+                              <td className="border px-3 py-1">{formatNumber(loan.amount)}</td>
+                              <td className="border px-3 py-1">{formatNumber(loan.dueAmount)}</td>
+                            </tr>
+                          )) : (
+                            <tr>
+                              <td colSpan="4" className="text-center py-3 text-gray-400 italic">වෙනත් ණය ගෙන නැත</td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                  </div>
+                )}
 
                 {/* Loan Summary Card */}
-                <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-pink-500">
-                    <p className="text-pink-600 font-semibold sm:text-base">අයදුම් කළ ණය පිළිබඳ විස්තර:</p>
-                    <div className="flex justify-between">
-                      <span className="font-medium text-pink-500">ණය වර්ගය:</span>
-                      <span>{selectedLoanType}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="font-medium text-pink-500">මුදල (Max- {formatNumber(maxAmount)}):</span>
-                      <span>{formatNumber(amount)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="font-medium text-pink-500">කාල සීමාව මාස (Max- {maxDuration}):</span>
-                      <span>{duration}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="font-medium text-pink-500">මාසික පොලී අනුපාතය:</span>
-                      <span>{interest}%</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="font-medium text-pink-500">පළමු වාරිකය:</span>
-                      <span>{formatNumber(firstInstallment)}</span>
-                    </div>
-                </div>
+                {applicant  && loanApplication && (
+                  <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-pink-500">
+                      <p className="text-pink-600 font-semibold sm:text-base">අයදුම් කළ ණය පිළිබඳ විස්තර:</p>
+                      <div className="flex justify-between">
+                        <span className="font-medium text-pink-500">ණය වර්ගය:</span>
+                        <span>{selectedLoanType}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="font-medium text-pink-500">මුදල (Max- {formatNumber(maxAmount)}):</span>
+                        <span>{formatNumber(amount)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="font-medium text-pink-500">කාල සීමාව මාස (Max- {maxDuration}):</span>
+                        <span>{duration}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="font-medium text-pink-500">මාසික පොලී අනුපාතය:</span>
+                        <span>{interest}%</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="font-medium text-pink-500">පළමු වාරිකය:</span>
+                        <span>{formatNumber(firstInstallment)}</span>
+                      </div>
+                  </div>
+                )}
 
                 {/* Approval Checkboxes */}
-                <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-teal-600">
-                    <p className="text-teal-600 font-semibold text-sm sm:text-base">ණය අනුමත කිරීම:</p>
+                {applicant  && loanApplication && (
+                  <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-teal-600">
+                      <p className="text-teal-600 font-semibold text-sm sm:text-base">ණය අනුමත කිරීම:</p>
 
-                    {(selectedLoanType === "ව්යාපෘති ණය" || selectedLoanType === "දිගු කාලීන ණය" ) && (
+                      {(selectedLoanType === "ව්යාපෘති ණය" || selectedLoanType === "දිගු කාලීන ණය" ) && (
+                        <label className="flex items-center gap-2 text-teal-600">
+                          <input
+                            type="checkbox"
+                            name="chairman"
+                            checked={approvals.chairman}
+                            onChange={(e) => setApprovals(prev => ({ ...prev, chairman: e.target.checked }))}
+                            className="form-checkbox h-5 w-5 text-teal-600"
+                          />
+                          සභාපති අනුමැතිය
+                        </label>
+                      )}
+
                       <label className="flex items-center gap-2 text-teal-600">
                         <input
                           type="checkbox"
-                          name="chairman"
-                          checked={approvals.chairman}
-                          onChange={(e) => setApprovals(prev => ({ ...prev, chairman: e.target.checked }))}
+                          name="secretary"
+                          checked={approvals.secretary}
+                          onChange={(e) => setApprovals(prev => ({ ...prev, secretary: e.target.checked }))}
                           className="form-checkbox h-5 w-5 text-teal-600"
                         />
-                        සභාපති අනුමැතිය
+                        ලේකම් අනුමැතිය
                       </label>
-                    )}
 
-                    <label className="flex items-center gap-2 text-teal-600">
-                      <input
-                        type="checkbox"
-                        name="secretary"
-                        checked={approvals.secretary}
-                        onChange={(e) => setApprovals(prev => ({ ...prev, secretary: e.target.checked }))}
-                        className="form-checkbox h-5 w-5 text-teal-600"
-                      />
-                      ලේකම් අනුමැතිය
-                    </label>
+                      {(selectedLoanType === "ව්යාපෘති ණය" || selectedLoanType === "දිගු කාලීන ණය" || selectedLoanType === "කෙටි කාලීන ණය") && (
+                        <label className="flex items-center gap-2 text-teal-600">
+                          <input
+                            type="checkbox"
+                            name="treasurer"
+                            checked={approvals.treasurer}
+                            onChange={(e) => setApprovals(prev => ({ ...prev, treasurer: e.target.checked }))}
+                            className="form-checkbox h-5 w-5 text-teal-600"
+                          />
+                          භාණ්ඩාගාරික අනුමැතිය
+                        </label>
+                      )}
 
-                    {(selectedLoanType === "ව්යාපෘති ණය" || selectedLoanType === "දිගු කාලීන ණය" || selectedLoanType === "කෙටි කාලීන ණය") && (
+                      {selectedLoanType === "ව්යාපෘති ණය" && (
+                        <label className="flex items-center gap-2 text-teal-600">
+                          <input
+                            type="checkbox"
+                            name="executive"
+                            checked={approvals.executive}
+                            onChange={(e) =>
+                              setApprovals((prev) => ({ ...prev, executive: e.target.checked }))
+                            }
+                            className="form-checkbox h-5 w-5 text-teal-600"
+                          />
+                          විධායක කමිටුවේ අනුමැතිය
+                        </label>
+                      )}
+
                       <label className="flex items-center gap-2 text-teal-600">
                         <input
                           type="checkbox"
-                          name="treasurer"
-                          checked={approvals.treasurer}
-                          onChange={(e) => setApprovals(prev => ({ ...prev, treasurer: e.target.checked }))}
+                          name="manager"
+                          checked={approvals.manager}
+                          onChange={(e) => setApprovals(prev => ({ ...prev, manager: e.target.checked }))}
                           className="form-checkbox h-5 w-5 text-teal-600"
                         />
-                        භාණ්ඩාගාරික අනුමැතිය
-                      </label>
-                    )}
-
-                    {selectedLoanType === "ව්යාපෘති ණය" && (
-                      <label className="flex items-center gap-2 text-teal-600">
-                        <input
-                          type="checkbox"
-                          name="executive"
-                          checked={approvals.executive}
-                          onChange={(e) =>
-                            setApprovals((prev) => ({ ...prev, executive: e.target.checked }))
-                          }
-                          className="form-checkbox h-5 w-5 text-teal-600"
-                        />
-                        විධායක කමිටුවේ අනුමැතිය
-                      </label>
-                    )}
-
-                    <label className="flex items-center gap-2 text-teal-600">
-                      <input
-                        type="checkbox"
-                        name="manager"
-                        checked={approvals.manager}
-                        onChange={(e) => setApprovals(prev => ({ ...prev, manager: e.target.checked }))}
-                        className="form-checkbox h-5 w-5 text-teal-600"
-                      />
-                      කළමනාකරු අනුමැතිය
-                    </label>                
-                </div> 
+                        කළමනාකරු අනුමැතිය
+                      </label>                
+                  </div> 
+                )}
 
                 {/* Reason */}
-                <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-blue-500">
-                    <p className="text-blue-600 font-semibold sm:text-base">ඉදිරිපත් කළ ණය අයදුම්පත:</p>
-                    <textarea
-                      className={`w-full rounded p-2 focus:ring-2 focus:ring-blue-400 ${!isEligible ? "text-red-600" : "text-blue-600"}`}
-                      rows={4}
-                      value={reason}
-                      onChange={e => setReason(e.target.value)}
-                      disabled={!isEligible}
-                    />
-                </div>
+                {applicant  && loanApplication && (
+                  <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-blue-500">
+                      <p className="text-blue-600 font-semibold sm:text-base">ඉදිරිපත් කළ ණය අයදුම්පත:</p>
+                      <textarea
+                        className={`w-full rounded p-2 focus:ring-2 focus:ring-blue-400 ${!isEligible ? "text-red-600" : "text-blue-600"}`}
+                        rows={4}
+                        value={reason}
+                        onChange={e => setReason(e.target.value)}
+                        disabled={!isEligible}
+                      />
+                  </div>
+                )}
           
                 {/* Action Buttons */}
+                {applicant  && loanApplication && (
                 <div className="flex flex-col sm:flex-row gap-4 mt-4">
                     <button
                       className={`w-full h-12 rounded-lg ${!isEligible ? "bg-gradient-to-r from-indigo-400 to-indigo-600 text-white hover:from-indigo-500 hover:to-indigo-700" : "bg-gray-400 cursor-not-allowed"}`}
@@ -586,6 +609,7 @@ export default function ApproveLoanPage() {
                       ආපසු යන්න
                     </button>          
                 </div>
+              )}
             </div>
         </div>
     );
