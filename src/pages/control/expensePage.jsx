@@ -305,7 +305,7 @@ export default function ExpensePage() {
 
       <div className="bg-white shadow-lg rounded-xl border-l-4 border-green-700 overflow-hidden flex flex-col p-6 space-y-6">
           <div className="w-full flex flex-col gap-2">
-              <label className="text-sm font-semibold text-gray-700">සාමාජික අංකය</label>
+              <label className="text-sm text-gray-600">සාමාජික අංකය</label>
               <input
                   type="text"
                   className="w-full border border-gray-300 rounded-lg p-2 text-center text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
@@ -324,7 +324,7 @@ export default function ExpensePage() {
               />
           </div>
           <div>
-            <label className="text-sm font-semibold text-gray-700">සාමාජිකයාගේ නම</label>
+            <label className="text-sm text-gray-600">සාමාජිකයාගේ නම</label>
             {member?.name && (
               <p className="mt-2 text-center font-semibold text-gray-700 p-2 rounded-lg">
                 {member.nameSinhala || member.name}
@@ -337,7 +337,7 @@ export default function ExpensePage() {
           {member?.name ? (
             <>
               <div>
-                <label className="text-sm font-semibold text-gray-700">වවුචර් අංකය</label>
+                <label className="text-sm text-gray-600">වවුචර් අංකය</label>
                 <input
                   type="text"
                   className={`mt-1 w-full text-center tracking-widest rounded-lg p-2 border focus:ring-2 focus:ring-blue-500 ${
@@ -358,7 +358,7 @@ export default function ExpensePage() {
               </div>
 
               <div className="">
-                <label className="text-sm font-semibold text-gray-700">දිනය</label>
+                <label className="text-sm text-gray-600">දිනය</label>
                 <input
                   type="date"
                   value={transferDate}
@@ -369,7 +369,7 @@ export default function ExpensePage() {
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-gray-700">වියදම් වර්ගය</label>
+                <label className="text-sm text-gray-600">වියදම් වර්ගය</label>
                 <select
                   value={selectedExpenseType}
                   disabled={isSubmitted || isSubmitting}
@@ -395,7 +395,7 @@ export default function ExpensePage() {
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-gray-700">ගිණුම</label>
+                <label className="text-sm text-gray-600">ගිණුම</label>
                 <select
                   value={accountFrom}
                   disabled={isSubmitted || isSubmitting}
@@ -417,8 +417,8 @@ export default function ExpensePage() {
                     </option>
                   ))}
                 </select>
-                <div className="mt-1 text-sm text-right text-gray-500">
-                  <span className="font-semibold text-green-600">ශේෂය: </span>
+                <div className="mt-1 gap-2 flex justify-end text-sm text-right text-gray-500">
+                  <span className="text-blue-600">ශේෂය: </span>
                   {Number(accountFromBalance ?? 0).toLocaleString("en-US", {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2,
@@ -427,7 +427,7 @@ export default function ExpensePage() {
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-gray-700">මුදල</label>
+                <label className="text-sm text-gray-600">මුදල</label>
                 <input
                   type="number"
                   value={transferAmount}

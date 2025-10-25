@@ -152,11 +152,11 @@ export default function ReceiptMembershipPage() {
       </div>
 
       {/* 🔍 Member Search */}
-      <div className="bg-white shadow-md rounded-xl border-l-4 border-blue-700 overflow-hidden p-4 space-y-4">
+      <div className="bg-white shadow-md rounded-xl border-l-4 border-blue-700 overflow-hidden p-4">
         <label className="block text-sm font-medium text-blue-700">සාමාජික අංකය</label>
         <input
           type="text"
-          className="w-full border border-blue-300 rounded-lg p-3 text-center text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="w-full border border-blue-300 rounded-lg p-3 text-center text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 mt-1"
           placeholder="000"
           maxLength={3}
           value={memberId}
@@ -180,13 +180,13 @@ export default function ReceiptMembershipPage() {
           <div className="bg-white shadow-md rounded-xl border-l-4 border-blue-700 overflow-hidden p-4 space-y-4">
             <div>
               <label className="block text-sm font-medium text-blue-700">සාමාජිකයාගේ නම</label>
-              <div className="w-full bg-blue-50 border border-blue-300 rounded-lg p-3 text-center font-medium text-blue-700">
+              <div className="w-full bg-blue-50 border border-blue-300 rounded-lg p-3 text-center font-medium text-blue-700 mt-1">
                 {member.nameSinhala || member.name}
               </div>
             </div>
             <div>
               <label className="block text-sm font-medium text-blue-700">සාමාජික ගාස්තු ශේෂය</label>
-              <div className="w-full bg-blue-50 border border-blue-300 rounded-lg p-3 text-center font-medium text-blue-700">
+              <div className="w-full bg-blue-50 border border-blue-300 rounded-lg p-3 text-center font-medium text-blue-700 mt-1">
                 {member.membership || 0}
               </div>
             </div>
@@ -195,7 +195,7 @@ export default function ReceiptMembershipPage() {
           {/* ✅ Show this section only if member found */}
           <div className="bg-white shadow-md rounded-xl border-l-4 border-orange-700 overflow-hidden p-4 space-y-4">
             <div>
-              <label className="block text-sm text-gray-600">රිසිට් අංකය</label>
+              <label className="mb-1 block text-sm text-gray-600">රිසිට් අංකය</label>
               <input
                 type="text"
                 value={receiptNo}
@@ -218,7 +218,7 @@ export default function ReceiptMembershipPage() {
             </div>
 
             <div>
-              <label className="block text-sm text-gray-600">ගෙවීම් දිනය</label>
+              <label className="mb-1 block text-sm text-gray-600">ගෙවීම් දිනය</label>
               <input
                 type="date"
                 value={trxDate}
@@ -231,7 +231,7 @@ export default function ReceiptMembershipPage() {
             </div>
 
             <div>
-              <label className="block text-sm text-gray-600">ගෙවන මුදල</label>
+              <label className="mb-1 block text-sm text-gray-600">ගෙවන මුදල</label>
               <input
                 type="number"
                 value={totalAmount}

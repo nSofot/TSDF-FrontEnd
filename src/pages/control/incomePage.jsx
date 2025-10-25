@@ -228,7 +228,7 @@ export default function IncomePage() {
                   </option>
                 ))}
               </select>
-              <div className="mt-1 text-sm text-right text-gray-500">
+              <div className="mt-1 gap-2 flex justify-end text-sm text-right text-gray-500">
                 <span className="font-semibold text-blue-600">ශේෂය: </span>
                 {Number(accountFromBalance ?? 0).toLocaleString("en-US", {
                   minimumFractionDigits: 2,

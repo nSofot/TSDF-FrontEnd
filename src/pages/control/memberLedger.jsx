@@ -43,7 +43,7 @@ export default function MemberLedger() {
   
     useEffect(() => {      
       if (user?.userId) {
-        if (user.memberRole === "member") {
+        if (user.memberRole !== "treasurer" || user.memberRole !== "admin") {
             setApplicantId(user.userId);
             if (user.userId.length === 3) {
             searchApplicant(user.userId);
@@ -92,11 +92,7 @@ export default function MemberLedger() {
                             සාමාජික අංකය
                         </label>
 
-                        {user.memberRole === "manager" 
-                        || user.memberRole === "admin" 
-                        || user.memberRole === "chairman"
-                        || user.memberRole === "secretary"
-                        || user.memberRole === "treasurer" ? (
+                        {user.memberRole === "treasurer"  || user.memberRole === "admin" ? (
                             <input
                                 type="text"
                                 className="w-full border border-indigo-300 rounded-lg p-3 text-center text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-400"
@@ -142,10 +138,9 @@ export default function MemberLedger() {
                                 Rs. {formatNumber(applicant?.membership) || ""}
                             </div>
                             {user?.memberRole === "treasurer" && (
-                                <div className="bg-white rounded-xl border-l-4 border-green-700 shadow-md">                         
-                                    <div className="px-4 py-4 grid grid-cols-2 gap-4">
-                                        <div>
-                                        <label className="text-sm font-medium text-green-700">දින සිට</label>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="text-sm font-medium text-indigo-600">දින සිට</label>
                                         <input
                                             type="date"
                                             value={fromDate}
@@ -154,12 +149,12 @@ export default function MemberLedger() {
                                             validateDates(e.target.value, toDate);
                                             }}
                                             max={toDate}
-                                            className="mt-1 w-full p-3 border border-green-400 rounded-lg text-sm focus:ring-2 focus:ring-green-300"
+                                            className="mt-1 w-full p-3 border border-indigo-600 rounded-lg text-sm focus:ring-2 focus:ring-indigo-300"
                                         />
-                                        </div>
+                                    </div>
 
-                                        <div>
-                                        <label className="text-sm font-medium text-green-700">දිනය දක්වා</label>
+                                    <div>
+                                        <label className="text-sm font-medium text-indigo-600">දිනය දක්වා</label>
                                         <input
                                             type="date"
                                             value={toDate}
@@ -168,9 +163,8 @@ export default function MemberLedger() {
                                             validateDates(fromDate, e.target.value);
                                             }}
                                             min={fromDate}
-                                            className="mt-1 w-full p-3 border border-green-400 rounded-lg text-sm focus:ring-2 focus:ring-green-300"
+                                            className="mt-1 w-full p-3 border border-indigo-600 rounded-lg text-sm focus:ring-2 focus:ring-indigo-300"
                                         />
-                                        </div>
                                     </div>
                                 </div>
                             )}
@@ -181,7 +175,7 @@ export default function MemberLedger() {
                 </div>
                     
                 {applicant ? (
-                    <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-indigo-500 mt-6">
+                    <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-green-600 mt-6">
                         <ViewMemberLedger customerId={applicant.customerId} fromDate={fromDate} toDate={toDate} />
                     </div>
                 ) : (
