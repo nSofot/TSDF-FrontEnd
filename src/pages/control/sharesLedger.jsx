@@ -17,14 +17,17 @@ export default function SharesLedgerPage() {
 
     useEffect(() => {      
       if (user?.userId) {
-        if (user.memberRole === "member") {
-            setApplicantId(user.userId);
-            if (user.userId.length === 3) {
-            searchApplicant(user.userId);
+        if (user.memberRole !== "treasurer" || 
+            user.memberRole !== "manager" || 
+            user.memberRole !== "admin") {
+                setApplicantId(user.userId);
+                if (user.userId.length === 3) {
+                searchApplicant(user.userId);
             }            
         }
       }
     }, [user?.userId]);
+
 
      // Fetch applicant
     const searchApplicant = async (id) => {
@@ -66,11 +69,9 @@ export default function SharesLedgerPage() {
                             සාමාජික අංකය
                         </label>
 
-                        {user.memberRole === "manager" 
-                        || user.memberRole === "admin" 
-                        || user.memberRole === "chairman"
-                        || user.memberRole === "secretary"
-                        || user.memberRole === "treasurer" ? (
+                        {user.memberRole === "treasurer"  ||
+                         user.memberRole === "manager" || 
+                         user.memberRole === "admin" ? (
                             <input
                                 type="text"
                                 className="w-full border border-indigo-300 rounded-lg p-3 text-center text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-400"

@@ -8,6 +8,7 @@ import Home from "./client/homePage";
 import MemberProfilePage from "./client/memberProfile";
 import ApplyLoanPage from "./control/applyLoanPage";
 import MemberLedger from "./control/memberLedger";
+import SharesLedgerPage from "./control/sharesLedger";
 import LedgerLoan from "./control/ledgerLoan";
 import NotFoundPage from "./notFoundPage";
 
@@ -34,6 +35,7 @@ export default function HomePage() {
         <Route path="member-profile" element={<MemberProfilePage />} />
         <Route path="apply-loan" element={<ApplyLoanPage />} />
         <Route path="ledger-membership" element={<MemberLedger />} />
+        <Route path="ledger-shares" element={<SharesLedgerPage />} />
         <Route path="ledger-loan" element={<LedgerLoan />} />
         
         <Route path="*" element={<NotFoundPage />} />
