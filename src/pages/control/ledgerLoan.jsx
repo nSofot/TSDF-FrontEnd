@@ -207,9 +207,9 @@ export default function LedgerLoanPage() {
             {isLoadingLoan ? (
                 <LoadingSpinner />
             ) : loanTransactions && loanTransactions.length > 0 ? (
-                <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-indigo-500 mt-6">
+                <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-green-600 mt-6">
 
-                    <div className="flex justify-between w-full bg-green-50 border border-green-200 rounded-lg text-center font-medium text-green-700">
+                    <div className="flex justify-between w-full bg-green-50 border border-green-200 rounded-lg text-center font-medium text-green-600">
                         <label className="block text-sm font-medium">
                             ගිණුම් ශේෂය
                         </label>

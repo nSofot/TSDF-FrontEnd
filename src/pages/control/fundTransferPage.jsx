@@ -199,8 +199,8 @@ export default function FundTransferPage() {
                 </div>
 
                 <div className="flex-1">                   
-                    <div className="mt-1 text-sm flex justify-end font-semibold text-gray-600">
-                        <label className="text-xs font-semibold text-orange-600">ගිණුම් ශේෂය</label>
+                    <div className="mt-1 gap-2 text-sm flex justify-end font-semibold text-gray-600">
+                        <label className="text-xs text-blue-600">ගිණුම් ශේෂය</label>
                         Rs.{" "}
                         {Number(accountFromBalance ?? 0).toLocaleString("en-US", {
                         minimumFractionDigits: 2,
@@ -241,8 +241,8 @@ export default function FundTransferPage() {
 
 
                 <div className="flex-1">                   
-                    <div className="mt-1 text-sm flex justify-end font-semibold text-gray-600">
-                        <label className="text-xs font-semibold">ගිණුම් ශේෂය</label>
+                    <div className="mt-1 gap-2 text-sm flex justify-end font-semibold text-gray-600">
+                        <label className="text-xs text-blue-600">ගිණුම් ශේෂය</label>
                         Rs.{" "}
                         {Number(accountToBalance ?? 0).toLocaleString("en-US", {
                         minimumFractionDigits: 2,
