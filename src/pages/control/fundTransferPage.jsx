@@ -90,7 +90,7 @@ export default function FundTransferPage() {
                 trxDate: new Date(transferDate).toISOString(),
                 transactionType: "transfer",
                 accountId: accountFrom,
-                description: `Transfer to ${accountToName || "Unknown Account"}`,
+                description: `${accountToName || "Unknown Account"}`,
                 isCredit: true,
                 trxAmount: Number(transferAmount)
             };
@@ -128,7 +128,7 @@ export default function FundTransferPage() {
                 trxDate: new Date(transferDate).toISOString(),
                 transactionType: "transfer",
                 accountId: accountTo,
-                description: `Transfer from ${accountFromName || "Unknown Account"}`,
+                description: `${accountFromName || "Unknown Account"}`,
                 isCredit: false,
                 trxAmount: Number(transferAmount),
             };

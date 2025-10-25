@@ -188,7 +188,7 @@ export default function Header() {
                   key={path}
                   to={path}
                   onClick={() => setSideDrawerOpened(false)}
-                  className={`flex items-center gap-2 text-base font-semibold hover:text-gray-200 transition ${
+                  className={`flex items-center gap-2 text-base font-medium hover:text-gray-200 transition ${
                     location.pathname === path
                       ? "text-yellow-300 underline"
                       : "text-gray-100"
@@ -205,7 +205,7 @@ export default function Header() {
             {isLoggedIn ? (
               <button
                 onClick={handleLogout}
-                className="flex items-center gap-3 text-white text-lg font-semibold w-full"
+                className="flex items-center gap-3 text-white text-sm font-medium w-full"
               >
                 <FaSignOutAlt /> පිටවීම
               </button>
@@ -213,7 +213,7 @@ export default function Header() {
               <Link
                 to="/login"
                 onClick={() => setSideDrawerOpened(false)}
-                className="flex items-center gap-3 text-red-600 text-lg"
+                className="flex items-center gap-3 text-red-600 text-sm font-medium w-full"
               >
                 <FaRegUser /> පිවිසෙන්න
               </Link>

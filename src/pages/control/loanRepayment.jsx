@@ -513,7 +513,9 @@ export default function LoanRepaymentPage() {
                             </div>                         
                         </div>
                     ) : (
-                        <p className="text-center text-blue-500">ණය ගිණුමක් සොයාගත නොහැක.</p>
+                        <div className="p-4 text-center text-gray-600 border rounded-lg bg-gray-50">
+                        ⚠️ සක්‍රිය ණය ගිණුමක් සොයාගත නොහැක.
+                        </div>                        
                     )}
                 </div>
 

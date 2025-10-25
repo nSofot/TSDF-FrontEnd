@@ -9,6 +9,7 @@ export default function LoginPage() {
   // const [email, setEmail] = useState("");
   const [loginId, setLoginId] = useState("");
   const [password, setPassword] = useState("");
+  const [isLogin, setIsLogin] = useState(false);
   const navigate = useNavigate();
 
   // Google OAuth Login
@@ -93,11 +94,20 @@ export default function LoginPage() {
           </div>
 
           <button
-            onClick={handleLogin}
-            className="w-full h-11 text-white font-semibold bg-purple-600 hover:bg-purple-700 active:bg-purple-800 rounded-lg transition"
+            disabled={isLogin}
+            onClick={async () => {
+              setIsLogin(true);
+              await handleLogin();
+            }}
+            className={`w-full h-11 text-white font-semibold bg-purple-600 rounded-lg transition ${
+              isLogin
+                ? "cursor-not-allowed opacity-70"
+                : "hover:bg-purple-700 active:bg-purple-800"
+            }`}
           >
-            Login
+            {isLogin ? "Logging in..." : "Login"}
           </button>
+
 
           <button
             onClick={googleLogin}
