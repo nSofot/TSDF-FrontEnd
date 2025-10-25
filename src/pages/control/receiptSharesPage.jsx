@@ -209,7 +209,9 @@ export default function ReceiptSharesPage() {
               </div>
             </>
           ) : (
-            <p className="text-center text-blue-500">🚫 වලංගු සාමාජික අංකයක් නොවේ.</p>
+            <div className="p-4 text-center text-gray-600 border rounded-lg bg-gray-50">
+              ⚠️ කරුණාකර වලංගු සාමාජික අංකයක් ඇතුලත් කරන්න.
+            </div>
           )}
         </div>
 
