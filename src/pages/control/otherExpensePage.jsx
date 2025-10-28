@@ -166,8 +166,9 @@ export default function OtherExpensePage() {
                 trxBookNo: voucherNo,
                 trxDate: new Date(transferDate).toISOString(),
                 transactionType: "voucher",
+                transactionCategory: selectedExpenseType,
                 accountId: accountFrom,
-                description: selectedExpenseType,
+                description: "",
                 isCredit: true,
                 trxAmount: Number(transferAmount)
             };

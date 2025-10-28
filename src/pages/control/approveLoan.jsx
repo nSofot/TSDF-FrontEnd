@@ -123,8 +123,6 @@ export default function ApproveLoanPage() {
         try {
           const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/customer/${id}`);
           setFirstGuarantor(res.data);
-          // const loan = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/loanMaster/pending-customer/${id}`);
-          // setFirstGuarantorLoans(loan.data);
           const fGLoans = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/loanMaster/pending-guarantor/${id}`);
           setFGuarantoredLoans(fGLoans.data);
         } catch (err) {
@@ -140,8 +138,6 @@ export default function ApproveLoanPage() {
         try {
           const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/customer/${id}`);
           setSecondGuarantor(res.data);
-          // const loan = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/loanMaster/pending-customer/${id}`);
-          // setSecondGuarantorLoans(loan.data);
           const sGLoans = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/loanMaster/pending-guarantor/${id}`);
           setSGuarantoredLoans(sGLoans.data);
         } catch (err) {
@@ -211,39 +207,39 @@ export default function ApproveLoanPage() {
         //check shares
         let sharesAmount = Number(applicant?.shares) + Number(applicant?.profits) 
 
-        if (!isMoreThanOneYear) {
-            setReason("❌ ඔබගේ සාමාජිකත්ව කාලය තවමත් වසරකට ළඟා වී නැත. මෙම අවස්ථාවේදී ණයක් සඳහා අයදුම් කිරීමට ඔබට සුදුසුකම් නොමැත.");
-            setIsEligible(false);
-            return;
-        } else if (membershipFee > 0) {
-            const membershipFeePercentage =  ((12 - currentMonth) * 150)
-            if (membershipFee < membershipFeePercentage) {
-              setReason("❌ ඔබගේ සාමාජික ගාස්තු ගෙවීම් යාවත්කාලීන නොවේ. එබැවින්, මෙම අවස්ථාවේදී ණයක් සඳහා අයදුම් කිරීමට ඔබට සුදුසුකම් නොමැත.");
-              setIsEligible(false);
-              setIsValidating(false);
-            return;        
-            }
-        } else if (sharesAmount < 5000) {
-            setReason("❌ ඔබගේ කොටස් දායකත්වය අවශ්‍ය අවම මුදලට ළඟා වී නොමැත. එබැවින්, මෙම අවස්ථාවේදී ණයක් නිකුත් කළ නොහැක.");
-            setIsEligible(false);
-            return;      
-        } 
-        {
-          applicantLoans.map((loan) => {
-            if (loan.loanType === selectedLoanType) {
-                setReason("❌ ඔබ ඉල්ලා සිටින ණය වර්ගය දැනටමත් ලබාගෙන ඇත. එබැවින්, මේ අවස්ථාවේ දී එම වර්ගයේම තවත් ණයක් නිකුත් කළ නොහැක.");
-                setIsEligible(false);
-                return;
-            } else if ((loan.loanType !== "Welfare Loan") && (selectedLoanType !== "Welfare Loan")) {
-                setReason("❌ ඔබට දැනටමත් ක්‍රියාකාරී ණයක් තිබේ. එබැවින්, මෙම අවස්ථාවේදී නව ණයක් නිකුත් කළ නොහැක.");
-                setIsEligible(false);
-                return;        
-            } else if (((loan.amount/2) < (loan.dueAmount)) && (selectedLoanType === "Welfare Loan")) {
-                setReason("❌ ඔබගේ පවතින ණය මුදලින් අවම වශයෙන් 50% ක්වත් පියවා නොමැති බැවින්, මෙම අවස්ථාවේදී සුභසාධන ණයක් නිකුත් කළ නොහැක.");
-                setIsEligible(false);
-                return;              
-            }
-        })}
+        // if (!isMoreThanOneYear) {
+        //     setReason("❌ ඔබගේ සාමාජිකත්ව කාලය තවමත් වසරකට ළඟා වී නැත. මෙම අවස්ථාවේදී ණයක් සඳහා අයදුම් කිරීමට ඔබට සුදුසුකම් නොමැත.");
+        //     setIsEligible(false);
+        //     return;
+        // } else if (membershipFee > 0) {
+        //     const membershipFeePercentage =  ((12 - currentMonth) * 150)
+        //     if (membershipFee < membershipFeePercentage) {
+        //       setReason("❌ ඔබගේ සාමාජික ගාස්තු ගෙවීම් යාවත්කාලීන නොවේ. එබැවින්, මෙම අවස්ථාවේදී ණයක් සඳහා අයදුම් කිරීමට ඔබට සුදුසුකම් නොමැත.");
+        //       setIsEligible(false);
+        //       setIsValidating(false);
+        //     return;        
+        //     }
+        // } else if (sharesAmount < 5000) {
+        //     setReason("❌ ඔබගේ කොටස් දායකත්වය අවශ්‍ය අවම මුදලට ළඟා වී නොමැත. එබැවින්, මෙම අවස්ථාවේදී ණයක් නිකුත් කළ නොහැක.");
+        //     setIsEligible(false);
+        //     return;      
+        // } 
+        // {
+        //   applicantLoans.map((loan) => {
+        //     if (loan.loanType === selectedLoanType) {
+        //         setReason("❌ ඔබ ඉල්ලා සිටින ණය වර්ගය දැනටමත් ලබාගෙන ඇත. එබැවින්, මේ අවස්ථාවේ දී එම වර්ගයේම තවත් ණයක් නිකුත් කළ නොහැක.");
+        //         setIsEligible(false);
+        //         return;
+        //     } else if ((loan.loanType !== "Welfare Loan") && (selectedLoanType !== "Welfare Loan")) {
+        //         setReason("❌ ඔබට දැනටමත් ක්‍රියාකාරී ණයක් තිබේ. එබැවින්, මෙම අවස්ථාවේදී නව ණයක් නිකුත් කළ නොහැක.");
+        //         setIsEligible(false);
+        //         return;        
+        //     } else if (((loan.amount/2) < (loan.dueAmount)) && (selectedLoanType === "Welfare Loan")) {
+        //         setReason("❌ ඔබගේ පවතින ණය මුදලින් අවම වශයෙන් 50% ක්වත් පියවා නොමැති බැවින්, මෙම අවස්ථාවේදී සුභසාධන ණයක් නිකුත් කළ නොහැක.");
+        //         setIsEligible(false);
+        //         return;              
+        //     }
+        // })}
         if (selectedLoanType === "Long Term Loan") {
           if (fGuarantoredLoans.length > 0) {
               setReason("❌ තෝරාගත් පළමු ඇපකරු දැනටමත් තවත් ණයක් සඳහා අත්සන් කර ඇති අතර එම නිසා නැවත අත්සන් කිරීමට සුදුසුකම් නොලබයි.");

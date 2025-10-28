@@ -121,8 +121,9 @@ export default function ReceiptMembershipPage() {
         trxBookNo: String(receiptNo),
         trxDate: new Date(trxDate).toISOString(),
         transactionType: "receipt",
+        transactionCategory: "සාමාජික ගාස්තු",
         accountId: lgAcIdDr,
-        description: `සාමාජික ගාස්තු - ${member?.nameSinhala || member?.name}`,
+        description: `${member?.nameSinhala || member?.name}`,
         isCredit: false,
         trxAmount: parseFloat(totalAmount) || 0,
       };

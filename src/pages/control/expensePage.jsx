@@ -3,7 +3,6 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import LoadingSpinner from "../../components/loadingSpinner.jsx";
-import { ArrowLeft, SendHorizontal, Search, DivideIcon } from "lucide-react";
 
 export default function ExpensePage() {
   const [accounts, setAccounts] = useState([]);
@@ -151,8 +150,9 @@ export default function ExpensePage() {
           trxBookNo: voucherNo,
           trxDate: new Date(transferDate).toISOString(),
           transactionType: "voucher",
+          transactionCategory: selectedExpenseType,
           accountId: accountFrom,
-          description: `${selectedExpenseType} - ${member.nameSinhala || member.name}`,
+          description: `${member.nameSinhala || member.name}`,
           isCredit: true,
           trxAmount: Number(transferAmount),
         });

@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import Cashbook from "../../components/viewCashbook";
-import { tr } from "framer-motion/client";
 
 export default function FundTransferPage() {
     const [accounts, setAccounts] = useState([]);
@@ -89,6 +87,7 @@ export default function FundTransferPage() {
                 trxBookNo: "",
                 trxDate: new Date(transferDate).toISOString(),
                 transactionType: "transfer",
+                transactionCategory: "",
                 accountId: accountFrom,
                 description: `${accountToName || "Unknown Account"}`,
                 isCredit: true,
@@ -127,6 +126,7 @@ export default function FundTransferPage() {
                 trxBookNo: "",
                 trxDate: new Date(transferDate).toISOString(),
                 transactionType: "transfer",
+                transactionCategory: "",
                 accountId: accountTo,
                 description: `${accountFromName || "Unknown Account"}`,
                 isCredit: false,
