@@ -137,8 +137,9 @@ export default function ReceiptSharesPage() {
         trxBookNo: String(receiptNo),
         trxDate: new Date().toISOString(),
         transactionType: "receipt",
+        transactionCategory: trxDes,
         accountId: lgAcIdDr,
-        description: `${trxDes} - ${member?.nameSinhala || member?.name}`,
+        description: `${member?.nameSinhala || member?.name}`,
         isCredit: false,
         trxAmount: parseFloat(totalAmount) || 0,
       });
