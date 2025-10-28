@@ -10,6 +10,7 @@ import EditCustomerPage from "./admin/editCustomerPage";
 import PostAnnualMembershipFee from "./admin/postAnnualMembershipFee";
 import InitalizeMasterFields from "./admin/initalizeMasterFields";
 import ImportData from "./admin/dataImport";
+import Reports from "./admin/reports";
 import Loading from "../components/loadingSpinner";
 import NotFoundPage from "./notFoundPage";
 
@@ -106,6 +107,7 @@ export default function AdminPage() {
             <Route path="post-annual-membership-fee" element={<PostAnnualMembershipFee />} />
             <Route path="master-fields" element={<InitalizeMasterFields />} />
             <Route path="upload-data" element={<ImportData />} />
+            <Route path="reports" element={<Reports />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </main>

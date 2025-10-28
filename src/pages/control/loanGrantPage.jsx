@@ -188,9 +188,9 @@ export default function LoanGrantPage() {
           trxBookNo: voucherNo,
           trxDate: new Date(),
           transactionType: "voucher",
+          transactionCategory: selectedLoanType,
           accountId: lgAcIdCr,
-          description:
-            selectedLoanType + " " + (applicant.nameSinhala || applicant.name),
+          description: (applicant.nameSinhala || applicant.name),
           isCredit: true,
           trxAmount: amount,
         }
@@ -208,8 +208,9 @@ export default function LoanGrantPage() {
           trxBookNo: voucherNo,
           trxDate: new Date(),
           transactionType: "voucher",
+          transactionCategory: selectedLoanType,
           accountId: lgAcIdDr,
-          description: selectedLoanType + " " + applicant.name,
+          description: (applicant.nameSinhala || applicant.name),
           isCredit: false,
           trxAmount: amount,
         }

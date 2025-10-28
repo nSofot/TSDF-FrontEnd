@@ -372,8 +372,9 @@ export default function LoanRepaymentPage() {
                     trxBookNo: String(receiptNo).padStart(6, "0"),
                     trxDate: new Date().toISOString(),
                     transactionType: "receipt",
+                    transactionCategory: selectedLoanType,
                     accountId: lgAcIdDr,
-                    description: `${selectedLoanType} ${applicant?.name || ""}`,
+                    description: `${applicant?.name || ""}`,
                     isCredit: false,
                     trxAmount: parseFloat(totalAmount) || 0
                 };
@@ -408,8 +409,9 @@ export default function LoanRepaymentPage() {
                     trxBookNo: receiptNo,
                     trxDate: new Date().toISOString(),
                     transactionType: "receipt",
+                    transactionCategory: selectedLoanType,
                     accountId: lgAcIdCr,
-                    description: selectedLoanType + " " + applicant.name,
+                    description: applicant.name,
                     isCredit: true,
                     trxAmount: installment
                 }                         
