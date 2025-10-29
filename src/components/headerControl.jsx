@@ -81,6 +81,7 @@ export default function Header() {
       { path: "/control/ledger-loan", label: "Loan Ledger", icon: <FaClipboardList /> },
       { path: "/control/ledger-shares", label: "Shares Ledger", icon: <FaBook /> },
       { path: "/control/attendance-mark", label: "Mark Attendance", icon: <FaUserCheck /> },
+      { path: "/control/transactions-report", label: "Transactions Report", icon: <FaChartLine /> },
     ],
     manager: [
       { path: "/control/loans", label: "ණය ශේෂ ලැයිස්තුව", icon: <FaGavel /> },
@@ -95,6 +96,7 @@ export default function Header() {
       { path: "/control/fund-transfer", label: "අන්තර් මුදල් හුවමාරු", icon: <FaExchangeAlt /> },
       { path: "/control/ledger-loan", label: "ණය ලෙජරය", icon: <FaClipboardList /> },
       { path: "/control/ledger-shares", label: "කොටස් මුදල් ලෙජරය", icon: <FaBook /> },
+      { path: "/control/transactions-report", label: "ගනුදෙනු වාර්තාව", icon: <FaChartLine /> },
     ],
     treasurer: [
       { path: "/control/receipts-membership", label: "සාමාජික ගාස්තු ලැබීම්", icon: <FaReceipt /> },
@@ -104,6 +106,7 @@ export default function Header() {
       { path: "/control/fund-transfer", label: "අන්තර් මුදල් හුවමාරු", icon: <FaExchangeAlt /> },
       { path: "/control/ledger-membership", label: "සාමාජික ගාස්තු ලෙජරය", icon: <FaAddressBook /> },
       { path: "/control/ledger-shares", label: "කොටස් මුදල් ලෙජරය", icon: <FaBook /> },
+      { path: "/control/transactions-report", label: "ගනුදෙනු වාර්තාව", icon: <FaChartLine /> },
     ],
     secretary: [
       { path: "/control/attendance-mark", label: "පැමිණීම සලකුණු කිරීම", icon: <FaUserCheck /> },
