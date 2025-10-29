@@ -26,6 +26,7 @@ import IncomePage from "./control/incomePage";
 import AddCustomerBySecratary from "./control/addCustomerBySecratary";
 import EditCustomerBySecratary from "./control/editCustomerBySecratary";
 import AttendanceMark from "./control/attendanceMark";
+import TransactionReport from "./control/transactionReport";
 
 import ProductOverview from "./client/productOverview";
 import CartPage from "./client/cart";
@@ -116,6 +117,7 @@ export default function ControlPage() {
         <Route path="attendance-mark" element={<AttendanceMark />} />
         <Route path="add-customer-secretary" element={<AddCustomerBySecratary />} />
         <Route path="edit-customer-secretary" element={<EditCustomerBySecratary />} />
+        <Route path="transactions-report" element={<TransactionReport />} />
         <Route path="contact" element={<Contact />} />
         <Route path="overview/:Id" element={<ProductOverview />} />
         <Route path="cart" element={<CartPage />} />
