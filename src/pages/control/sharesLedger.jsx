@@ -105,7 +105,7 @@ export default function SharesLedgerPage() {
                                 <label className="block text-sm font-medium text-indigo-600 mb-1">
                                     සාමාජිකයාගේ නම
                                 </label>
-                                <div className="w-full bg-indigo-50 border border-indigo-200 rounded-lg p-3 text-center font-medium text-indigo-600">
+                                <div className="w-full bg-indigo-50 border border-indigo-200 rounded-lg p-3 text-sm text-center font-medium text-indigo-600">
                                     {applicant?.nameSinhala || applicant?.name || ""}
                                 </div>
                             </div>
