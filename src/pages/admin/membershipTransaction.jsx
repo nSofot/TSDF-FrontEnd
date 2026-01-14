@@ -8,7 +8,7 @@ import { saveAs } from "file-saver";
 // import html2pdf from "html2pdf.js";
 
 
-export default function Reports() {
+export default function MembershipTransaction() {
     const printRef = useRef(); // ✅ now valid
 
     const [dateFrom, setDateFrom] = useState(() => {
@@ -34,7 +34,10 @@ export default function Reports() {
         setIsGenerating(true);
         setTransactions([]);
         try {
-            const response = await axios.get(import.meta.env.VITE_BACKEND_URL + "/api/ledgerTransactions");
+            const response = await axios.get(
+            import.meta.env.VITE_BACKEND_URL + "/api/membershipTransactions/all"
+            );
+
 
             // ✅ Determine data array safely
             let dataArray = Array.isArray(response.data)
@@ -54,7 +57,7 @@ export default function Reports() {
             const from = new Date(dateFrom);
             const to = new Date(dateTo);
             dataArray = dataArray.filter((transaction) => {
-                const trxDate = new Date(transaction.trxDate);
+                const trxDate = new Date(transaction.transactionDate);
                 return trxDate >= from && trxDate <= to;
             });
 
@@ -87,7 +90,7 @@ export default function Reports() {
         const excelData = transactions.map((trx, index) => ({
             "#": index + 1,
             "Ref/No": trx.trxBookNo,
-            "Date": new Date(trx.trxDate).toLocaleDateString("en-GB"),
+            "Date": new Date(trx.transactionDate).toLocaleDateString("en-GB"),
             "Category": trx.transactionCategory,
             "Details": trx.description,
             "Amount": trx.trxAmount,
@@ -110,7 +113,7 @@ export default function Reports() {
         <div className="w-full h-full flex flex-col bg-gray-100 rounded-md px-12 py-4">
             <div className='flex justify-between items-center mb-4'>
                 <div className='w-40% h-full flex flex-col item-center'>
-                    <h1 className='text-xl font-semibold text-gray-800'>📥📗 Ledger Transaction Reports</h1>
+                    <h1 className='text-xl font-semibold text-gray-800'>📥📗 Membership Transaction Reports</h1>
                     <p className='text-sm text-gray-600'>Generate and download all transactions reports from here.</p>
                 </div>
                 <div className="flex justify-end gap-4">
@@ -190,7 +193,8 @@ export default function Reports() {
                         <th style={{ textAlign: "left", fontWeight: "bold", fontSize: "10px", padding: "4px 8px" }}>#</th>
                         <th style={{ textAlign: "left", fontWeight: "bold", fontSize: "10px", padding: "4px 8px" }}>Ref/No</th>
                         <th style={{ textAlign: "left", fontWeight: "bold", fontSize: "10px", padding: "4px 8px" }}>Date</th>
-                        <th style={{ textAlign: "left", fontWeight: "bold", fontSize: "10px", padding: "4px 8px" }}>Category</th>
+                        <th style={{ textAlign: "left", fontWeight: "bold", fontSize: "10px", padding: "4px 8px" }}>Type</th>
+                        <th style={{ textAlign: "left", fontWeight: "bold", fontSize: "10px", padding: "4px 8px" }}>Member ID</th>
                         <th style={{ textAlign: "left", fontWeight: "bold", fontSize: "10px", padding: "4px 8px" }}>Details</th>
                         <th style={{ textAlign: "right", fontWeight: "bold", fontSize: "10px", padding: "4px 8px" }}>Amount</th>
                         </tr>
@@ -203,9 +207,10 @@ export default function Reports() {
                             <td style={{ textAlign: "left", fontSize: "10px", padding: "4px 8px" }}>{index + 1}</td>
                             <td style={{ textAlign: "left", fontSize: "10px", padding: "4px 8px" }}>{trx.trxBookNo}</td>
                             <td style={{ textAlign: "left", fontSize: "10px", padding: "4px 8px" }}>
-                                {new Date(trx.trxDate).toLocaleDateString("en-GB")}
+                                {new Date(trx.transactionDate).toLocaleDateString("en-GB")}
                             </td>
                             <td style={{ textAlign: "left", fontSize: "10px", padding: "4px 8px" }}>{trx.isCredit ? "Credit" : "Debit"}</td>
+                            <td style={{ textAlign: "left", fontSize: "10px", padding: "4px 8px" }}>{trx.customerId}</td>
                             <td style={{ textAlign: "left", fontSize: "10px", padding: "4px 8px" }}>{trx.description}</td>
                             <td style={{ textAlign: "right", fontSize: "10px", padding: "4px 8px" }}>{formatNumber(trx.trxAmount)}</td>
                             </tr>

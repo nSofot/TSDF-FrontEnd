@@ -54,7 +54,7 @@ export default function SharesLedgerPage() {
 
 
     return (
-        <div className="max-w-5xl w-full h-full flex flex-col space-y-6 overflow-hidden">
+        <div className="max-w-6xl w-full h-full flex flex-col space-y-6 overflow-hidden">
             <div className="bg-white shadow rounded-md max-h-[calc(100vh-120px)] space-y-8 overflow-y-auto">
                 <div className="p-4 space-y-2">
                     <h1 className="text-lg md:text-2xl font-bold text-orange-700">💵 කොටස් මුදල් ලෙජරය</h1>
@@ -105,7 +105,7 @@ export default function SharesLedgerPage() {
                                 <label className="block text-sm font-medium text-indigo-600 mb-1">
                                     සාමාජිකයාගේ නම
                                 </label>
-                                <div className="w-full bg-indigo-50 border border-indigo-200 rounded-lg p-3 text-center font-medium text-indigo-600">
+                                <div className="w-full bg-indigo-50 border border-indigo-200 rounded-lg p-3 text-sm text-center font-medium text-indigo-600">
                                     {applicant?.nameSinhala || applicant?.name || ""}
                                 </div>
                             </div>

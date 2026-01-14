@@ -11,6 +11,9 @@ import PostAnnualMembershipFee from "./admin/postAnnualMembershipFee";
 import InitalizeMasterFields from "./admin/initalizeMasterFields";
 import ImportData from "./admin/dataImport";
 import Reports from "./admin/reports";
+import SharesTransaction from "./admin/sharesTransaction";
+import MembershipTransaction from "./admin/membershipTransaction";
+import BackupPage from "./admin/backup";
 import Loading from "../components/loadingSpinner";
 import NotFoundPage from "./notFoundPage";
 
@@ -81,12 +84,15 @@ export default function AdminPage() {
             <Link className={getClass("Membership Fee Adjustment")} to="/admin/membership-fee-adjustment">💰 Membership Fee Adjustment</Link>
             <Link className={getClass("Shares Adjustment")} to="/admin/shares-adjustment">💰 Shares Adjustment</Link>
             <Link className={getClass("Ledger Adjustment")} to="/admin/ledger-adjustment">💰 Ledger Adjustment</Link>
-            <Link className={getClass("Reports")} to="/admin/reports">📊 Reports</Link>
+            <Link className={getClass("Reports")} to="/admin/reports">📊 Ledger Transaction Reports</Link>
+            <Link className={getClass("MembershipTransaction")} to="/admin/membership-transaction">📊 Membership Transaction Report</Link>
+            <Link className={getClass("SharesTransaction")} to="/admin/shares-transaction">📊 Shares Transaction Report</Link>
             <Link className={getClass("Post Annual Membership Fee")} to="/admin/post-annual-membership-fee">💰 Post Annual Membership Fee</Link>
             <Link className={getClass("Initalize Master Fields")} to="/admin/master-fields">📦 Initalize Master Fields</Link>
             <Link className={getClass("Upload Data")} to="/admin/upload-data">📦 Upload Data</Link>
             <Link className={getClass("edit-customer")} to="/admin/edit-customer">✏️ Edit Customer</Link>
             <Link className={getClass("add-product")} to="/admin/add-customer">➕ Add Customer</Link>
+            <Link className={getClass("backup")} to="/admin/backup">💾 Backup</Link>
           </div>
 
           <button
@@ -108,6 +114,9 @@ export default function AdminPage() {
             <Route path="master-fields" element={<InitalizeMasterFields />} />
             <Route path="upload-data" element={<ImportData />} />
             <Route path="reports" element={<Reports />} />
+            <Route path="shares-transaction" element={<SharesTransaction />} />
+            <Route path="membership-transaction" element={<MembershipTransaction />} />
+            <Route path="backup" element={<BackupPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </main>

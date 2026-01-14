@@ -135,7 +135,7 @@ export default function ReceiptSharesPage() {
       await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/ledgerTransactions`, {
         trxId: String(newReferenceNo),
         trxBookNo: String(receiptNo),
-        trxDate: new Date().toISOString(),
+        trxDate: new Date(trxDate).toISOString(),
         transactionType: "receipt",
         transactionCategory: trxDes,
         accountId: lgAcIdDr,

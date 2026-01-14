@@ -318,7 +318,7 @@ export default function LoanRepaymentPage() {
                     trxBookNo: receiptNo,
                     loanId: selectedLoanId,
                     customerId: applicantId,
-                    transactionDate: new Date(),
+                    transactionDate: new Date(paymentDate).toISOString(),
                     interest: parseFloat(interest) || 0,
                     installment: parseFloat(installment) || 0,
                     totalAmount: parseFloat(totalAmount) || 0,
@@ -370,7 +370,7 @@ export default function LoanRepaymentPage() {
                 const accTrxPayload = {
                     trxId: String(newReferenceNo),
                     trxBookNo: String(receiptNo).padStart(6, "0"),
-                    trxDate: new Date().toISOString(),
+                    trxDate: new Date(paymentDate).toISOString(),
                     transactionType: "receipt",
                     transactionCategory: selectedLoanType,
                     accountId: lgAcIdDr,
@@ -407,7 +407,7 @@ export default function LoanRepaymentPage() {
                 const accTrxPayload = {
                     trxId: newReferenceNo,
                     trxBookNo: receiptNo,
-                    trxDate: new Date().toISOString(),
+                    trxDate: new Date(paymentDate).toISOString(),
                     transactionType: "receipt",
                     transactionCategory: selectedLoanType,
                     accountId: lgAcIdCr,
@@ -667,7 +667,7 @@ export default function LoanRepaymentPage() {
 
                             <button
                                 onClick={() => navigate('/control')}
-                                className="w-full h-12 hover:bg-gray-700 text-gray-700 rounded-lg border border-gray-700 font-semibold transition mb-6"
+                                className="w-full h-12 hover:bg-gray-700 hover:text-white text-gray-700 rounded-lg border border-gray-700 font-semibold transition mb-6"
                             >
                                 ආපසු යන්න
                             </button>

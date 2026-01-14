@@ -49,10 +49,17 @@ export default function Reports() {
             }
 
             // ✅ Filter by transaction type
+
             if (transactionType !== "all") {
-                dataArray = dataArray.filter(
-                    (transaction) => transaction.transactionType === transactionType
-                );
+                if (transactionType === "receipt") {
+                    dataArray = dataArray.filter(
+                        (transaction) => transaction.isCredit === false
+                    );                  
+                } else {
+                    dataArray = dataArray.filter(
+                        (transaction) => transaction.isCredit === true
+                    );
+                }
             }
 
             // ✅ Filter by date range
