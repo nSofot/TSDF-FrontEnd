@@ -78,7 +78,13 @@ export default function ViewMemberLedger({ customerId, fromDate, toDate }) {
                                 <span className="hidden md:block">{b.description}</span>
                                 <span className="hidden md:block text-right">{b.debit === "0.00" ? "—" : b.debit}</span>
                                 <span className="hidden md:block text-right">{b.credit === "0.00" ? "—" : b.credit}</span>
-                                <span className="hidden md:block text-right">{b.balance}</span>
+                                <span className={`hidden md:block  text-right ${
+                                                b.balance > "0.00" 
+                                                ? "text-gray-600" 
+                                                : "text-red-600"
+                                            }`}
+                                        >{b.balance} 
+                                </span>
                             </div>
                         ))}
                     </div>

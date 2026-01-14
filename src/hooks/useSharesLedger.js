@@ -1,31 +1,40 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
+/* ---------------------------------------------------------------------- */
+/* Number formatter (1,234.56)                                             */
+/* ---------------------------------------------------------------------- */
+const numberFormatter = new Intl.NumberFormat("en-US", {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
 
+/* ---------------------------------------------------------------------- */
+/* Hook                                                                   */
+/* ---------------------------------------------------------------------- */
 export function useSharesLedger(customerId) {
   const [sharesLedger, setSharesLedger] = useState([]);
-  const [loading,  setLoading]  = useState(false);
-  const [error,    setError]    = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (!customerId) return;
 
     const fetchSharesLedger = async () => {
-      if (!customerId) return;
-
       setLoading(true);
       setError(null);
 
       try {
         const { data } = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/api/sharesTransactions/transactions/${encodeURIComponent(customerId)}`
+          `${import.meta.env.VITE_BACKEND_URL}/api/sharesTransactions/transactions/${encodeURIComponent(
+            customerId
+          )}`
         );
 
-        const ledgerArray = Array.isArray(data) ? data : data.rows || [];
+        const ledgerArray = Array.isArray(data) ? data : data?.rows || [];
         const { rows } = transformSharesLedger(ledgerArray);
 
         setSharesLedger(rows);
-
       } catch (err) {
         console.error(err);
         setError("Failed to fetch shares data.");
@@ -41,55 +50,65 @@ export function useSharesLedger(customerId) {
 }
 
 /* ---------------------------------------------------------------------- */
-/* Helper: transform + totals                                             */
+/* Transform ledger + running balance                                     */
 /* ---------------------------------------------------------------------- */
 function transformSharesLedger(data) {
-
-  // Start: January 1st
-  const start = new Date();
-  start.setMonth(0);      // January
-  start.setDate(1);       // 1st
+  // Start: January 1st, 2024
+  const start = new Date(2024, 0, 1); // year, month (0 = Jan), day
   start.setHours(0, 0, 0, 0);
+
 
   // End: Today
   const end = new Date();
-  end.setHours(23, 59, 59, 999); 
+  end.setHours(23, 59, 59, 999);
 
   const beforeStart = [];
-  const inRange     = [];
+  const inRange = [];
 
-  // for (const trx of data) {
-  //   const d = new Date(trx.transactionDate);
-  //   if (d < start)      beforeStart.push(trx);
-  //   else if (d <= end)  inRange.push(trx);
-  // }
-  inRange.push(...data);
+  for (const trx of data) {
+    const d = new Date(trx.transactionDate);
+    if (d < start) beforeStart.push(trx);
+    else if (d <= end) inRange.push(trx);
+  }
 
-  // 🔹 Balance B/F
+  // Balance B/F
   const balanceBF = beforeStart.reduce(
-    (sum, t) => sum + (!t.isCredit ? t.trxAmount : -t.trxAmount),
+    (sum, t) =>
+      sum + (!t.isCredit ? Number(t.trxAmount) : -Number(t.trxAmount)),
     0
   );
 
   let rows = [];
-  let running = balanceBF;
+  let running = Number(balanceBF);
 
+  // Balance B/F row
   if (balanceBF !== 0) {
-    rows.push(makeRow({
-      trxDate   : start,
-      trxId     : "B/F",
-      transactionType: "Balance B/F",
-      description: "As At " + start.toLocaleDateString("en-GB"),
-      isCredit  : balanceBF < 0,
-      trxAmount : Math.abs(balanceBF),
-      createdAt : start,
-    }, balanceBF));
+    rows.push(
+      makeRow(
+        {
+          transactionDate: start,
+          trxBookNo: "B/F",
+          transactionType: "Balance B/F",
+          description: `As at ${start.toLocaleDateString("en-GB")}`,
+          isCredit: balanceBF < 0,
+          trxAmount: Math.abs(balanceBF),
+          createdAt: start,
+        },
+        running
+      )
+    );
   }
 
+  // Sort and map transactions
   const mapped = inRange
-    .sort((a, b) => new Date(a.trxDate) - new Date(b.trxDate))
-    .map(trx => {
-      running += !trx.isCredit ? trx.trxAmount : -trx.trxAmount;
+    .sort(
+      (a, b) =>
+        new Date(a.transactionDate) - new Date(b.transactionDate)
+    )
+    .map((trx) => {
+      running += !trx.isCredit
+        ? Number(trx.trxAmount)
+        : -Number(trx.trxAmount);
 
       return makeRow(trx, running);
     });
@@ -100,17 +119,27 @@ function transformSharesLedger(data) {
 }
 
 /* ---------------------------------------------------------------------- */
+/* Create a ledger row                                                     */
+/* ---------------------------------------------------------------------- */
 function makeRow(trx, runningBalance) {
   const isCredit = trx.isCredit;
 
   return {
-    date       : new Date(trx.transactionDate).toLocaleDateString("en-GB"),
-    trxId      : trx.trxBookNo || trx.trxId,
-    trxType    : trx.transactionType || "",
+    date: new Date(trx.transactionDate).toLocaleDateString("en-GB"),
+    trxId: trx.trxBookNo || trx.trxId || "",
+    trxType: trx.transactionType || "",
     description: trx.description || "",
-    debit      : !isCredit ? trx.trxAmount.toLocaleString("en-US", { minimumFractionDigits: 2 }) : "0.00",
-    credit     : isCredit  ? trx.trxAmount.toLocaleString("en-US", { minimumFractionDigits: 2 }) : "0.00",
-    balance    : runningBalance.toLocaleString("en-US", { minimumFractionDigits: 2 }),
-    createdAt  : new Date(trx.createdAt),
+
+    debit: !isCredit
+      ? numberFormatter.format(Number(trx.trxAmount))
+      : "0.00",
+
+    credit: isCredit
+      ? numberFormatter.format(Number(trx.trxAmount))
+      : "0.00",
+
+    balance: numberFormatter.format(Number(runningBalance)),
+
+    createdAt: new Date(trx.createdAt),
   };
 }

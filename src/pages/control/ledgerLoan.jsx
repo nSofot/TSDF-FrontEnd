@@ -118,7 +118,7 @@ export default function LedgerLoanPage() {
 
 
     return (
-        <div className="flex flex-col  max-w-5xl mx-auto min-h-screen">
+        <div className="flex flex-col  max-w-6xl mx-auto min-h-screen">
             {/* HEADER */}
             <div className="p-4 shadow-md flex flex-col md:flex-row md:items-center md:justify-between gap-3">
                 <div>

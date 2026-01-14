@@ -19,11 +19,13 @@ export default function MembershipPage() {
     axios
       .get(`${import.meta.env.VITE_BACKEND_URL}/api/customer`)
       .then((res) => {
-        const filteredList = res.data
-          .filter((customer) => customer.membership > 0)
+        const membersList = res.data.filter((customer) => customer.customerType === "shareholder");
+        const filteredList = membersList
+          .filter((customer) => customer.membership >= 0)
+          .filter((customer) => customer.customerType === "shareholder")
           .sort((a, b) => a.customerId.localeCompare(b.customerId));
 
-        const creditList = res.data
+        const creditList = membersList
           .filter((customer) => customer.membership < 0)
           .sort((a, b) => a.customerId.localeCompare(b.customerId));
 
@@ -78,7 +80,14 @@ export default function MembershipPage() {
                 <td></td>
                 <td className="px-2 py-2 text-orange-700">අයවිය යුතු</td>
                 <td className="px-2 py-2 text-right text-orange-700">
-                  {formatNumber(customers.reduce((total, item) => total + item.membership, 0))}
+                  {formatNumber(
+                    customers.reduce((total, item) => {
+                      const twoDigitMembership = Number(
+                        String(item.membership).padStart(2, "0")
+                      );
+                      return total + twoDigitMembership;
+                    }, 0)
+                  )}
                 </td>
               </tr>
             </tbody>

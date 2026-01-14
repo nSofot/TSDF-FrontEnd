@@ -1,6 +1,14 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
+/* ---------------------------------------------------------------------- */
+/* Number formatter (1,234.56)                                             */
+/* ---------------------------------------------------------------------- */
+const numberFormatter = new Intl.NumberFormat("en-US", {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
+
 export function useMemberLedger(customerId, fromDate, toDate) {
   const [memberLedger, setMemberLedger] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -19,11 +27,17 @@ export function useMemberLedger(customerId, fromDate, toDate) {
 
       try {
         const { data } = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/api/membershipTransactions/transactions/${encodeURIComponent(customerId)}`
+          `${import.meta.env.VITE_BACKEND_URL}/api/membershipTransactions/transactions/${encodeURIComponent(
+            customerId
+          )}`
         );
 
-        const ledgerArray = Array.isArray(data) ? data : data.rows || [];
-        const { rows, totals } = transformMemberLedger(ledgerArray, fromDate, toDate);
+        const ledgerArray = Array.isArray(data) ? data : data?.rows || [];
+        const { rows, totals } = transformMemberLedger(
+          ledgerArray,
+          fromDate,
+          toDate
+        );
 
         setMemberLedger(rows);
         setBalanceBF(totals.balanceBF);
@@ -40,9 +54,18 @@ export function useMemberLedger(customerId, fromDate, toDate) {
     fetchMemberLedger();
   }, [customerId, fromDate, toDate]);
 
-  return { memberLedger, loading, error, balanceBF, receivedAm, spentAm };
+  return {
+    memberLedger,
+    loading,
+    error,
+    balanceBF,
+    receivedAm,
+    spentAm,
+  };
 }
 
+/* ---------------------------------------------------------------------- */
+/* Transform ledger + totals                                               */
 /* ---------------------------------------------------------------------- */
 function transformMemberLedger(data, fromDate, toDate) {
   const start = new Date(fromDate);
@@ -60,13 +83,15 @@ function transformMemberLedger(data, fromDate, toDate) {
     else if (d <= end) inRange.push(trx);
   }
 
+  // Balance B/F
   const balanceBF = beforeStart.reduce(
-    (sum, t) => sum + (!t.isCredit ? t.trxAmount : -t.trxAmount),
+    (sum, t) =>
+      sum + (!t.isCredit ? Number(t.trxAmount) : -Number(t.trxAmount)),
     0
   );
 
   let rows = [];
-  let running = balanceBF;
+  let running = Number(balanceBF);
 
   if (balanceBF !== 0) {
     rows.push(
@@ -75,12 +100,12 @@ function transformMemberLedger(data, fromDate, toDate) {
           transactionDate: start,
           trxId: "B/F",
           transactionType: "Balance B/F",
-          description: "As At " + start.toLocaleDateString("en-GB"),
+          description: `As At ${start.toLocaleDateString("en-GB")}`,
           isCredit: balanceBF < 0,
           trxAmount: Math.abs(balanceBF),
           createdAt: start,
         },
-        balanceBF
+        running
       )
     );
   }
@@ -89,34 +114,53 @@ function transformMemberLedger(data, fromDate, toDate) {
   let spentAm = 0;
 
   const mapped = inRange
-    .sort((a, b) => new Date(a.transactionDate) - new Date(b.transactionDate))
+    .sort(
+      (a, b) =>
+        new Date(a.transactionDate) - new Date(b.transactionDate)
+    )
     .map((trx) => {
-      running += !trx.isCredit ? trx.trxAmount : -trx.trxAmount;
-      if (!trx.isCredit) receivedAm += trx.trxAmount;
-      else spentAm += trx.trxAmount;
+      const amount = Number(trx.trxAmount);
+
+      running += !trx.isCredit ? amount : -amount;
+
+      if (!trx.isCredit) receivedAm += amount;
+      else spentAm += amount;
+
       return makeRow(trx, running);
     });
 
   return {
     rows: [...rows, ...mapped],
-    totals: { balanceBF, receivedAm, spentAm },
+    totals: {
+      balanceBF,
+      receivedAm,
+      spentAm,
+    },
   };
 }
 
+/* ---------------------------------------------------------------------- */
+/* Create a ledger row                                                     */
+/* ---------------------------------------------------------------------- */
 function makeRow(trx, runningBalance) {
   const isCredit = trx.isCredit;
+
   return {
     date: new Date(trx.transactionDate).toLocaleDateString("en-GB"),
-    trxId: trx.trxBookNo || trx.trxId,
+    trxId: trx.trxBookNo || trx.trxId || "",
     trxType: trx.transactionType || "",
     description: trx.description || "",
+
     debit: !isCredit
-      ? trx.trxAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })
+      ? numberFormatter.format(Number(trx.trxAmount))
       : "0.00",
+
     credit: isCredit
-      ? trx.trxAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })
+      ? numberFormatter.format(Number(trx.trxAmount))
       : "0.00",
-    balance: runningBalance.toLocaleString("en-US", { minimumFractionDigits: 2 }),
+
+    balance: numberFormatter.format(Number(runningBalance)),
+
     createdAt: new Date(trx.createdAt),
   };
 }
