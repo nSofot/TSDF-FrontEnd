@@ -224,63 +224,81 @@ export default function ExpensePage() {
             funeralFee = 250;
           }
 
-          const enrichedCustomers = members.map((customer) => {
-            const otherCount = customer.familyMembers
-              ? customer.familyMembers.filter((fm) => fm.relationship === "other").length
-              : 0;
+        // 1️⃣ Only shareholders
+        const shareholderMembers = members.filter(
+          (customer) => customer.customerType === "shareholder"
+        );
 
-            let memberFee = funeralFee;
-            if (otherCount > 0) {
-              memberFee = funeralFee + (otherCount * (funeralFee / 2)); // add 50% if other family members exist
-            }
+        // 2️⃣ Enrich shareholders with memberFee
+        const enrichedCustomers = shareholderMembers.map((customer) => {
+          const otherCount = customer.familyMembers
+            ? customer.familyMembers.filter(
+                (fm) => fm.relationship === "other"
+              ).length
+            : 0;
 
-            return {
-              ...customer,
-              memberFee,
+          let memberFee = funeralFee;
+          if (otherCount > 0) {
+            memberFee = funeralFee + otherCount * (funeralFee / 2); // +50% per "other"
+          }
+
+          return {
+            ...customer,
+            memberFee,
+          };
+        });
+
+        // 3️⃣ Update state (optional: keep only shareholders or merge back)
+        setMembers(enrichedCustomers);
+
+        // 4️⃣ Post updates ONLY for shareholders
+        for (const customer of enrichedCustomers) {
+          // 6️⃣ Update membership fee
+          try {
+            const customerPayload = {
+              updates: [
+                {
+                  customerId: customer.customerId,
+                  amount: parseFloat(customer.memberFee) || 0,
+                },
+              ],
             };
-          });
 
-          setMembers(enrichedCustomers);
-       
-          for (const customer of enrichedCustomers) {
-              // 6️⃣ post funeral fee for the customer
-              try {
-                  const customerPayload = {
-                      updates: [
-                          {
-                              customerId: customer.customerId,
-                              amount: parseFloat(customer.memberFee) || 0,
-                          },
-                      ],
-                  };
-                  await axios.put(
-                      `${import.meta.env.VITE_BACKEND_URL}/api/customer/membershipFee-add`,
-                      customerPayload
-                  );
-              } catch (err) {
-                  console.error(`6️⃣⚠️ Error posting fee for customer ${customer.customerId}:`, err);
-              }
+            await axios.put(
+              `${import.meta.env.VITE_BACKEND_URL}/api/customer/membershipFee-add`,
+              customerPayload
+            );
+          } catch (err) {
+            console.error(
+              `6️⃣⚠️ Error posting fee for customer ${customer.customerId}:`,
+              err
+            );
+          }
 
-              // 7️⃣ post funeral fee transaction for the customer
-              try {
-                  const trxPayload = {
-                      trxBookNo: "",
-                      customerId: customer.customerId,
-                      transactionDate: new Date(transferDate).toISOString(),
-                      trxAmount: parseFloat(customer.memberFee) || 0,
-                      transactionType: "funeralFee",
-                      isCredit: false,
-                      description: `අවමංගල ගාස්තු- ${member.nameSinhala || member.name}`,
-                  };
-                  const res = await axios.post(
-                      `${import.meta.env.VITE_BACKEND_URL}/api/membershipTransactions/create`,
-                      trxPayload
-                  );
+          // 7️⃣ Post funeral fee transaction
+          try {
+            const trxPayload = {
+              trxBookNo: "",
+              customerId: customer.customerId,
+              transactionDate: new Date(transferDate).toISOString(),
+              trxAmount: parseFloat(customer.memberFee) || 0,
+              transactionType: "funeralFee",
+              isCredit: false,
+              description: `අවමංගල ගාස්තු- ${customer.nameSinhala || customer.name}`,
+            };
 
-                } catch (err) {
-                  console.error(`7️⃣⚠️ Error posting fee transaction for customer ${customer.customerId}:`, err);
-              }
-          }    
+            await axios.post(
+              `${import.meta.env.VITE_BACKEND_URL}/api/membershipTransactions/create`,
+              trxPayload
+            );
+          } catch (err) {
+            console.error(
+              `7️⃣⚠️ Error posting fee transaction for customer ${customer.customerId}:`,
+              err
+            );
+          }
+        }
+   
       }
 
       setIsSubmitted(true);

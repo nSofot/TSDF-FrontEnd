@@ -1,6 +1,6 @@
-import { m } from "framer-motion";
+// import { m } from "framer-motion";
 import { useSharesLedger } from "../hooks/useSharesLedger.js";
-import { formatNumber } from "../utils/numberFormat.js";
+// import { formatNumber } from "../utils/numberFormat.js";
 
 
 export default function ViewSharesLedger({ customerId }) {

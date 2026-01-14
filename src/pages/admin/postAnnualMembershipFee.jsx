@@ -1,15 +1,248 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
-import LoadingSpinner from "../../components/loadingSpinner";
-import { formatNumber } from "../../utils/numberFormat.js";
-import toast from "react-hot-toast";
+// import { useEffect, useState } from "react";
+// import axios from "axios";
+// import LoadingSpinner from "../../components/loadingSpinner";
+// import { formatNumber } from "../../utils/numberFormat.js";
+// import toast from "react-hot-toast";
 
 
-export default function PostAnnualMembershipFee() {
+// export default function PostAnnualMembershipFee() {
+//     const [isLoading, setIsLoading] = useState(true);
+
+//     const [postingDate, setPostingDate] = useState(new Date());
+
+//     const [customers, setCustomers] = useState([]);
+//     const [payList, setPayList] = useState([]);
+//     const [isPosting, setIsPosting] = useState(false);
+//     const [isPosted, setIsPosted] = useState(false);
+//     const [isPaying, setIsPaying] = useState(false);
+//     const [isPaid, setIsPaid] = useState(false);
+
+
+//     useEffect(() => {
+//     const fetchCustomers = async () => {
+//         try {
+//         window.scrollTo(0, 0);
+//         setIsLoading(true);
+
+//         const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/customer`);
+
+//         // ✅ Enrich each customer with annualFee = 150 + (75 * count of 'other' family members)
+//         const enrichedCustomers = res.data
+//             .filter(customer => customer.customerType === "shareholder")
+//             .map((customer) => {
+//                 const otherCount = customer.familyMembers
+//                     ? customer.familyMembers.filter(
+//                         (fm) => fm.relationship === "other"
+//                     ).length
+//                     : 0;
+
+//                 return {
+//                     ...customer,
+//                     annualFee: (150 + 75 * otherCount) * 12,
+//                 };
+//             });
+
+//         setCustomers(enrichedCustomers);
+
+//         // ✅ Create pay list — only customers with shares >= 30000
+//         const enrichedPayList = enrichedCustomers
+//         .filter(
+//             (customer) =>
+//             customer.shares >= 30000 && customer.customerType?.toLowerCase() === "shareholder"
+//         )
+//         .map((customer) => ({
+//             customerId: customer.customerId,
+//             name: customer.name,
+//             payAmount: 1800,
+//         }));
+//             setPayList(enrichedPayList);
+//         } catch (err) {
+//         console.error("Error fetching customers:", err);
+//         } finally {
+//         setIsLoading(false);
+//         }
+//     };
+
+//     fetchCustomers();
+//     }, []);
+
+
+//     const handlePost = async () => {
+//         setIsPosting(true);
+
+//         try {
+//             for (const customer of customers) {
+//                 // 1️⃣ post annual membership fee for the customer
+//                 try {
+//                     const customerPayload = {
+//                         updates: [
+//                             {
+//                                 customerId: customer.customerId,
+//                                 amount: parseFloat(customer.annualFee) || 0, // use enriched annualFee
+//                             },
+//                         ],
+//                     };
+//                     await axios.put(
+//                         `${import.meta.env.VITE_BACKEND_URL}/api/customer/membershipFee-add`,
+//                         customerPayload
+//                     );
+//                 } catch (err) {
+//                     console.error(`1️⃣⚠️ Error posting fee for customer ${customer.customerId}:`, err);
+//                 }
+
+//                 // 2️⃣ post annual membership fee transaction for the customer
+//                 try {
+//                     const trxPayload = {
+//                         trxBookNo: "",
+//                         customerId: customer.customerId,
+//                         transactionDate: new Date(postingDate).toISOString(),
+//                         trxAmount: parseFloat(customer.annualFee) || 0,
+//                         transactionType: "membershipFee",
+//                         isCredit: false,
+//                         description: `වාර්ෂික සාමාජික ගාස්තුව`,
+//                     };
+//                     const res = await axios.post(
+//                         `${import.meta.env.VITE_BACKEND_URL}/api/membershipTransactions/create`,
+//                         trxPayload
+//                     );
+
+//                  } catch (err) {
+//                     console.error(`2️⃣⚠️ Error posting fee transaction for customer ${customer.customerId}:`, err);
+//                 }
+//             }
+
+//             setIsPosted(true);
+//             toast.success("Annual membership fee posted successfully for all customers!");
+//         } catch (err) {
+//             console.error("⚠️ Error posting fees:", err);
+//             toast.error("Error posting some fees. Check console for details.");
+//         } finally {
+//             setIsPosting(false);
+//         }
+//     };
+
+
+//     const handlePay = async () => {
+//         setIsPaying(true);
+//         let newReferenceNo = "";
+
+//         try {
+//             for (const pay of payList) {
+//                 // 1️⃣ pay annual membership fee from shares for the customer
+//                 try {
+//                     const customerPayload = {
+//                         updates: [
+//                             {
+//                                 customerId: pay.customerId,
+//                                 amount: parseFloat(pay.payAmount) || 0, // use enriched annualFee
+//                             },
+//                         ],
+//                     };
+//                     await axios.put(
+//                         `${import.meta.env.VITE_BACKEND_URL}/api/customer/membershipFee-subtract`,
+//                         customerPayload
+//                     );
+
+//                     await axios.put(
+//                         `${import.meta.env.VITE_BACKEND_URL}/api/customer/shares-subtract`,
+//                         customerPayload
+//                     )
+//                 } catch (err) {
+//                     console.error(`1️⃣⚠️ Error posting fee for customer ${pay.customerId}:`, err);
+//                 }
+
+//                 // 2️⃣ post annual membership fee transaction for the customer
+//                 try {
+//                     const trxPayload = {
+//                         trxBookNo: "N/A",
+//                         customerId: pay.customerId,
+//                         transactionDate: new Date(postingDate).toISOString(),
+//                         trxAmount: parseFloat(pay.payAmount) || 0,
+//                         transactionType: "receipt",
+//                         isCredit: true,
+//                         description: 'කොටස් අරමුදලින් සාමාජික ගාස්තු ගෙවීම',
+//                     };
+//                     const res = await axios.post(
+//                         `${import.meta.env.VITE_BACKEND_URL}/api/membershipTransactions/create`,
+//                         trxPayload
+//                     );
+//                  } catch (err) {
+//                     console.error(`2️⃣⚠️ Error posting fee transaction for customer ${pay.customerId}:`, err);
+//                 }
+//                 try {
+//                     const Payload = {
+//                         // trxId: newReferenceNo,
+//                         trxBookNo: 'N/A',
+//                         customerId: pay.customerId,
+//                         transactionDate: new Date(postingDate).toISOString(),
+//                         trxAmount: parseFloat(pay.payAmount) || 0,
+//                         transactionType: "voucher", 
+//                         isCredit: true,
+//                         description: 'සාමාජික ගාස්තු ගෙවීම'
+//                     };                
+//                     const res = await axios.post(
+//                         `${import.meta.env.VITE_BACKEND_URL}/api/sharesTransactions/create`,
+//                         Payload
+//                     );                     
+//                 } catch (err) {
+//                     console.error(`2️⃣⚠️ Error posting fee transaction for customer ${pay.customerId}:`, err);
+//                 }            
+//             }
+
+//             const totalAmount = Number(
+//             payList.reduce((total, pay) => total + (pay.payAmount || 0), 0)
+//             );
+
+//             const ledgerPayload = {
+//             trxId: 'N/A',
+//             trxBookNo: "N/A",
+//             trxDate: postingDate.toISOString().split("T")[0], // YYYY-MM-DD
+//             transactionType: "voucher",
+//             accountId: "325-0001",
+//             description: "සාමාජික ගාස්තු ගෙවීම",
+//             isCredit: true,
+//             trxAmount: totalAmount,
+//             };
+//             await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/ledgerTransactions`, ledgerPayload);
+
+//             await Promise.all([
+//             axios.put(`${import.meta.env.VITE_BACKEND_URL}/api/ledgerAccounts/add-balance`, {
+//                 updates: [{ accountId: "325-0002", amount: totalAmount }],
+//             }),
+//             axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/ledgerTransactions`, {
+//                 trxId: 'N/A',
+//                 trxBookNo: "N/A",
+//                 trxDate: postingDate.toISOString().split("T")[0],
+//                 transactionType: "voucher",
+//                 accountId: "325-0002",
+//                 description: "කොටස් අරමුදලින් සාමාජික ගාස්තු ගෙවීම",
+//                 isCredit: false,
+//                 trxAmount: totalAmount, 
+//             }),
+//             ]);
+         
+//             setIsPaid(true);
+//             toast.success("Paying membership from Shares successfully completed!");
+//         } catch (err) {
+//             console.error("⚠️ Error posting fees:", err);
+//             toast.error("Error paying membership fees.. Check console for details.");
+//         } finally {
+//             setIsPaying(false);
+//         }
+//     };
+
+    import { useEffect, useState } from "react";
+    import axios from "axios";
+    import LoadingSpinner from "../../components/loadingSpinner";
+    import { formatNumber } from "../../utils/numberFormat.js";
+    import toast from "react-hot-toast";
+
+    // ✅ helper to round to 2 decimals
+    const round2 = (num) => Math.round(num * 100) / 100;
+
+    export default function PostAnnualMembershipFee() {
     const [isLoading, setIsLoading] = useState(true);
-
     const [postingDate, setPostingDate] = useState(new Date());
-
     const [customers, setCustomers] = useState([]);
     const [payList, setPayList] = useState([]);
     const [isPosting, setIsPosting] = useState(false);
@@ -17,216 +250,233 @@ export default function PostAnnualMembershipFee() {
     const [isPaying, setIsPaying] = useState(false);
     const [isPaid, setIsPaid] = useState(false);
 
-
     useEffect(() => {
-    const fetchCustomers = async () => {
+        const fetchCustomers = async () => {
         try {
-        window.scrollTo(0, 0);
-        setIsLoading(true);
+            window.scrollTo(0, 0);
+            setIsLoading(true);
 
-        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/customer`);
+            const res = await axios.get(
+            `${import.meta.env.VITE_BACKEND_URL}/api/customer`
+            );
 
-        // ✅ Enrich each customer with annualFee = 150 + (75 * count of 'other' family members)
-        const enrichedCustomers = res.data.map((customer) => {
-            const otherCount = customer.familyMembers
-            ? customer.familyMembers.filter((fm) => fm.relationship === "other").length
-            : 0;
+            // ✅ Enrich each customer with annualFee = 150 + (75 * count of 'other' family members)
+            const enrichedCustomers = res.data
+            .filter((customer) => customer.customerType === "shareholder")
+            .map((customer) => {
+                const otherCount = customer.familyMembers
+                ? customer.familyMembers.filter((fm) => fm.relationship === "other")
+                    .length
+                : 0;
 
-            return {
-            ...customer,
-            annualFee: (150 + 75 * otherCount) * 12,
-            };
-        });
-        setCustomers(enrichedCustomers);
+                return {
+                ...customer,
+                annualFee: round2((150 + 75 * otherCount) * 12), // ✅ round to 2 digits
+                };
+            });
 
-        // ✅ Create pay list — only customers with shares >= 30000
-        const enrichedPayList = enrichedCustomers
-        .filter(
-            (customer) =>
-            customer.shares >= 30000 && customer.customerType?.toLowerCase() === "shareholder"
-        )
-        .map((customer) => ({
-            customerId: customer.customerId,
-            name: customer.name,
-            payAmount: 1800,
-        }));
+            setCustomers(enrichedCustomers);
 
-        setPayList(enrichedPayList);
+            // ✅ Create pay list — only customers with shares >= 30000
+            const enrichedPayList = enrichedCustomers
+            .filter(
+                (customer) =>
+                customer.shares >= 30000 &&
+                customer.customerType?.toLowerCase() === "shareholder"
+            )
+            .map((customer) => ({
+                customerId: customer.customerId,
+                name: customer.name,
+                payAmount: 1800, // already integer, if needed: round2(1800)
+            }));
+
+            setPayList(enrichedPayList);
         } catch (err) {
-        console.error("Error fetching customers:", err);
+            console.error("Error fetching customers:", err);
         } finally {
-        setIsLoading(false);
+            setIsLoading(false);
         }
-    };
+        };
 
-    fetchCustomers();
+        fetchCustomers();
     }, []);
-
 
     const handlePost = async () => {
         setIsPosting(true);
 
         try {
-            for (const customer of customers) {
-                // 1️⃣ post annual membership fee for the customer
-                try {
-                    const customerPayload = {
-                        updates: [
-                            {
-                                customerId: customer.customerId,
-                                amount: parseFloat(customer.annualFee) || 0, // use enriched annualFee
-                            },
-                        ],
-                    };
-                    await axios.put(
-                        `${import.meta.env.VITE_BACKEND_URL}/api/customer/membershipFee-add`,
-                        customerPayload
-                    );
-                } catch (err) {
-                    console.error(`1️⃣⚠️ Error posting fee for customer ${customer.customerId}:`, err);
-                }
+        for (const customer of customers) {
+            const roundedFee = round2(customer.annualFee || 0);
 
-                // 2️⃣ post annual membership fee transaction for the customer
-                try {
-                    const trxPayload = {
-                        trxBookNo: "",
-                        customerId: customer.customerId,
-                        transactionDate: new Date(postingDate).toISOString(),
-                        trxAmount: parseFloat(customer.annualFee) || 0,
-                        transactionType: "membershipFee",
-                        isCredit: false,
-                        description: `වාර්ෂික සාමාජික ගාස්තුව`,
-                    };
-                    const res = await axios.post(
-                        `${import.meta.env.VITE_BACKEND_URL}/api/membershipTransactions/create`,
-                        trxPayload
-                    );
-
-                 } catch (err) {
-                    console.error(`2️⃣⚠️ Error posting fee transaction for customer ${customer.customerId}:`, err);
-                }
+            // 1️⃣ post annual membership fee for the customer
+            try {
+            const customerPayload = {
+                updates: [
+                {
+                    customerId: customer.customerId,
+                    amount: roundedFee,
+                },
+                ],
+            };
+            await axios.put(
+                `${import.meta.env.VITE_BACKEND_URL}/api/customer/membershipFee-add`,
+                customerPayload
+            );
+            } catch (err) {
+            console.error(
+                `1️⃣⚠️ Error posting fee for customer ${customer.customerId}:`,
+                err
+            );
             }
 
-            setIsPosted(true);
-            toast.success("Annual membership fee posted successfully for all customers!");
+            // 2️⃣ post annual membership fee transaction for the customer
+            try {
+            const trxPayload = {
+                trxBookNo: "",
+                customerId: customer.customerId,
+                transactionDate: new Date(postingDate).toISOString(),
+                trxAmount: roundedFee,
+                transactionType: "membershipFee",
+                isCredit: false,
+                description: `වාර්ෂික සාමාජික ගාස්තුව`,
+            };
+            await axios.post(
+                `${import.meta.env.VITE_BACKEND_URL}/api/membershipTransactions/create`,
+                trxPayload
+            );
+            } catch (err) {
+            console.error(
+                `2️⃣⚠️ Error posting fee transaction for customer ${customer.customerId}:`,
+                err
+            );
+            }
+        }
+
+        setIsPosted(true);
+        toast.success("Annual membership fee posted successfully for all customers!");
         } catch (err) {
-            console.error("⚠️ Error posting fees:", err);
-            toast.error("Error posting some fees. Check console for details.");
+        console.error("⚠️ Error posting fees:", err);
+        toast.error("Error posting some fees. Check console for details.");
         } finally {
-            setIsPosting(false);
+        setIsPosting(false);
         }
     };
 
-
     const handlePay = async () => {
         setIsPaying(true);
-        let newReferenceNo = "";
 
         try {
-            for (const pay of payList) {
-                // 1️⃣ pay annual membership fee from shares for the customer
-                try {
-                    const customerPayload = {
-                        updates: [
-                            {
-                                customerId: pay.customerId,
-                                amount: parseFloat(pay.payAmount) || 0, // use enriched annualFee
-                            },
-                        ],
-                    };
-                    await axios.put(
-                        `${import.meta.env.VITE_BACKEND_URL}/api/customer/membershipFee-subtract`,
-                        customerPayload
-                    );
+        for (const pay of payList) {
+            const roundedPay = round2(pay.payAmount || 0);
 
-                    await axios.put(
-                        `${import.meta.env.VITE_BACKEND_URL}/api/customer/shares-subtract`,
-                        customerPayload
-                    )
-                } catch (err) {
-                    console.error(`1️⃣⚠️ Error posting fee for customer ${pay.customerId}:`, err);
-                }
-
-                // 2️⃣ post annual membership fee transaction for the customer
-                try {
-                    const trxPayload = {
-                        trxBookNo: "N/A",
-                        customerId: pay.customerId,
-                        transactionDate: new Date(postingDate).toISOString(),
-                        trxAmount: parseFloat(pay.payAmount) || 0,
-                        transactionType: "receipt",
-                        isCredit: true,
-                        description: 'කොටස් අරමුදලින් සාමාජික ගාස්තු ගෙවීම',
-                    };
-                    const res = await axios.post(
-                        `${import.meta.env.VITE_BACKEND_URL}/api/membershipTransactions/create`,
-                        trxPayload
-                    );
-                 } catch (err) {
-                    console.error(`2️⃣⚠️ Error posting fee transaction for customer ${customer.customerId}:`, err);
-                }
-                try {
-                    const Payload = {
-                        // trxId: newReferenceNo,
-                        trxBookNo: 'N/A',
-                        customerId: pay.customerId,
-                        transactionDate: new Date(postingDate).toISOString(),
-                        trxAmount: parseFloat(pay.payAmount) || 0,
-                        transactionType: "voucher", 
-                        isCredit: true,
-                        description: 'සාමාජික ගාස්තු ගෙවීම'
-                    };                
-                    const res = await axios.post(
-                        `${import.meta.env.VITE_BACKEND_URL}/api/sharesTransactions/create`,
-                        Payload
-                    );                     
-                } catch (err) {
-                    console.error(`2️⃣⚠️ Error posting fee transaction for customer ${pay.customerId}:`, err);
-                }            
+            // 1️⃣ pay annual membership fee from shares for the customer
+            try {
+            const customerPayload = {
+                updates: [
+                {
+                    customerId: pay.customerId,
+                    amount: roundedPay,
+                },
+                ],
+            };
+            await axios.put(
+                `${import.meta.env.VITE_BACKEND_URL}/api/customer/membershipFee-subtract`,
+                customerPayload
+            );
+            await axios.put(
+                `${import.meta.env.VITE_BACKEND_URL}/api/customer/shares-subtract`,
+                customerPayload
+            );
+            } catch (err) {
+            console.error(
+                `1️⃣⚠️ Error posting fee for customer ${pay.customerId}:`,
+                err
+            );
             }
 
-            const totalAmount = Number(
-            payList.reduce((total, pay) => total + (pay.payAmount || 0), 0)
+            // 2️⃣ post annual membership fee transactions
+            try {
+            const trxPayload = {
+                trxBookNo: "N/A",
+                customerId: pay.customerId,
+                transactionDate: new Date(postingDate).toISOString(),
+                trxAmount: roundedPay,
+                transactionType: "receipt",
+                isCredit: true,
+                description: "කොටස් අරමුදලින් සාමාජික ගාස්තු ගෙවීම",
+            };
+            await axios.post(
+                `${import.meta.env.VITE_BACKEND_URL}/api/membershipTransactions/create`,
+                trxPayload
             );
 
-            const ledgerPayload = {
-            trxId: 'N/A',
+            const voucherPayload = {
+                trxBookNo: "N/A",
+                customerId: pay.customerId,
+                transactionDate: new Date(postingDate).toISOString(),
+                trxAmount: roundedPay,
+                transactionType: "voucher",
+                isCredit: true,
+                description: "සාමාජික ගාස්තු ගෙවීම",
+            };
+            await axios.post(
+                `${import.meta.env.VITE_BACKEND_URL}/api/sharesTransactions/create`,
+                voucherPayload
+            );
+            } catch (err) {
+            console.error(
+                `2️⃣⚠️ Error posting fee transaction for customer ${pay.customerId}:`,
+                err
+            );
+            }
+        }
+
+        // ✅ totalAmount rounded to 2 digits
+        const totalAmount = round2(
+            payList.reduce((total, pay) => total + (pay.payAmount || 0), 0)
+        );
+
+        const ledgerPayload = {
+            trxId: "N/A",
             trxBookNo: "N/A",
-            trxDate: postingDate.toISOString().split("T")[0], // YYYY-MM-DD
+            trxDate: postingDate.toISOString().split("T")[0],
             transactionType: "voucher",
             accountId: "325-0001",
             description: "සාමාජික ගාස්තු ගෙවීම",
             isCredit: true,
             trxAmount: totalAmount,
-            };
-            await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/ledgerTransactions`, ledgerPayload);
+        };
 
-            await Promise.all([
+        await axios.post(
+            `${import.meta.env.VITE_BACKEND_URL}/api/ledgerTransactions`,
+            ledgerPayload
+        );
+
+        await Promise.all([
             axios.put(`${import.meta.env.VITE_BACKEND_URL}/api/ledgerAccounts/add-balance`, {
-                updates: [{ accountId: "325-0002", amount: totalAmount }],
+            updates: [{ accountId: "325-0002", amount: totalAmount }],
             }),
             axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/ledgerTransactions`, {
-                trxId: 'N/A',
-                trxBookNo: "N/A",
-                trxDate: postingDate.toISOString().split("T")[0],
-                transactionType: "voucher",
-                accountId: "325-0002",
-                description: "කොටස් අරමුදලින් සාමාජික ගාස්තු ගෙවීම",
-                isCredit: false,
-                trxAmount: totalAmount, 
+            trxId: "N/A",
+            trxBookNo: "N/A",
+            trxDate: postingDate.toISOString().split("T")[0],
+            transactionType: "voucher",
+            accountId: "325-0002",
+            description: "කොටස් අරමුදලින් සාමාජික ගාස්තු ගෙවීම",
+            isCredit: false,
+            trxAmount: totalAmount,
             }),
-            ]);
-         
-            setIsPaid(true);
-            toast.success("Paying membership from Shares successfully completed!");
+        ]);
+
+        setIsPaid(true);
+        toast.success("Paying membership from Shares successfully completed!");
         } catch (err) {
-            console.error("⚠️ Error posting fees:", err);
-            toast.error("Error paying membership fees.. Check console for details.");
+        console.error("⚠️ Error posting fees:", err);
+        toast.error("Error paying membership fees. Check console for details.");
         } finally {
-            setIsPaying(false);
+        setIsPaying(false);
         }
     };
-
 
     return (
         <div className="w-full h-full flex flex-col items-center p-6">

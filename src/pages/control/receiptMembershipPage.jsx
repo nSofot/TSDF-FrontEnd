@@ -251,7 +251,7 @@ export default function ReceiptMembershipPage() {
             <button
               disabled={!member || isSubmitting || isSubmitted}
               onClick={handleSave}
-              className={`w-full md:w-auto h-12 rounded-lg font-semibold text-white transition ${
+              className={`w-full md:w-auto h-12 px-4 rounded-lg font-semibold text-white transition ${
                 isSubmitting
                   ? "bg-gray-400 hover:bg-green-700"
                   : isSubmitted
@@ -268,7 +268,7 @@ export default function ReceiptMembershipPage() {
 
             <button
               onClick={() => navigate("/control")}
-              className="w-full md:w-auto h-12 rounded-lg border border-gray-700 text-gray-700 hover:bg-gray-200 font-semibold transition"
+              className="w-full md:w-auto h-12 px-4 rounded-lg border border-gray-700 text-gray-700 hover:bg-gray-200 font-semibold transition"
             >
               ආපසු යන්න
             </button>

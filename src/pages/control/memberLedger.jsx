@@ -22,10 +22,9 @@ export default function MemberLedger() {
 
     const [fromDate, setFromDate] = useState(() => {
         const today = new Date();
-        const firstDayOfYear = new Date(today.getFullYear(), 0, 1); // January = 0
-        return formatLocalISODate(firstDayOfYear);
+        const firstDayOfPreviousYear = new Date(today.getFullYear() - 1, 0, 1); // Jan 1 of previous year
+        return formatLocalISODate(firstDayOfPreviousYear);
     });
-
 
     const [toDate, setToDate] = useState(() => formatLocalISODate(new Date()));
     const [error, setError] = useState("");
@@ -77,7 +76,7 @@ export default function MemberLedger() {
 
 
     return (
-        <div className="max-w-5xl w-full h-full flex flex-col space-y-6 overflow-hidden">
+        <div className="max-w-6xl w-full h-full flex flex-col space-y-6 overflow-hidden">
             <div className="bg-white shadow rounded-md max-h-[calc(100vh-120px)] space-y-6 overflow-y-auto">
                 <div className="p-6 space-y-4">
                     <h1 className="text-lg md:text-2xl font-bold text-orange-700">💵 සාමාජික මුදල් ලෙජරය</h1>
@@ -137,7 +136,7 @@ export default function MemberLedger() {
                                 </label>
                                 Rs. {formatNumber(applicant?.membership) || ""}
                             </div>
-                            {user?.memberRole === "treasurer" && (
+                            {user?.memberRole === "treasurer" || user?.memberRole === "admin" && (
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
                                         <label className="text-sm font-medium text-indigo-600">දින සිට</label>
