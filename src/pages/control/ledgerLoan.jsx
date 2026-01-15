@@ -193,7 +193,7 @@ export default function LedgerLoanPage() {
                                         key={loan.id || loan._id}
                                         value={loan.loanId || loan.loanId}
                                     >
-                                        {loan.loanTypeSinhala}
+                                        {loan.loanTypeSinhala} - {loan.loanId}
                                     </option>
                                 ))}
                             </select>

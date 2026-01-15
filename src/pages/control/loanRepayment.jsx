@@ -46,13 +46,37 @@ export default function LoanRepaymentPage() {
                 `${import.meta.env.VITE_BACKEND_URL}/api/loanMaster/customer/${id}`
             );
 
-            // Enrich each loan with Sinhala label
-            if (appRes.data) {
-            const enrichedLoans = appRes.data.map((loan) => ({
-                ...loan,
-                loanTypeSinhala: loanTypeMap[loan.loanType] || loan.loanType, // fallback
-            }));
-            setApplicantLoans(enrichedLoans);            
+            if (!Array.isArray(appRes.data) || appRes.data.length === 0) {
+                toast.error("No loans found for this applicant");
+                return;
+            }
+
+            // Filter loans by customerId and dueAmount > 0, then enrich
+            const enrichedLoans = appRes.data
+                .filter(
+                    (loan) =>
+                        loan.customerId === id &&
+                        Number(loan.dueAmount) > 0
+                )
+                .map((loan) => ({
+                    ...loan,
+                    loanTypeSinhala:
+                        loanTypeMap[loan.loanType] || loan.loanType,
+                }));
+
+            if (enrichedLoans.length === 0) {
+                toast.error("Applicant has no outstanding loans");
+                setApplicantLoans([]);
+                setLoanDetails({});
+                setDateEnded("");
+                setLastTransaction({});
+                setInterest("");
+                setInstallment("");
+                setTotalAmount("");
+                return;
+            }
+
+            setApplicantLoans(enrichedLoans);
 
             // Fetch applicant details
             const res = await axios.get(
@@ -62,9 +86,9 @@ export default function LoanRepaymentPage() {
             if (res.data) {
                 setApplicant(res.data);
             }
-            }
         } catch (err) {
             toast.error(err.response?.data?.message || "Applicant not found");
+            setApplicantLoans([]);
             setLoanDetails({});
             setDateEnded("");
             setLastTransaction({});
@@ -75,6 +99,7 @@ export default function LoanRepaymentPage() {
             setIsLoading(false);
         }
     };
+
 
     // Fetch loan details when selectedLoanType changes
     useEffect(() => {

@@ -9,6 +9,7 @@ export default function LoanGrantPage() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [isGranting, setIsGranting] = useState(false);
+  const [isGranted, setIsGranted] = useState(false);
 
   const [applicantId, setApplicantId] = useState("");
   const [loanDetails, setLoanDetails] = useState(null);
@@ -19,6 +20,7 @@ export default function LoanGrantPage() {
   const [duration, setDuration] = useState("");
   const [firstInstallment, setFirstInstallment] = useState("");
   const [voucherNo, setVoucherNo] = useState("");
+  const [voucherDate, setVoucherDate] = useState(new Date().toISOString().split("T")[0]);
   const [error, setError] = useState("");
 
   const [approvals, setApprovals] = useState({
@@ -151,10 +153,11 @@ export default function LoanGrantPage() {
     }
 
     try {
+
       await axios.put(
         `${import.meta.env.VITE_BACKEND_URL}/api/loanMaster/update/${referenceNo}`,
         {
-          issuedDate: new Date(),
+          issuedDate: new Date(voucherDate).toISOString(),
           isGranted: true,
           voucherNumber: voucherNo,
         }
@@ -164,12 +167,15 @@ export default function LoanGrantPage() {
         trxBookNo: voucherNo,
         loanId: referenceNo,
         customerId: applicantId,
+        transactionDate: new Date(voucherDate).toISOString(),
+        interest: parseFloat(0),
+        installment: parseFloat(0),   
+        totalAmount: Number(amount),     
         transactionType: "voucher",
-        transactionDate: new Date(),
-        totalAmount: amount,
         isCredit: false,
-        description: selectedLoanType,
+        description: loanTypeEnglish,      
       };
+     
       const res = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/loanTransactions`,
         loanTrxPayload
@@ -184,15 +190,15 @@ export default function LoanGrantPage() {
       await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/ledgerTransactions`,
         {
-          trxId: newReferenceNo,
-          trxBookNo: voucherNo,
-          trxDate: new Date(),
+          trxId: String(newReferenceNo),
+          trxBookNo: String(voucherNo),
+          trxDate: new Date(voucherDate).toISOString(),
           transactionType: "voucher",
           transactionCategory: selectedLoanType,
           accountId: lgAcIdCr,
           description: (applicant.nameSinhala || applicant.name),
           isCredit: true,
-          trxAmount: amount,
+          trxAmount: parseFloat(amount),
         }
       );
 
@@ -204,15 +210,15 @@ export default function LoanGrantPage() {
       await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/ledgerTransactions`,
         {
-          trxId: newReferenceNo,
-          trxBookNo: voucherNo,
-          trxDate: new Date(),
+          trxId: String(newReferenceNo),
+          trxBookNo: String(voucherNo),
+          trxDate: new Date(voucherDate).toISOString(),
           transactionType: "voucher",
           transactionCategory: selectedLoanType,
           accountId: lgAcIdDr,
           description: (applicant.nameSinhala || applicant.name),
           isCredit: false,
-          trxAmount: amount,
+          trxAmount: parseFloat(amount),
         }
       );
 
@@ -222,6 +228,8 @@ export default function LoanGrantPage() {
         trxReference: newReferenceNo,
       });
 
+      setIsGranting(false);
+      setIsGranted(true);
       toast.success(
         "ඔබගේ ණය නිකුතුව සාර්ථකව අවසන් කර ඇත. කරුණාකර ඔබගේ ගිණුම පරීක්ෂා කරන්න."
       );
@@ -267,27 +275,27 @@ export default function LoanGrantPage() {
           <LoadingSpinner />
         ) : applicant ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-indigo-700 font-medium">
-            <div className="flex justify-between">
+            <div className="w-[250px] flex justify-between">
               <span>නම:</span>
               <span>{applicant?.nameSinhala || applicant?.name}</span>
             </div>
-            <div className="flex justify-between">
+            <div className="w-[250px] flex justify-between">
               <span>ණය වර්ගය:</span>
               <span>{selectedLoanType}</span>
             </div>
-            <div className="flex justify-between">
+            <div className="w-[250px] flex justify-between">
               <span>මුදල:</span>
               <span>රු. {formatNumber(amount)}</span>
             </div>
-            <div className="flex justify-between">
+            <div className="w-[250px] flex justify-between">
               <span>කාලය (මාස):</span>
               <span>{duration}</span>
             </div>
-            <div className="flex justify-between">
+            <div className="w-[250px] flex justify-between">
               <span>මාසික පොලී:</span>
               <span>{interest}%</span>
             </div>
-            <div className="flex justify-between font-bold">
+            <div className="w-[250px] flex justify-between font-bold">
               <span>පළමු වාරිකය:</span>
               <span>රු. {formatNumber(firstInstallment)}</span>
             </div>
@@ -333,39 +341,52 @@ export default function LoanGrantPage() {
           </div>
 
           {/* Voucher Input */}
-          <div className="bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-pink-600">
-            <label className="block font-medium text-pink-600 text-lg">
-              වවුචර් අංකය
-            </label>
-            <input
-              type="text"
-              className={`text-pink-600 border border-pink-300 rounded-lg w-full p-3 text-center tracking-widest focus:ring-2 focus:ring-purple-500 outline-none ${
-                error ? "border-red-500" : "border-gray-300"
-              }`}
-              value={voucherNo}
-              placeholder="0000"
-              onChange={(e) => {
-                const val = e.target.value.replace(/\D/g, "");
-                setVoucherNo(val);
-              }}
-              onBlur={() => {
-                const formatted = voucherNo.padStart(4, "0");
-                setVoucherNo(formatted);
-                if (formatted !== "0000") checkVoucherExists(formatted);
-              }}
-              maxLength={4}
-            />
-            {error && (
-              <div className="bg-red-50 text-red-600 p-2 rounded-md text-sm">
-                {error}
-              </div>
-            )}
+          <div className="flex flex-col sm:flex-row sm:justify-between bg-white shadow-lg rounded-xl p-6 space-y-4 border-l-4 border-pink-600">
+            <div>
+                <label className="block font-medium text-pink-600 text-lg">
+                  වවුචර් අංකය
+                </label>
+                <input
+                  type="text"
+                  className={`text-pink-600 border border-pink-300 rounded-lg w-full p-3 text-center tracking-widest focus:ring-2 focus:ring-purple-500 outline-none ${
+                    error ? "border-red-500" : "border-gray-300"
+                  }`}
+                  value={voucherNo}
+                  placeholder="0000"
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/\D/g, "");
+                    setVoucherNo(val);
+                  }}
+                  onBlur={() => {
+                    const formatted = voucherNo.padStart(4, "0");
+                    setVoucherNo(formatted);
+                    if (formatted !== "0000") checkVoucherExists(formatted);
+                  }}
+                  maxLength={4}
+                />
+                {error && (
+                  <div className="bg-red-50 text-red-600 p-2 rounded-md text-sm">
+                    {error}
+                  </div>
+                )}
+            </div>
+
+            <div>
+                <label className="text-sm font-semibold text-orange-500">දිනය</label>
+                <input
+                type="date"
+                disabled={isGranting}
+                value={voucherDate}
+                onChange={(e) => setVoucherDate(e.target.value)}
+                className="mt-1 w-full border rounded-lg p-3 text-orange-500 border-orange-300 focus:ring-2 focus:ring-orange-500"
+                />
+            </div>              
           </div>
 
           {/* Buttons */}
           <div className="mt-6">
             <button
-              disabled={isGranting}
+              disabled={isGranting || isGranted}
               onClick={async () => {
                 setIsGranting(true);
                 await handleLoanGrant();
@@ -376,12 +397,12 @@ export default function LoanGrantPage() {
                   : "bg-gray-300 cursor-not-allowed text-gray-600"
               }`}
             >
-              {isGranting ? "✅ ණය ප්‍රදානය සාර්ථකයි" : "ණය මුදල ලබා දෙන්න"}
+              {isGranting ?  "Processing ..." : isGranted ? "✅ ණය ප්‍රදානය සාර්ථකයි" : "ණය මුදල ලබා දෙන්න"}
             </button>
 
             <button
               onClick={() => navigate("/control")}
-              className="mt-6 w-full h-12 rounded-lg font-semibold text-gray-600 border border-gray-600 hover:bg-red-600 transition"
+              className="mt-6 w-full h-12 rounded-lg font-semibold text-gray-600 border border-gray-600 hover:bg-gray-600 hover:text-white transition"
             >
               ආපසු යන්න
             </button>
