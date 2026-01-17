@@ -77,31 +77,40 @@ export default function AdminPage() {
     <div className="w-full h-screen bg-purple-600 flex flex-col font-sans">
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
-        <aside className="w-[256px] bg-white border-r shadow-md flex flex-col justify-between p-4">
-          <div className="flex flex-col space-y-2">
-            <h2 className="text-lg font-semibold text-purple-800 mb-4">Admin Panel</h2>
-            <Link className={getClass("members")} to="/admin/members">📦 Members</Link>
-            <Link className={getClass("Membership Fee Adjustment")} to="/admin/membership-fee-adjustment">💰 Membership Fee Adjustment</Link>
-            <Link className={getClass("Shares Adjustment")} to="/admin/shares-adjustment">💰 Shares Adjustment</Link>
-            <Link className={getClass("Ledger Adjustment")} to="/admin/ledger-adjustment">💰 Ledger Adjustment</Link>
-            <Link className={getClass("Reports")} to="/admin/reports">📊 Ledger Transaction Reports</Link>
-            <Link className={getClass("MembershipTransaction")} to="/admin/membership-transaction">📊 Membership Transaction Report</Link>
-            <Link className={getClass("SharesTransaction")} to="/admin/shares-transaction">📊 Shares Transaction Report</Link>
-            <Link className={getClass("Post Annual Membership Fee")} to="/admin/post-annual-membership-fee">💰 Post Annual Membership Fee</Link>
-            <Link className={getClass("Initalize Master Fields")} to="/admin/master-fields">📦 Initalize Master Fields</Link>
-            <Link className={getClass("Upload Data")} to="/admin/upload-data">📦 Upload Data</Link>
-            <Link className={getClass("edit-customer")} to="/admin/edit-customer">✏️ Edit Customer</Link>
-            <Link className={getClass("add-product")} to="/admin/add-customer">➕ Add Customer</Link>
-            <Link className={getClass("backup")} to="/admin/backup">💾 Backup</Link>
+        <aside className="w-[256px] bg-white border-r shadow-md flex flex-col p-4">
+          {/* Top Section */}
+          <div className="flex flex-col min-h-0">
+            <h2 className="text-lg font-semibold text-purple-800 mb-4">
+              Admin Panel
+            </h2>
+
+            {/* Scrollable Menu */}
+            <div className="flex flex-col space-y-2 overflow-y-auto pr-1">
+              <Link className={getClass("members")} to="/admin/members">📦 Members</Link>
+              <Link className={getClass("membership-fee-adjustment")} to="/admin/membership-fee-adjustment">💰 Membership Fee Adjustment</Link>
+              <Link className={getClass("shares-adjustment")} to="/admin/shares-adjustment">💰 Shares Adjustment</Link>
+              <Link className={getClass("ledger-adjustment")} to="/admin/ledger-adjustment">💰 Ledger Adjustment</Link>
+              <Link className={getClass("reports")} to="/admin/reports">📊 Ledger Transaction Reports</Link>
+              <Link className={getClass("membership-transaction")} to="/admin/membership-transaction">📊 Membership Transaction Report</Link>
+              <Link className={getClass("shares-transaction")} to="/admin/shares-transaction">📊 Shares Transaction Report</Link>
+              <Link className={getClass("post-annual-membership-fee")} to="/admin/post-annual-membership-fee">💰 Post Annual Membership Fee</Link>
+              <Link className={getClass("master-fields")} to="/admin/master-fields">📦 Initalize Master Fields</Link>
+              <Link className={getClass("upload-data")} to="/admin/upload-data">📦 Upload Data</Link>
+              <Link className={getClass("edit-customer")} to="/admin/edit-customer">✏️ Edit Customer</Link>
+              <Link className={getClass("add-customer")} to="/admin/add-customer">➕ Add Customer</Link>
+              <Link className={getClass("backup")} to="/admin/backup">💾 Backup</Link>
+            </div>
           </div>
 
+          {/* Logout Fixed at Bottom */}
           <button
             onClick={handleLogout}
-            className="mt-6 text-red-600 font-semibold px-3 py-2 rounded hover:bg-red-100 transition text-left"
+            className="mt-4 text-red-600 font-semibold px-3 py-2 rounded hover:bg-red-100 transition text-left"
           >
             🔓 Logout
           </button>
         </aside>
+
 
         {/* Page Content */}
         <main className="h-full w-[calc(100%-256px)] border-purple-600 border-4 rounded-xl bg-white overflow-y-auto">

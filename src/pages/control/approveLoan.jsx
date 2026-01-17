@@ -600,7 +600,7 @@ export default function ApproveLoanPage() {
 
                     <button
                       onClick={() => navigate('/control')}
-                      className="w-full h-12 text-gray-600 border border-gray-600 hover:bg-gray-700 rounded-lg font-semibold transition mb-4"
+                      className="w-full h-12 text-gray-600 border border-gray-600 hover:bg-gray-700 hover:text-white rounded-lg font-semibold transition mb-4"
                     >
                       ආපසු යන්න
                     </button>          

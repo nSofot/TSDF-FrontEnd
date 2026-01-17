@@ -161,20 +161,21 @@ export default function OtherExpensePage() {
 
         //2️⃣update cash book
         try {
-            const accTrxPayload = {
-                trxId: newReferenceNo,
-                trxBookNo: voucherNo,
+            await axios.post(
+                `${import.meta.env.VITE_BACKEND_URL}/api/ledgerTransactions`,
+                {
+                trxId: String(newReferenceNo),
+                trxBookNo: String(voucherNo),
                 trxDate: new Date(transferDate).toISOString(),
                 transactionType: "voucher",
                 transactionCategory: selectedExpenseType,
                 accountId: accountFrom,
-                description: "",
+                description: selectedExpenseType,
                 isCredit: true,
-                trxAmount: Number(transferAmount)
-            };
-                
-            await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/ledgerTransactions`, accTrxPayload);
-        } catch (error) {
+                trxAmount: parseFloat(transferAmount),
+                }
+            );
+         } catch (error) {
             console.log('2️⃣⚠️ create main account transaction error: ', error); 
         }
 
@@ -188,64 +189,6 @@ export default function OtherExpensePage() {
             await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/bookReferences`, refPayload);
         } catch (error) {
             console.log('3️⃣⚠️ create book reference error: ', error);
-        }
-
-        if (
-            user.memberRole === 'treasurer' &&
-            (
-                selectedExpenseType === 'සාමාජික පවුලේ අවමංගල්‍ය පරිත්‍යාග' ||
-                selectedExpenseType === 'කලත්රයාගේ පවුලේ අවමංගල්‍ය පරිත්‍යාග'
-            )
-        ) {
-            try {
-                let funeralFeev = 0;
-                if (selectedExpenseType === 'සාමාජික පවුලේ අවමංගල්‍ය පරිත්‍යාග') {
-                    funeralFeev = 750;
-                } else if (selectedExpenseType === 'කලත්රයාගේ පවුලේ අවමංගල්‍ය පරිත්‍යාග') {
-                    funeralFeev = 275;
-                }
-
-                // Use for..of to properly await async calls
-                for (const mem of members) {
-                    if (mem.isActive) {
-                        // 4️⃣ create funeral fee transaction
-                        try {
-                            const trxPayload = {
-                                trxId: newReferenceNo,
-                                trxBookNo: voucherNo,
-                                customerId: mem.customerId,
-                                transactionDate: new Date(trxDate).toISOString(),
-                                trxAmount: funeralFeev,
-                                transactionType: "funeralFee",
-                                isCredit: false,
-                                description: member.nameSinhala || member.name
-                            };
-                            await axios.post(
-                                `${import.meta.env.VITE_BACKEND_URL}/api/membershipTransactions/create`,
-                                trxPayload
-                            );
-                        } catch (error) {
-                            console.log('4️⃣⚠️ create funeral fee transaction error: ', error);
-                        }
-
-                        // 5️⃣ update customer membership fee
-                        try {
-                            const customerPayload = {
-                                customerId: mem.customerId,
-                                amount: funeralFeev
-                            };
-                            await axios.put(
-                                `${import.meta.env.VITE_BACKEND_URL}/api/customer/membershipFee-add`,
-                                customerPayload
-                            );
-                        } catch (error) {
-                            console.log('5️⃣⚠️ update customer error: ', error);
-                        }
-                    }
-                }
-            } catch (error) {
-                console.log('3️⚠️ create funeral fee error: ', error);
-            }
         }
 
         setIsSubmitted(true);
