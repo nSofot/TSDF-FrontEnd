@@ -170,7 +170,7 @@ export default function OtherExpensePage() {
                 transactionType: "voucher",
                 transactionCategory: selectedExpenseType,
                 accountId: accountFrom,
-                description: "Other Expense",
+                description: selectedExpenseType,
                 isCredit: true,
                 trxAmount: parseFloat(transferAmount),
                 }

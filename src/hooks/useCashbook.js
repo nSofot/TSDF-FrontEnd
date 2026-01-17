@@ -85,20 +85,41 @@ function transformCashbook(data, fromDate, toDate) {
   let receivedAm = 0;
   let spentAm = 0;
 
-  const mapped = inRange
-    .sort((a, b) => new Date(a.trxDate) - new Date(b.trxDate))
-    .map(trx => {
-      running += !trx.isCredit ? trx.trxAmount : -trx.trxAmount;
+  // const mapped = inRange
+  //   .sort((a, b) => new Date(a.trxDate) - new Date(b.trxDate))
+  //   .map(trx => {
+  //     running += !trx.isCredit ? trx.trxAmount : -trx.trxAmount;
 
-      // received = debit (isCredit=false), spent = credit (isCredit=true)
-      if (!trx.isCredit) {
-        receivedAm += trx.trxAmount;
-      } else {
-        spentAm += trx.trxAmount;
-      }
+  //     // received = debit (isCredit=false), spent = credit (isCredit=true)
+  //     if (!trx.isCredit) {
+  //       receivedAm += trx.trxAmount;
+  //     } else {
+  //       spentAm += trx.trxAmount;
+  //     }
 
-      return makeRow(trx, running);
-    });
+  //     return makeRow(trx, running);
+  //   });
+const mapped = inRange
+  .sort((a, b) => {
+    const dateDiff = new Date(a.trxDate) - new Date(b.trxDate);
+    if (dateDiff !== 0) return dateDiff;
+
+    // if dates are same, sort by trxBookNo
+    return Number(a.trxBookNo) - Number(b.trxBookNo);
+  })
+  .map(trx => {
+    running += !trx.isCredit ? trx.trxAmount : -trx.trxAmount;
+
+    // received = debit (isCredit=false), spent = credit (isCredit=true)
+    if (!trx.isCredit) {
+      receivedAm += trx.trxAmount;
+    } else {
+      spentAm += trx.trxAmount;
+    }
+
+    return makeRow(trx, running);
+  });
+
 
   return {
     rows: [...rows, ...mapped],

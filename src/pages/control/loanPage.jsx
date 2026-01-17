@@ -29,17 +29,22 @@ export default function LoanPage() {
           `${import.meta.env.VITE_BACKEND_URL}/api/loanMaster/pending-all`
         ).then((res) => {
           const loans = res.data;
-          const enriched = loans.map((loan) => {
-            const customer = customerList.find(
-              (c) => c.customerId === loan.customerId
-            );
-            return {
-              ...loan,
-              customerName: customer
-                ? customer.nameSinhala || customer.name
-                : "Unknown Customer",
-            };
-          });
+
+          const enriched = loans
+            .map((loan) => {
+              const customer = customerList.find(
+                (c) => c.customerId === loan.customerId
+              );
+
+              return {
+                ...loan,
+                customerName: customer
+                  ? customer.nameSinhala || customer.name
+                  : "Unknown Customer",
+              };
+            })
+            // ✅ SORT BY customerId
+            .sort((a, b) => Number(a.customerId) - Number(b.customerId));
 
           setWelfareLoans(
             enriched.filter((l) => l.loanType === "Welfare Loan")
@@ -47,8 +52,12 @@ export default function LoanPage() {
           setShortTermLoans(
             enriched.filter((l) => l.loanType === "Short Term Loan")
           );
-          setLongTermLoans(enriched.filter((l) => l.loanType === "Long Term Loan"));
-          setProjectLoans(enriched.filter((l) => l.loanType === "Project Loan"));
+          setLongTermLoans(
+            enriched.filter((l) => l.loanType === "Long Term Loan")
+          );
+          setProjectLoans(
+            enriched.filter((l) => l.loanType === "Project Loan")
+          );
 
           setIsLoading(false);
         });
@@ -58,6 +67,7 @@ export default function LoanPage() {
         setIsLoading(false);
       });
   }, [location]);
+
 
   const sections = [
     { title: "සුභසාධන ණය", color: "orange", data: welfareLoans },
