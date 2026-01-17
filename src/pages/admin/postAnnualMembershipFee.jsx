@@ -436,6 +436,10 @@
             payList.reduce((total, pay) => total + (pay.payAmount || 0), 0)
         );
 
+        axios.put(`${import.meta.env.VITE_BACKEND_URL}/api/ledgerAccounts/subtract-balance`, {
+            updates: [{ accountId: "325-0001", amount: totalAmount }],
+            });        
+
         const ledgerPayload = {
             trxId: "N/A",
             trxBookNo: "N/A",
