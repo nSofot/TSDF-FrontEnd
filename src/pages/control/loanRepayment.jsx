@@ -208,7 +208,8 @@ export default function LoanRepaymentPage() {
             const interestPerMonth =
                 ((loanDetails.dueAmount || 0) * (interestRate || 0)) / 100;
             const interestPerDay = interestPerMonth / 30;
-            const calculatedInterest = (daysInterest * interestPerDay).toFixed(2);
+            const calculatedInterest = Math.ceil(daysInterest * interestPerDay).toFixed(2);
+
 
             //calculate installment
             // const issuedDate = new Date(loanDetails.issuedDate);
