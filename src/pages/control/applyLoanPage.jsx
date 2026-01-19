@@ -63,8 +63,8 @@ export default function ApplyLoanPage() {
       try {
           try {
               const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/customer/${id}`);
-              if (!res.data) {
-                  setApplicant(null);                 
+              if (!res.data || res.data.customerType !== "shareholder") {
+                  setApplicant(null);
                   toast.error("සාමාජික අංකය වලංගු නැත");
                   return;
               }
@@ -218,12 +218,34 @@ export default function ApplyLoanPage() {
       } else if (loanType === "Long Term Loan") {
         setMaxDuration(24);
         setInterest(1.5);
-        setMaxAmount(applicant.shares * 1.5);
+        setMaxAmount(applicant.shares * 1.71);
       } else if (loanType === "Project Loan") {
         setMaxDuration(24);
         setInterest(1.5);
         setMaxAmount(200000);
+      } const roundUpTo1000 = (value) => Math.ceil(value / 1000) * 1000;
+
+      if (loanType === "Welfare Loan") {
+        setMaxDuration(2);
+        setInterest(5);
+        setMaxAmount(roundUpTo1000(applicant.shares * 0.4));
+
+      } else if (loanType === "Short Term Loan") {
+        setMaxDuration(12);
+        setInterest(2.5);
+        setMaxAmount(roundUpTo1000(applicant.shares * 0.7));
+
+      } else if (loanType === "Long Term Loan") {
+        setMaxDuration(24);
+        setInterest(1.5);
+        setMaxAmount(roundUpTo1000(applicant.shares * 1.7));
+
+      } else if (loanType === "Project Loan") {
+        setMaxDuration(24);
+        setInterest(1.5);
+        setMaxAmount(roundUpTo1000(200000));
       }
+
     };
 
     useEffect(() => {
@@ -302,65 +324,65 @@ export default function ApplyLoanPage() {
         setIsEligible(false);
         setIsValidating(false);
         return;
-      // } else if (membershipFee > 0) {
-      //   const membershipFeePercentage =  ((12 - currentMonth) * 150)
-      //   if (membershipFee < membershipFeePercentage) {
-      //     setReason("❌ ඔබගේ සාමාජික ගාස්තු ගෙවීම් යාවත්කාලීන නොවේ. එබැවින්, මෙම අවස්ථාවේදී ණයක් සඳහා අයදුම් කිරීමට ඔබට සුදුසුකම් නොමැත.");
-      //     setIsEligible(false);
-      //     setIsValidating(false);
-      //   return;        
-      //   }
-      // } else if (sharesAmount < 5000) {
-      //   setReason("❌ ඔබගේ කොටස් දායකත්වය අවශ්‍ය අවම මුදලට ළඟා වී නොමැත. එබැවින්, මෙම අවස්ථාවේදී ණයක් නිකුත් කළ නොහැක.");
-      //   setIsEligible(false);
-      //   setIsValidating(false);
-      //   return;      
+      } else if (membershipFee > 0) {
+        const membershipFeePercentage =  ((12 - currentMonth) * 150)     
+        if (membershipFee > membershipFeePercentage) {
+          setReason("❌ ඔබගේ සාමාජික ගාස්තු ගෙවීම් යාවත්කාලීන නොවේ. එබැවින්, මෙම අවස්ථාවේදී ණයක් සඳහා අයදුම් කිරීමට ඔබට සුදුසුකම් නොමැත.");
+          setIsEligible(false);
+          setIsValidating(false);
+        return;        
+        }
+      } else if (sharesAmount < 5000) {
+        setReason("❌ ඔබගේ කොටස් දායකත්වය අවශ්‍ය අවම මුදලට ළඟා වී නොමැත. එබැවින්, මෙම අවස්ථාවේදී ණයක් නිකුත් කළ නොහැක.");
+        setIsEligible(false);
+        setIsValidating(false);
+        return;      
       }
 
       // ✅ FIX: use for...of instead of map so we can exit validateLoanGrant
-      // for (let loan of applicantLoans) {
-      //   if (loan.loanType === selectedLoanType) {                 
-      //     setReason("❌ ඔබ ඉල්ලා සිටින ණය වර්ගය දැනටමත් ලබාගෙන ඇත. එබැවින්, මේ අවස්ථාවේ දී එම වර්ගයේම තවත් ණයක් නිකුත් කළ නොහැක.");
-      //     setIsEligible(false);
-      //     setIsValidating(false);
-      //     return;
-      //   } else if ((loan.loanType !== "Welfare Loan") && (selectedLoanType !== "Welfare Loan")) {
-      //     setReason("❌ ඔබට දැනටමත් ක්‍රියාකාරී ණයක් තිබේ. එබැවින්, මෙම අවස්ථාවේදී නව ණයක් නිකුත් කළ නොහැක.");
-      //     setIsEligible(false);
-      //     setIsValidating(false);
-      //     return;        
-        // } else if (((loan.amount / 2) < loan.dueAmount) && (selectedLoanType === "Welfare Loan")) {
-        //   setReason("❌ ඔබගේ පවතින ණය මුදලින් අවම වශයෙන් 50% ක්වත් පියවා නොමැති බැවින්, මෙම අවස්ථාවේදී සුභසාධන ණයක් නිකුත් කළ නොහැක.");
-        //   setIsEligible(false);
-        //   setIsValidating(false);
-        //   return;              
-      //   }
-      // }
+      for (let loan of applicantLoans) {
+        if (loan.loanType === selectedLoanType) {                 
+          setReason("❌ ඔබ ඉල්ලා සිටින ණය වර්ගය දැනටමත් ලබාගෙන ඇත. එබැවින්, මේ අවස්ථාවේ දී එම වර්ගයේම තවත් ණයක් නිකුත් කළ නොහැක.");
+          setIsEligible(false);
+          setIsValidating(false);
+          return;
+        } else if ((loan.loanType !== "Welfare Loan") && (selectedLoanType !== "Welfare Loan")) {
+          setReason("❌ ඔබට දැනටමත් ක්‍රියාකාරී ණයක් තිබේ. එබැවින්, මෙම අවස්ථාවේදී නව ණයක් නිකුත් කළ නොහැක.");
+          setIsEligible(false);
+          setIsValidating(false);
+          return;        
+        } else if (((loan.amount / 2) < loan.dueAmount) && (selectedLoanType === "Welfare Loan")) {
+          setReason("❌ ඔබගේ පවතින ණය මුදලින් අවම වශයෙන් 50% ක්වත් පියවා නොමැති බැවින්, මෙම අවස්ථාවේදී සුභසාධන ණයක් නිකුත් කළ නොහැක.");
+          setIsEligible(false);
+          setIsValidating(false);
+          return;              
+        }
+      }
 
-      // if (selectedLoanType === "Long Term Loan") {
-      //   if (fGuranteredLoans.length > 0) {
-      //     setReason("❌ තෝරාගත් පළමු ඇපකරු දැනටමත් තවත් ණයක් සඳහා අත්සන් කර ඇති අතර එම නිසා නැවත අත්සන් කිරීමට සුදුසුකම් නොලබයි.");
-      //     setIsEligible(false);
-      //     setIsValidating(false);
-      //     return;         
-      //   } else if ((amount / 4) > (Number(firstGuranter.shares) + Number(firstGuranter.profits))) {
-      //     setReason("❌ මෙම ණය මුදල සඳහා අත්සන් කිරීමට පළමු ඇපකරුගේ කොටස් මුදල ප්‍රමාණවත් නොවේ.");
-      //     setIsEligible(false);
-      //     setIsValidating(false);
-      //     return;          
-      //   }
-      //   if (sGuranteredLoans.length > 0) {
-      //     setReason("❌ තෝරාගත් දෙවන ඇපකරු දැනටමත් තවත් ණයක් සඳහා අත්සන් කර ඇති අතර එම නිසා නැවත අත්සන් කිරීමට සුදුසුකම් නොලබයි.");
-      //     setIsEligible(false);
-      //     setIsValidating(false);
-      //     return;         
-      //   } else if ((amount / 4) > (Number(secondGuranter.shares) + Number(secondGuranter.profits))) {
-      //     setReason("❌ මෙම ණය මුදල සඳහා අත්සන් කිරීමට දෙවන ඇපකරුගේ කොටස් මුදල ප්‍රමාණවත් නොවේ.");
-      //     setIsEligible(false);
-      //     setIsValidating(false);
-      //     return;          
-      //   }     
-      // }
+      if (selectedLoanType === "Long Term Loan") {
+        if (fGuranteredLoans.length > 1) {
+          setReason("❌ තෝරාගත් පළමු ඇපකරු දැනටමත් තවත් ණයක් සඳහා අත්සන් කර ඇති අතර එම නිසා නැවත අත්සන් කිරීමට සුදුසුකම් නොලබයි.");
+          setIsEligible(false);
+          setIsValidating(false);
+          return;         
+        } else if ((amount / 4) > (Number(firstGuranter.shares) + Number(firstGuranter.profits))) {
+          setReason("❌ මෙම ණය මුදල සඳහා අත්සන් කිරීමට පළමු ඇපකරුගේ කොටස් මුදල ප්‍රමාණවත් නොවේ.");
+          setIsEligible(false);
+          setIsValidating(false);
+          return;          
+        }
+        if (sGuranteredLoans.length > 1) {
+          setReason("❌ තෝරාගත් දෙවන ඇපකරු දැනටමත් තවත් ණයක් සඳහා අත්සන් කර ඇති අතර එම නිසා නැවත අත්සන් කිරීමට සුදුසුකම් නොලබයි.");
+          setIsEligible(false);
+          setIsValidating(false);
+          return;         
+        } else if ((amount / 4) > (Number(secondGuranter.shares) + Number(secondGuranter.profits))) {
+          setReason("❌ මෙම ණය මුදල සඳහා අත්සන් කිරීමට දෙවන ඇපකරුගේ කොටස් මුදල ප්‍රමාණවත් නොවේ.");
+          setIsEligible(false);
+          setIsValidating(false);
+          return;          
+        }     
+      }
       setReason("✅ඔබගේ ණය අයදුම්පත සූදානම් සහ ඉදිරිපත් කිරීමට සුදුසුකම් ලබා ඇත. අනුමැතිය සඳහා එය ඉදිරිපත් කිරීමට කරුණාකර පහත බොත්තම ක්ලික් කරන්න.");
       setIsEligible(true);
       setIsValidating(false);
@@ -460,19 +482,19 @@ export default function ApplyLoanPage() {
                       <LoadingSpinner />
                     ) : applicant  && applicantId.length === 3 ? (
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-indigo-700 font-medium mt-4">
-                            <div className="flex justify-between">
+                            <div className="w-full md:w-2/3 flex justify-between">
                               <span>නම:</span>
                               <span>{applicant?.nameSinhala || applicant?.name || "-"}</span>
                             </div>
-                            <div className="flex justify-between">
+                            <div className="w-full md:w-2/3 flex justify-between">
                               <span>සම්බන්ධ දිනය:</span>
                               <span>{applicant?.joinDate?.slice(0, 10) || "-"}</span>
                             </div>
-                            <div className="flex justify-between">
+                            <div className="w-full md:w-2/3 flex justify-between">
                               <span>හිග​ සාමාජික ගාස්තු:</span>
                               <span>{formatNumber(applicant?.membership)}</span>
                             </div>
-                            <div className="flex justify-between">
+                            <div className="w-full md:w-2/3 flex justify-between">
                               <span>කොටස් මුදල:</span>
                               <span>{formatNumber(applicant?.shares)}</span>
                             </div>
@@ -554,11 +576,11 @@ export default function ApplyLoanPage() {
                             onChange={e => {
                               const value = Number(e.target.value);
                               setAmount(value);
-                              // if (value <= maxAmount) setAmount(value);
-                              // else {
-                              //   toast.error(`මුදල ${formatNumber(maxAmount)} ට වඩා නොවිය යුතුය`);
-                              //   setAmount(maxAmount);
-                              // }
+                              if (value <= maxAmount) setAmount(value);
+                              else {
+                                toast.error(`මුදල ${formatNumber(maxAmount)} ට වඩා නොවිය යුතුය`);
+                                setAmount(0);
+                              }
                             }}
                             className={`mt-1 w-full border rounded-lg p-2 focus:ring-2 focus:ring-pink-400 ${
                               !isNewLoan ? "bg-gray-100 cursor-not-allowed text-gray-500" : ""
@@ -637,7 +659,11 @@ export default function ApplyLoanPage() {
                     <div className="bg-white shadow-lg rounded-xl p-6 border-l-4 border-blue-500">
                       <p className="text-blue-600 font-semibold mb-2">ඉදිරිපත් කළ ණය අයදුම්පත:</p>
                       <textarea
-                        className={`w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-400 text-blue-600`}
+                        className={`w-full border rounded-lg p-2 focus:ring-2 ${
+                          isEligible
+                            ? "text-blue-600 border-blue-400 focus:ring-blue-400"
+                            : "text-red-600 border-red-400 focus:ring-red-400"
+                        }`}
                         rows={4}
                         value={reason}
                         onChange={e => setReason(e.target.value)}
