@@ -610,11 +610,12 @@ export default function LoanRepaymentPage() {
                             <div>
                                 <label className="block text-sm text-orange-500 mb-1">අදාළ පොලිය</label>
                                 <input
+                                disabled={true}
                                 type="number"
                                 value={interest}
                                 // readOnly
                                 onChange={(e) => setInterest(e.target.value)}
-                                className="w-full p-3 border border-orange-300 rounded-lg text-orange-500 text-right focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                className="w-full p-3 border border-orange-300 rounded-lg tetxt-lg text-orange-500 text-right focus:outline-none focus:ring-2 focus:ring-orange-500"
                                 />
                                 <small className="text-xs text-gray-500">* පොලිය ස්වයංක්‍රීයව ගණනය කර ඇත.</small>
                             </div>
@@ -633,7 +634,7 @@ export default function LoanRepaymentPage() {
                                             setInstallment(loanDetails.dueAmount);
                                         }   
                                     }}                                  
-                                    className="w-full p-3 border border-orange-300 rounded-lg text-orange-500 text-right focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                    className="w-full p-3 border border-orange-300 rounded-lg text-lg text-orange-500 text-right focus:outline-none focus:ring-2 focus:ring-orange-500"
                                 />
                                 <small className="text-xs text-gray-500">* වාරිකය ස්වයංක්‍රීයව ගණනය කර ඇත. අවශ්‍ය නම් වෙනස් කළ හැක. (Max.{formatNumber(loanDetails.dueAmount)})</small>
                             </div>

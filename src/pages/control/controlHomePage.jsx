@@ -135,7 +135,7 @@ export default function ControlHomePage() {
   const AccountItem = ({ name, balance }) => (
     <div className="flex justify-between items-center p-3 rounded-md bg-gray-50 border border-gray-200 mb-2">
       <span className="font-medium text-gray-800">{name}</span>
-      <span className="font-semibold text-gray-700">{formatNumber(balance)}</span>
+      <span className="font-semibold text-blue-700">{formatNumber(balance)}</span>
     </div>
   );
 
