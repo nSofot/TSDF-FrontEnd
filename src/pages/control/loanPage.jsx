@@ -119,7 +119,7 @@ export default function LoanPage() {
                       <tr className="bg-gray-50">
                         <th className="px-3 py-2 font-semibold text-gray-600">ID</th>
                         <th className="px-3 py-2 font-semibold text-gray-600">
-                          Customer Name
+                          Name
                         </th>
                         <th className="px-3 py-2 font-semibold text-gray-600 text-right">
                           Amount

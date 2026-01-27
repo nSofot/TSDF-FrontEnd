@@ -41,6 +41,11 @@ export default function LedgerLoanPage() {
         if (!id || id === "0") return;
 
         setIsLoading(true);
+        setApplicantLoans([]);
+        setApplicant({});
+        setSelectedLoanId("");
+        setLoanDetails({});
+        setLoanTransactions([]);
         try {
             // Fetch applicant loans
             const appRes = await axios.get(
@@ -48,12 +53,41 @@ export default function LedgerLoanPage() {
             );
 
             // Enrich each loan with Sinhala label
+            let enrichedLoans = [];
+
             if (appRes.data) {
-            const enrichedLoans = appRes.data.map((loan) => ({
-                ...loan,
-                loanTypeSinhala: loanTypeMap[loan.loanType] || loan.loanType, // fallback
-            }));
-            setApplicantLoans(enrichedLoans);            
+                if (user.memberRole === "member") {
+                    enrichedLoans = appRes.data
+                        .filter((loan) => Number(loan.dueAmount) > 0)
+                        .map((loan) => ({
+                            ...loan,
+                            loanTypeSinhala: loanTypeMap[loan.loanType] || loan.loanType,
+                        }));
+                } else {
+                    // enrichedLoans = appRes.data.map((loan) => ({
+                    //     ...loan,
+                    //     loanTypeSinhala: loanTypeMap[loan.loanType] || loan.loanType,
+                    // }));
+                    enrichedLoans = [...appRes.data]
+                        .sort((a, b) => {
+                            // 1️⃣ loanType descending
+                            if (a.loanType < b.loanType) return 1;
+                            if (a.loanType > b.loanType) return -1;
+
+                            // 2️⃣ extract numeric part from loanId (e.g. LAPC-000042 → 42)
+                            const numA = parseInt(a.loanId.split("-")[1], 10);
+                            const numB = parseInt(b.loanId.split("-")[1], 10);
+
+                            return numB - numA; // descending
+                        })
+                        .map((loan) => ({
+                            ...loan,
+                            loanTypeSinhala: loanTypeMap[loan.loanType] || loan.loanType,
+                        }));
+                }
+            }
+
+            setApplicantLoans(enrichedLoans);
 
             // Fetch applicant details
             const res = await axios.get(
@@ -62,7 +96,6 @@ export default function LedgerLoanPage() {
 
             if (res.data) {
                 setApplicant(res.data);
-            }
             }
         } catch (err) {
             toast.error(err.response?.data?.message || "Applicant not found");
@@ -118,7 +151,7 @@ export default function LedgerLoanPage() {
 
 
     return (
-        <div className="flex flex-col  max-w-6xl mx-auto min-h-screen">
+        <div className="flex flex-col  max-w-6xl mx-auto w-full min-h-screen">
             {/* HEADER */}
             <div className="p-4 shadow-md flex flex-col md:flex-row md:items-center md:justify-between gap-3">
                 <div>
@@ -188,15 +221,20 @@ export default function LedgerLoanPage() {
                                 onChange={(e) => setSelectedLoanId(e.target.value)}
                             >
                                 <option value="">Select Loan Type</option>
-                                    {applicantLoans.map((loan) => (
+
+                                {applicantLoans.map((loan) => (
                                     <option
                                         key={loan.id || loan._id}
-                                        value={loan.loanId || loan.loanId}
+                                        value={loan.loanId}
+                                        style={{
+                                            color: Number(loan.dueAmount) === 0 ? "red" : "black",
+                                        }}
                                     >
                                         {loan.loanTypeSinhala} - {loan.loanId}
                                     </option>
                                 ))}
                             </select>
+
                         </div>
                     </div>
                 ) : (

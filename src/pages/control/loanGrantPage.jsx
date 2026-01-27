@@ -302,7 +302,7 @@ export default function LoanGrantPage() {
           </div>
         ) : (
           <div className="p-4 text-center text-gray-600 border rounded-lg bg-gray-50">
-            ⚠️ සක්‍රිය ණය ගිණුමක් සොයාගත නොහැක.
+            ⚠️ අනුමත ණය ගිණුමක් සොයාගත නොහැක.
           </div>
         )}
       </div>
