@@ -268,7 +268,7 @@ export default function ReceiptSharesPage() {
             <button
               disabled={isSubmitting || isSubmitted}
               onClick={handleSave}
-              className={`w-full md:w-auto h-12 rounded-lg font-semibold text-white transition ${
+              className={`w-full px-4 md:w-auto h-12 rounded-lg font-semibold text-white transition ${
                 isSubmitting
                   ? "bg-gray-400"
                   : isSubmitted
@@ -284,7 +284,7 @@ export default function ReceiptSharesPage() {
             </button>
             <button
               onClick={() => navigate("/control")}
-              className="w-full md:w-auto h-12 rounded-lg border border-gray-700 text-gray-700 hover:bg-gray-200 font-semibold transition"
+              className="w-full px-4 md:w-auto h-12 rounded-lg border border-gray-700 text-gray-700 hover:bg-gray-200 font-semibold transition"
             >
               ආපසු යන්න
             </button>
