@@ -185,7 +185,8 @@ export default function EditMember() {
 				const uploadPromises = image.map((img) => mediaUpload(img));
 				uploadedNewImages = await Promise.all(uploadPromises);
 			} else {
-				uploadedNewImages =  ["/userDefault.jpg"];
+				// uploadedNewImages =  ["/userDefault.jpg"];
+				uploadedNewImages = [];
 			}
 
 			const updatedProduct = {
@@ -204,7 +205,7 @@ export default function EditMember() {
 			};
 
 			await axios.put(
-				`${import.meta.env.VITE_BACKEND_URL}/api/customer/${customerId}`,
+				`${import.meta.env.VITE_BACKEND_URL}/api/customer/update/${customerId}`,
 				updatedProduct,
 				{
 					headers: {

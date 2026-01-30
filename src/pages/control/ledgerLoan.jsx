@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 import LoadingSpinner from "../../components/loadingSpinner";
 import { formatNumber } from "../../utils/numberFormat.js";
 import LoanLedger from "../../components/viewLoanLedger";
@@ -15,6 +16,8 @@ export default function LedgerLoanPage() {
     const [isLoadingLoan, setIsLoadingLoan] = useState(false);
     const [loanDetails, setLoanDetails] = useState({});
     const [loanTransactions, setLoanTransactions] = useState([]);
+
+    const navigate = useNavigate();
 
     const user = JSON.parse(localStorage.getItem("user") || "null");
 
@@ -64,12 +67,29 @@ export default function LedgerLoanPage() {
                             loanTypeSinhala: loanTypeMap[loan.loanType] || loan.loanType,
                         }));
                 } else {
-                    // enrichedLoans = appRes.data.map((loan) => ({
-                    //     ...loan,
-                    //     loanTypeSinhala: loanTypeMap[loan.loanType] || loan.loanType,
-                    // }));
+                    // enrichedLoans = [...appRes.data]
+                    //     .sort((a, b) => {
+                    //         // 1️⃣ loanType descending
+                    //         if (a.loanType < b.loanType) return 1;
+                    //         if (a.loanType > b.loanType) return -1;
+
+                    //         // 2️⃣ extract numeric part from loanId (e.g. LAPC-000042 → 42)
+                    //         const numA = parseInt(a.loanId.split("-")[1], 10);
+                    //         const numB = parseInt(b.loanId.split("-")[1], 10);
+
+                    //         return numB - numA; // descending
+                    //     })
+                    //     .map((loan) => ({
+                    //         ...loan,
+                    //         loanTypeSinhala: loanTypeMap[loan.loanType] || loan.loanType,
+                    //     }));
                     enrichedLoans = [...appRes.data]
                         .sort((a, b) => {
+                            // 0️⃣ dueAmount > 0 comes first
+                            const aDue = a.dueAmount > 0 ? 0 : 1;
+                            const bDue = b.dueAmount > 0 ? 0 : 1;
+                            if (aDue !== bDue) return aDue - bDue;
+
                             // 1️⃣ loanType descending
                             if (a.loanType < b.loanType) return 1;
                             if (a.loanType > b.loanType) return -1;
@@ -84,6 +104,7 @@ export default function LedgerLoanPage() {
                             ...loan,
                             loanTypeSinhala: loanTypeMap[loan.loanType] || loan.loanType,
                         }));
+
                 }
             }
 
@@ -240,7 +261,7 @@ export default function LedgerLoanPage() {
                 ) : (
                     <p className="text-center text-gray-500">ණය ගිණුමක් සොයාගත නොහැක.</p>
                 )}
-            </div>
+            </div>           
                 
             {isLoadingLoan ? (
                 <LoadingSpinner />
@@ -258,6 +279,15 @@ export default function LedgerLoanPage() {
             ) : (
                 <p className="text-center text-gray-500 mt-6">ණය ගනුදෙනු සොයාගත නොහැක.</p>
             )}
+
+            <div>
+                <button
+                    className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+                    onClick={() => navigate('/control')}
+                >
+                    ආපසු යන්න
+                </button>
+            </div> 
         </div>
     );
 }

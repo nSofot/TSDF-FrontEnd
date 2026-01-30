@@ -29,10 +29,17 @@ export default function MembersPage() {
     axios
       .get(import.meta.env.VITE_BACKEND_URL + "/api/customer")
       .then((res) => {
-        setCustomers(res.data);
+        const filteredList = res.data
+          .filter((customer) => customer.customerType === "shareholder")
+          .sort((a, b) => a.customerId.localeCompare(b.customerId));
+
+        setCustomers(filteredList);
         setIsLoading(false);
       })
-      .catch(() => setIsLoading(false));
+      .catch((err) => {
+        console.error("Error fetching customers:", err);
+        setIsLoading(false);
+      });
   }, [location]);
 
   const handleCheckboxChange = (customerId) => {
