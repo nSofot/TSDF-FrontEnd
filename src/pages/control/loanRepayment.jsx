@@ -400,7 +400,7 @@ export default function LoanRepaymentPage() {
                     transactionType: "receipt",
                     transactionCategory: selectedLoanType,
                     accountId: lgAcIdDr,
-                    description: `${applicant?.name || ""}`,
+                    description: applicant?.nameSinhala ?? applicant?.name ?? "",
                     isCredit: false,
                     trxAmount: parseFloat(totalAmount) || 0
                 };
@@ -437,7 +437,7 @@ export default function LoanRepaymentPage() {
                     transactionType: "receipt",
                     transactionCategory: selectedLoanType,
                     accountId: lgAcIdCr,
-                    description: applicant.name,
+                    description: applicant?.nameSinhala ?? applicant?.name ?? "",
                     isCredit: true,
                     trxAmount: installment
                 }                         
