@@ -581,8 +581,8 @@ export default function LoanRepaymentPage() {
                             <div className="flex justify-between">
                                 <span>අවසන් ගෙවීම් දිනය:</span>
                                 <span>
-                                    {lastTransaction?.createdAt
-                                    ? new Date(lastTransaction.createdAt).toLocaleDateString("uk")
+                                    {lastTransaction?.transactionDate
+                                    ? new Date(lastTransaction.transactionDate).toLocaleDateString("uk")
                                     : "N/A"}
                                 </span>
                             </div>
