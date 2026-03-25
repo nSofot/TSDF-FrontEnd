@@ -72,8 +72,9 @@ function transformCashbook(data, fromDate, toDate) {
   if (balanceBF !== 0) {
     rows.push(makeRow({
       trxDate   : start,
-      trxId     : "B/F",
-      transactionType: "Balance B/F",
+      trxId     : "",
+      transactionType: "B/F",
+      transactionCategory: "Balance B/F",
       description: "As At " + start.toLocaleDateString("en-GB"),
       isCredit  : balanceBF < 0,
       trxAmount : Math.abs(balanceBF),
@@ -135,6 +136,7 @@ function makeRow(trx, runningBalance) {
     date       : new Date(trx.trxDate).toLocaleDateString("en-GB"),
     trxId      : trx.trxBookNo || trx.trxId,
     trxType    : trx.transactionType || "",
+    category   : trx.transactionCategory || "",
     description: trx.description || "",
     debit      : !isCredit ? trx.trxAmount.toLocaleString("en-US", { minimumFractionDigits: 2 }) : "0.00",
     credit     : isCredit  ? trx.trxAmount.toLocaleString("en-US", { minimumFractionDigits: 2 }) : "0.00",

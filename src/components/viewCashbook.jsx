@@ -43,15 +43,33 @@ export default function ViewCashbook({ accountId, fromDate, toDate }) {
                 </div>                                                   
 
 
-            {/* Header Row */}
-            <div className="hidden md:grid grid-cols-[100px_120px_120px_280px_120px_120px_120px] font-semibold bg-gray-200 px-4 py-2">
+            {/* Header Row Desktop */}
+            <div className="hidden md:grid grid-cols-[100px_80px_100px_150px_250px_120px_120px_120px] font-semibold bg-gray-200 px-4 py-2">
                 <span>Date</span>
                 <span>Reference</span>
                 <span>Type</span>
+                <span>Category</span>
                 <span>Description</span>
                 <span className="text-right">Debit</span>
                 <span className="text-right">Credit</span>
                 <span className="text-right">Balance</span>
+            </div>
+            {/* Header Row Mobile */}
+            <div className="md:hidden grid grid-cols font-semibold bg-gray-200 px-4 py-2">
+                <div className="flex justify-start gap-4">
+                    <span>Date</span>
+                    <span>Reference</span>
+                    <span>Type</span>
+                    <span>Category</span>
+                </div>
+                <div className="flex justify-start">
+                    <span>Description</span>
+                </div>
+                <div className="flex justify-end gap-4">
+                    <span className="text-right text-red-500">Debit</span>
+                    <span className="text-right text-green-500">Credit</span>
+                    <span className="text-right">Balance</span>
+                </div>
             </div>
 
             {/* Scrollable Data */}
@@ -63,7 +81,7 @@ export default function ViewCashbook({ accountId, fromDate, toDate }) {
                         {cashbook.map((b, idx) => (
                             <div
                               key={`${b.trxId}-${idx}`} // ensures uniqueness
-                              className="grid grid-cols-1 md:grid-cols-[100px_120px_120px_280px_120px_120px_120px] px-4 py-2 border-b border-gray-200 hover:bg-gray-100 gap-1 md:gap-0"
+                              className="grid grid-cols-1 md:grid-cols-[100px_80px_100px_150px_250px_120px_120px_120px] px-4 py-2 border-b border-gray-200 hover:bg-gray-100 gap-1 md:gap-0"
                             >
                                 {/* For mobile, show stacked info */}
                                 <div className="flex justify-start gap-4 md:hidden">
@@ -71,10 +89,10 @@ export default function ViewCashbook({ accountId, fromDate, toDate }) {
                                         <span>{b.date}</span>
                                         <span>{b.trxId}</span>
                                         <span>{b.trxType}</span>
+                                        <span>{b.category}</span>
                                     </span>
-
-             
                                 </div>
+
                                 <div className="flex justify-start md:hidden">
                                     <span>{b.description}</span>
                                 </div>
@@ -102,6 +120,7 @@ export default function ViewCashbook({ accountId, fromDate, toDate }) {
                                 <span className="hidden md:block">{b.date}</span>
                                 <span className="hidden md:block">{b.trxId}</span>
                                 <span className="hidden md:block">{b.trxType}</span>
+                                <span className="hidden md:block">{b.category}</span>
                                 <span className="hidden md:block">{b.description}</span>
                                 <span className="hidden md:block text-right">{b.debit === "0.00" ? "—" : b.debit}</span>
                                 <span className="hidden md:block text-right">{b.credit === "0.00" ? "—" : b.credit}</span>
