@@ -385,7 +385,6 @@ export default function LoanRepaymentPage() {
                 await axios.put(
                     `${import.meta.env.VITE_BACKEND_URL}/api/ledgerAccounts/add-balance`,
                     payload
-
                 );
             } catch (error) {
               console.log("3️⃣⚠️ update cash book error: ", error);
@@ -403,7 +402,7 @@ export default function LoanRepaymentPage() {
                     description: applicant?.nameSinhala ?? applicant?.name ?? "",
                     isCredit: false,
                     trxAmount: parseFloat(totalAmount) || 0
-                };
+                };               
                 await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/ledgerTransactions`, accTrxPayload);
             } catch (error) {
                 console.error("4️⃣⚠️ create cash book transaction error:", error.response?.data || error.message);
@@ -440,7 +439,7 @@ export default function LoanRepaymentPage() {
                     description: applicant?.nameSinhala ?? applicant?.name ?? "",
                     isCredit: true,
                     trxAmount: installment
-                }                         
+                }                                       
                 await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/ledgerTransactions`, accTrxPayload);
             } catch (error) {
                 console.log('6️⃣⚠️ create loan account transaction error: ', error); 
