@@ -324,13 +324,13 @@ export default function LoanRepaymentPage() {
 
         switch (selectedLoanType) {
             case "Welfare Loan":
-                lgAcIdCr = "211-0003"; break;
+                lgAcIdCr = "330-0001"; break;
             case "Short Term Loan":
-                lgAcIdCr = "211-0004"; break;
+                lgAcIdCr = "330-0002"; break;
             case "Long Term Loan":
-                lgAcIdCr = "211-0005"; break;
+                lgAcIdCr = "330-0003"; break;
             case "Project Loan":
-                lgAcIdCr = "211-0006"; break;
+                lgAcIdCr = "330-0004"; break;
             default:
                 toast.error("Invalid loan type");
                 setIsSubmitting(false);
